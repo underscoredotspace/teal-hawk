@@ -1,0 +1,81 @@
+BODY {
+  background-color: #404246;
+}
+DIV, SPAN, IMG {
+    border: 0px;
+    border-style: none;
+    padding: 0px;
+    margin: 0px;
+    font-family: 'Source Sans Pro', sans-serif;
+    font-size: 14px;
+}
+.tweet-container {
+    width: 310px;
+    padding-left: 5px;
+    padding-right: 5px;
+}
+.tweet {
+    width: 380px;
+    min-height: 62px;
+    float: left;
+    display: block;
+    border: 1px;
+    border-style: solid;
+    margin-bottom: 5px;
+    color: rgb(221, 221, 221);
+    background-color: #222426;
+}
+.left-column {
+    float: left;
+}
+.right-column {
+    width: 300px;
+    float: right;
+    min-height: 60px;
+    margin-right: 10px;
+}
+.user, .tweet-text, .created-at {
+    display: block;
+    padding: 2px;
+}
+.tweet-text{
+    text-align: left;
+    margin-right: 3px;
+}
+.user {
+  font-weight: bold;
+  border-bottom: solid;
+  border-width: 1px;
+  vertical-align: bottom;
+}
+.user-handle {
+    float: right;
+    vertical-align: middle;
+    line-height: 18px;
+    font-size: 75%;
+}
+.user-name {
+  font-weight: bold;
+}
+.user-handle, .created-at {
+    color: #999;
+}
+.created-at {
+    font-size: 75%;
+//    text-align: right;
+    margin-bottom: 5px;
+}
+IMG.profile-image {
+    margin: 0px;
+    padding: 10px;
+    width: 40px;
+    height: 40px;
+    float: left;
+}
+A, A:hover, A:visited {
+  color: #88bbdd;
+  text-decoration: none;
+}
+A:hover {
+  text-decoration: underline;
+}
