@@ -1,7 +1,21 @@
+<?php
+if( ($_GET["debug"] == "") && (isset($_GET["debug"])) ) {
+  $g_debug = true;
+  print("<!-- debug mode -->");
+} else {
+  $g_debug = false;
+}
+?>
 <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=UTF-8">
 <html><head><link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro' rel='stylesheet' type='text/css'>
+<?php
+if($g_debug==false) {
+?>
 <link rel="stylesheet" type="text/css" href="v2.css">
-<title>Star Hose</title></head>
+<?php
+}
+?>
+<title>teal-hawk hose</title></head>
 <body>
 
 <?php
@@ -15,11 +29,11 @@ $tweets = array();
 
 while ($row = mysqli_fetch_array($result,MYSQLI_ASSOC)) { $tweets[] = $row;}
 
-if( ($_GET["debug"] == "") && (isset($_GET["debug"])) ) {
+if($g_debug==true) {
   print("<pre>");
   print_r($tweets);
   print("</pre></body></html>");
-  exit;
+  exit; // not ideal, but good for readability of everything velow
 }
 
 ?><div class="tweet-container">
