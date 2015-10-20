@@ -6,8 +6,11 @@ if( ($_GET["debug"] == "") && (isset($_GET["debug"])) ) {
   $g_debug = false;
 }
 ?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
 <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=UTF-8">
-<html><head><link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro' rel='stylesheet' type='text/css'>
+<link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro' rel='stylesheet' type='text/css'>
 <?php
 if($g_debug==false) {
 ?>
@@ -45,14 +48,14 @@ $tweet['profile_image_url'] = "img.php?url=" . str_replace("http://pbs.twimg.com
 
 <span class="tweet">
   <span class="left-column">
-    <img class="profile-image" src="<?=$tweet['profile_image_url']?>" />
+    <img class="profile-image" src="<?=$tweet['profile_image_url']?>" alt="<?=$tweet['screen_name']?>">
   </span>
   <span class="right-column">
     <span class="user">
       <span class="user-name"><?=$tweet['name']?></span>
       <span class="user-handle"><?=$tweet['screen_name']?></span>
     </span>
-    <span class="tweet-text" id="<?=$tweet['tweet_id']?>"><?=linkify($tweet['tweet_text'])?></span>
+    <span class="tweet-text" id="tweet-id-<?=$tweet['tweet_id']?>"><?=linkify($tweet['tweet_text'])?></span>
     <span class="created-at" title="<?=$tweet['created_at']?>"><?=time_ago($tweet['created_at'])?></span>
   </span>
 </span>
