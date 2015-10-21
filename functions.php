@@ -10,7 +10,7 @@ function linkify($status_text) {
   // linkify twitter users
   $status_text = preg_replace(
     '/(^|\s)@(\w+)/',
-    '\1<a href="http://twitter.com/\2">@\2</a>',
+    '\1@<a href="http://twitter.com/\2">\2</a>',
     $status_text
   );
 

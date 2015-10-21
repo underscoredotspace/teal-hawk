@@ -27,7 +27,7 @@ require("config.php");
 
 $connect = mysqli_connect($sql_host, $sql_user, $sql_pass, $sql_dbname);
 $connect->set_charset("utf8");
-$result = mysqli_query($connect, "select * from tweets order by tweet_id DESC LIMIT 100;");
+$result = mysqli_query($connect, "select * from tweets WHERE is_rt=0 order by tweet_id DESC LIMIT 100;");
 $tweets = array();
 
 while ($row = mysqli_fetch_array($result,MYSQLI_ASSOC)) { $tweets[] = $row;}
