@@ -7,7 +7,7 @@
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
 /*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8 */;
+/*!40101 SET NAMES utf8mb4 */;
 /*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
 /*!40103 SET TIME_ZONE='+00:00' */;
 /*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
@@ -26,11 +26,11 @@ CREATE TABLE `json_cache` (
   `tweet_id` bigint(20) unsigned NOT NULL,
   `cache_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `cache_date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `raw_tweet` text CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+  `raw_tweet` mediumtext COLLATE utf8mb4_unicode_ci NOT NULL,
   PRIMARY KEY (`cache_id`),
   KEY `tweet_id` (`tweet_id`),
   KEY `cache_date` (`cache_date`)
-) ENGINE=MyISAM AUTO_INCREMENT=2734 DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM AUTO_INCREMENT=4371 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -89,14 +89,14 @@ DROP TABLE IF EXISTS `tweets`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `tweets` (
   `tweet_id` bigint(20) unsigned NOT NULL,
-  `tweet_text` varchar(160) NOT NULL,
+  `tweet_text` varchar(160) COLLATE utf8mb4_unicode_ci NOT NULL,
   `created_at` datetime NOT NULL,
   `geo_lat` decimal(10,5) DEFAULT NULL,
   `geo_long` decimal(10,5) DEFAULT NULL,
   `user_id` bigint(20) unsigned NOT NULL,
-  `screen_name` char(20) NOT NULL,
-  `name` varchar(20) DEFAULT NULL,
-  `profile_image_url` varchar(200) DEFAULT NULL,
+  `screen_name` char(20) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `name` varchar(20) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `profile_image_url` varchar(200) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `is_rt` tinyint(1) NOT NULL,
   PRIMARY KEY (`tweet_id`),
   KEY `created_at` (`created_at`),
@@ -104,7 +104,7 @@ CREATE TABLE `tweets` (
   KEY `screen_name` (`screen_name`),
   KEY `name` (`name`),
   FULLTEXT KEY `tweet_text` (`tweet_text`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -116,24 +116,24 @@ DROP TABLE IF EXISTS `users`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `users` (
   `user_id` bigint(20) unsigned NOT NULL,
-  `screen_name` varchar(20) NOT NULL,
-  `name` varchar(20) DEFAULT NULL,
-  `profile_image_url` varchar(200) DEFAULT NULL,
-  `location` varchar(30) DEFAULT NULL,
-  `url` varchar(200) DEFAULT NULL,
-  `description` varchar(200) DEFAULT NULL,
+  `screen_name` varchar(20) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `name` varchar(20) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `profile_image_url` varchar(200) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `location` varchar(30) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `url` varchar(200) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `description` varchar(200) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `created_at` datetime NOT NULL,
   `followers_count` int(10) unsigned DEFAULT NULL,
   `friends_count` int(10) unsigned DEFAULT NULL,
   `statuses_count` int(10) unsigned DEFAULT NULL,
-  `time_zone` varchar(40) DEFAULT NULL,
+  `time_zone` varchar(40) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `last_update` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`user_id`),
   KEY `user_name` (`name`),
   KEY `last_update` (`last_update`),
   KEY `screen_name` (`screen_name`),
   FULLTEXT KEY `description` (`description`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
@@ -145,4 +145,4 @@ CREATE TABLE `users` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2015-10-19 17:05:21
+-- Dump completed on 2015-10-22 13:57:45

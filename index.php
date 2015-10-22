@@ -18,7 +18,7 @@ if($g_debug==false) {
 <?php
 }
 ?>
-<title>teal-hawk hose</title></head>
+<title>Hose (teal-hawk)</title></head>
 <body>
 
 <?php
@@ -26,7 +26,7 @@ require("functions.php");
 require("config.php");
 
 $connect = mysqli_connect($sql_host, $sql_user, $sql_pass, $sql_dbname);
-$connect->set_charset("utf8");
+$connect->set_charset("utf8mb4");
 $result = mysqli_query($connect, "select * from tweets WHERE is_rt=0 order by tweet_id DESC LIMIT 100;");
 $tweets = array();
 
