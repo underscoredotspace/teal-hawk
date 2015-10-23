@@ -4,7 +4,12 @@ require("config.php");
 
 $connect = mysqli_connect($sql_host, $sql_user, $sql_pass, $sql_dbname);
 $connect->set_charset("utf8mb4");
-$result = mysqli_query($connect, "select * from tweets WHERE is_rt=0 order by tweet_id DESC LIMIT 100;");
+
+if (isset($_GET['tt']) && ($_GET['tt']!="")) {
+  $query_keywords = "AND tweet_text RLIKE " . "'" . escape_mySQL($_GET['tt']) . "'";
+}
+
+$result = mysqli_query($connect, "select * from tweets WHERE (is_rt=0 " . $query_keywords . ") order by tweet_id DESC LIMIT 100;");
 $tweets = array();
 
 while ($row = mysqli_fetch_array($result,MYSQLI_ASSOC)) { $tweets[] = $row;}
