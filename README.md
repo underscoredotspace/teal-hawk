@@ -1,17 +1,17 @@
 # teal-hawk
 
-config.php must be created with the following: 
+config.php must be created with the following:
 
-<?php
-// Local SQL Server credentials
-$sql_dbname = "DBNAME";
-$sql_host = "DBHOSTNAME";
-$sql_user = "DBUSERNAME";
-$sql_pass = "DBPASSWORD";
+<?php <br>
+// Local SQL Server credentials <br>
+$sql_dbname = "DBNAME"; <br>
+$sql_host = "DBHOSTNAME"; <br>
+$sql_user = "DBUSERNAME"; <br>
+$sql_pass = "DBPASSWORD"; <br>
 
-// Twitter API keys and tokens
-$consumer_key = "TWITTERCONSUMERKEY";
-$consumer_secret = "TWITTERCONSUMERSECRET";
-$access_token = "TWITTERACCESSTOKEN";
-$access_secret = "TWITTERACESSSECRET";
+// Twitter API keys and tokens <br>
+$consumer_key = "TWITTERCONSUMERKEY"; <br>
+$consumer_secret = "TWITTERCONSUMERSECRET"; <br>
+$access_token = "TWITTERACCESSTOKEN"; <br>
+$access_secret = "TWITTERACESSSECRET"; <br>
 ?>
