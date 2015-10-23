@@ -18,7 +18,7 @@ echo "    \"tweet_id\": " . json_encode($tweet['tweet_id']) .",\n";
 echo "    \"profile_image_url\": " . json_encode($tweet['profile_image_url']) .",\n";
 echo "    \"screen_name\": " . json_encode($tweet['screen_name']) .",\n";
 echo "    \"name\": " . json_encode($tweet['name']) .",\n";
-echo "    \"tweet_text\": " . json_encode($tweet['tweet_text']) .",\n";
+echo "    \"tweet_text\": " . json_encode(linkify($tweet['tweet_text'])) .",\n";
 echo "    \"created_at\": " . json_encode($tweet['created_at']) .",\n";
 echo "    \"time_ago\": " . json_encode(time_ago($tweet['created_at'])) ."\n";
 if ($index==count($tweets)-1) {
