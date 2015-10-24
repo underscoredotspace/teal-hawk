@@ -4,16 +4,22 @@
 
 <meta charset="utf-8">
 <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro" rel="stylesheet" type="text/css">
-<link rel="stylesheet" type="text/css" href="v2.css">
+
+<style>
+<?php include 'v2.css'; ?>
+</style>
+
+<script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.2.26/angular.min.js"></script>
+<script>
+<?php include 'ngTweetApp.js'; ?>
+</script>
 
 <title>AngularHose (teal-hawk)</title>
 
-<script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.2.26/angular.min.js"></script>
-<script src="ngTweetApp.js"></script>
 </head>
 
-<body data-ng-controller="TweetCtrl" data-ng-app="tweetApp">
-  <div class="tweet-container">
+<body data-ng-app="tweetApp">
+  <div class="tweet-container" data-ng-controller="TweetCtrl">
     <span class="tweet" data-ng-repeat="tweet in tweets">
       <span class="left-column">
         <img class="profile-image" src="#" data-ng-src="{{tweet.profile_image_url}}" alt="{{tweet.screen_name}}">
