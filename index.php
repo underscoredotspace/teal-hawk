@@ -9,7 +9,7 @@
 <?php include 'v2.css'; ?>
 </style>
 
-<script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.2.26/angular.min.js"></script>
+<script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.4.7/angular.min.js"></script>
 <script>
 <?php include 'ngTweetApp.js'; ?>
 </script>
@@ -20,14 +20,10 @@
 
 <body data-ng-app="tweetApp">
   <div class="tweet-container" data-ng-controller="TweetCtrl">
-    <form data-ng-submit="tt_submit()">
-      <input data-ng-model="tt_query_input" type="text">
-      <input data-ng-model="tt_query" type="hidden" value=" ">
-      <input type="submit">
-    </form>
-    <span class="tweet" data-ng-repeat="tweet in tweets">
+    <input data-ng-model="search.tweet_text" type="search">
+    <span class="tweet" data-ng-repeat="tweet in tweets | filter:search | orderBy : tweet_id : reverse">
       <span class="left-column">
-        <img class="profile-image" src="#" data-ng-src="{{tweet.profile_image_url}}" alt="{{tweet.screen_name}}">
+        <img class="profile-image" src="#" data-ng-src="{{tweet.profile_image_url|proxy_image}}" alt="{{tweet.screen_name}}">
       </span>
       <span class="right-column" >
         <span class="user">

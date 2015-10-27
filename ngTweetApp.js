@@ -1,24 +1,16 @@
 var tweetApp = angular.module('tweetApp', []);
 tweetApp.controller('TweetCtrl', function ($scope, $http, $interval){
-  $scope.tt_query = "";
-
   $http.get('json.php').success(function(data) {
     $scope.tweets = data;
   });
 
-  $scope.$watch('tt_query', function(){
-    $http.get('json.php?tt='+ $scope.tt_query).success(function(data) {
-      $scope.tweets = data;
-    });
-  });
-
-  $scope.tt_submit = function() {
-    $scope.tt_query=$scope.tt_query_input;
-  };
-
   $scope.Timer = $interval(function () {
-    $http.get('json.php?tt='+ $scope.tt_query).success(function(data) {
-      $scope.tweets = data;
+     $http.get('json.php?created_at=' + $scope.tweets[0].created_at).success(function(data) {
+      if(data.length>0){
+        for (var i=0; i<data.length; i++){
+          $scope.tweets.unshift(data[i]);
+         }
+      }
     });
   }, 10000);
 });
@@ -29,3 +21,15 @@ tweetApp.filter('html', ['$sce', function ($sce) {
     return $sce.trustAsHtml(text);
   };  
 }])
+
+tweetApp.filter('proxy_image', function() {
+  return function(text) {
+    var out = "";
+    if (text.search("http://abs.twimg.com") >-1) {
+      out = "img.php?url=" + text; 
+    } else {
+      out = text.replace("http://pbs.twimg.com/profile_images/", "img.php?url=");
+    }
+    return out;
+  };
+})
