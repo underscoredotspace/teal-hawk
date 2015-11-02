@@ -21,22 +21,26 @@
 </head>
 
 <body data-ng-app="tweetApp">
-  <div class="tweet-container" data-ng-controller="TweetCtrl">
-    <span class="search_tweets">
+  <div class="tweet-column" data-ng-controller="TweetCtrl">
+    <span class="search-tweets">
       <input data-ng-model="search.tweet_text" type="text">
-    </span><span>{{tweets.length}}</span>
-    <span class="tweet" data-ng-repeat="tweet in tweets|filter:search|orderBy:tweet_id:reverse">
-      <span class="left-column">
-        <img class="profile-image" src="#" data-ng-src="{{tweet.profile_image_url|proxy_image}}" alt="{{tweet.screen_name}}">
-      </span>
-      <span class="right-column" >
-        <span class="user">
-          <span class="user-name">{{tweet.name}} </span>
-          <span class="user-handle"> {{tweet.screen_name}}</span>
-        </span>
-        <span class="tweet-text" id="tweet-id-{{tweet.tweet_id}}">{{tweet.tweet_text}}</span>
-        <span class="created-at" title="{{tweet.created_at|amCalendar}}" am-time-ago="tweet.created_at"></span>
-      </span>
+      <span>{{tweets.length}}</span>
     </span>
+    <div class="tweet-container">
+      <span class="tweet" data-ng-repeat="tweet in tweets|filter:search|orderBy:tweet_id:reverse">
+        <span class="left-column">
+          <img class="profile-image" src="#" data-ng-src="{{tweet.profile_image_url|proxy_image}}" alt="{{tweet.screen_name}}">
+        </span>
+        <span class="right-column" >
+          <span class="user">
+            <span class="user-name">{{tweet.name}} </span>
+            <span class="user-handle"> {{tweet.screen_name}}</span>
+          </span>
+          <span class="tweet-text" id="tweet-id-{{tweet.tweet_id}}" data-ng-bind-html="tweet.tweet_text|html"></span>
+          <span class="created-at" title="{{tweet.created_at|amCalendar}}" am-time-ago="tweet.created_at"></span>
+        </span>
+      </span>
+    </div>
   </div>
+</body>
 </html>
