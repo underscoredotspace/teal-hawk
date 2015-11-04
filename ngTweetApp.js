@@ -17,7 +17,7 @@ tweetApp.controller('TweetCtrl', function ($scope, $http, $interval, $timeout){
     $timeout(function() {
       // TODO - remove duplication with Factory/Service
       // Get next 80 tweets and push them to the end of tweets
-      $http.get('json.php?count=80&tweet_id_before=' + $scope.tweets[$scope.tweets.length-1].tweet_id).success(function(data) {
+      $http.get('json.php?count=20&tweet_id_before=' + $scope.tweets[$scope.tweets.length-1].tweet_id).success(function(data) {
         if(data.length>0) {
           for (var i=0; i<data.length; i++) {
             $scope.tweets.push(data[i]);
@@ -40,7 +40,7 @@ tweetApp.controller('TweetCtrl', function ($scope, $http, $interval, $timeout){
   }, 10000);
 });
 
-// Tells view to accept tweet_text as html. Not used now, and not sure it will be again. 
+// Tells view to accept tweet_text as html. 
 tweetApp.filter('html', ['$sce', function ($sce) { 
   return function (text) {
     return $sce.trustAsHtml(text);
