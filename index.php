@@ -11,9 +11,10 @@
 <?php include 'v2.css'; ?>
 </style>
 
-<script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.4.7/angular.min.js"></script>
-<script src="http://cdnjs.cloudflare.com/ajax/libs/moment.js/2.9.0/moment.min.js"></script>
-<script src="http://cdnjs.cloudflare.com/ajax/libs/angular-moment/0.9.0/angular-moment.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.4.7/angular.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.4.7/angular-animate.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.9.0/moment.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/angular-moment/0.9.0/angular-moment.min.js"></script>
 <script>
 <?php include 'ngTweetApp.js'; ?>
 </script>
@@ -26,6 +27,7 @@
   <div class="tweet-column" data-ng-controller="TweetCtrl">
     <span class="search-tweets">
       <input data-ng-model="search.tweet_text" type="text" class="search-tweets">
+      <button ng-click="search=''">Clear</button>
       <span class="filtered-count">{{filteredtweets.length}} / {{tweets.length}}</span>
     </span>
     <div class="tweet-container">

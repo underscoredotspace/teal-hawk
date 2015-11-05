@@ -7,7 +7,7 @@
         This can probably be rewritten in about 10 lines
 */ 
 
-var tweetApp = angular.module('tweetApp', ['angularMoment']);    // Is this the best set up for this? doesn't feel like it. 
+var tweetApp = angular.module('tweetApp', ['angularMoment', 'ngAnimate']);    // Is this the best set up for this? doesn't feel like it. 
 tweetApp.controller('TweetCtrl', function ($scope, $http, $interval, $timeout){
   // Get initial 20 tweets using json.php
   $http.get('json.php?count=20').success(function(data) {

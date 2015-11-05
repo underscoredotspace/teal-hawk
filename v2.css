@@ -11,20 +11,30 @@ DIV, SPAN, IMG {
     font-family: 'Source Sans Pro', sans-serif;
     font-size: 14px;
 }
+.tweet-container::-webkit-scrollbar {
+  width: 15px;
+}
+.tweet-container::-webkit-scrollbar-thumb {
+    background: #222426;
+}
 .tweet-column {
   width: 375px;
 }
 SPAN.search-tweets {
   position: fixed;
   width: 375px;
-  background-color: yellow;
+  background-color: #222426;
+  height: 30px;
+  border-width: 0px;
+  border-style: solid;
+  color: rgb(221, 221, 221);
 }
-INPUT.search-tweets {
-  height: 27px;
+INPUT.search-tweets, BUTTON.search-tweets {
+  height: 18px;
   margin: 0px;
   padding-left: 5px;
   padding-right: 5px;
-  margin-left: 1px;
+  margin: 5px;
   border-width: 0px;
   outline-width: 0px;
   width: 200px;
@@ -36,7 +46,7 @@ INPUT.search-tweets {
 }
 .tweet-container {
   position: fixed;
-  top: 30px;
+  top: 32px;
   bottom: 0px;
   overflow: scroll;
   overflow-x: hidden;
@@ -46,17 +56,24 @@ INPUT.search-tweets {
     min-height: 62px;
     float: left;
     display: block;
-    border: 1px;
+    border: 0px;
     border-style: solid;
-    margin-bottom: 5px;
+    margin-bottom: 2px;
     color: rgb(221, 221, 221);
     background-color: #222426;
+}
+.tweet.ng-enter {
+  transition:0.5s linear all;
+  opacity:0;
+}
+.tweet.ng-enter.ng-enter-active {
+  opacity:1;
 }
 .left-column {
     float: left;
 }
 .right-column {
-  width: 290px;
+  width: 293px;
   float: right;
   min-height: 60px;
   padding-right: 5px;
