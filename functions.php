@@ -27,15 +27,15 @@ function linkify($status_text) {
 
   // linkify twitter users
   $status_text = preg_replace(
-    '/(^|\s)@(\w+)/',
-    '\1@<a href="http://star.underscore.space/?q=\2">\2</a>',
+    '/@(\w+)/',
+    '<a href="http://star.underscore.space/?q=\1">@\1</a>',
     $status_text
   );
 
   // linkify tags
   $status_text = preg_replace(
     '/(^|\s)#(\w+)/',
-    '\1#<a href="http://star.underscore.space/?q=%23\2">\2</a>',
+    '\1<a href="http://star.underscore.space/?q=%23\2">#\2</a>',
     $status_text
   );
   return $status_text;

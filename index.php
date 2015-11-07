@@ -40,7 +40,7 @@
             <span class="user-name">{{tweet.name}} </span>
             <span class="user-handle"> {{tweet.screen_name}}</span>
           </span>
-          <span class="tweet-text" id="tweet-id-{{tweet.tweet_id}}" data-ng-bind-html="tweet.tweet_text|html"></span>
+          <span class="tweet-text" id="tweet-id-{{tweet.tweet_id}}" data-ng-bind-html="tweet.tweet_text|linkify|html"></span>
           <span class="created-at" title="{{tweet.created_at|amCalendar}}" data-am-time-ago="tweet.created_at"></span>
         </span>
       </span>

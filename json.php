@@ -11,10 +11,13 @@ if ((isset($_GET['tweet_id_after']) && isset($_GET['tweet_id_before'])) && ($_GE
   if (isset($_GET['tweet_id_after'])) {
     array_push($query_strings, "AND tweet_id > '" . escape_mySQL($_GET['tweet_id_after']) . "' ");
   }
-  if (isset($_GET['tweet_id_before'])) {
+  if (isset($_GET['tweet_id_before']) && $_GET['tweet_id_before']<>"") {
     array_push($query_strings, "AND tweet_id < '" . escape_mySQL($_GET['tweet_id_before']) . "' ");
   }
 }
+
+// Validate like this?
+//   preg_match("/^([0-9]{17}[0-9]+)$/", $_GET['tweet_id'])
 
 if(ctype_digit($_GET['count']) && $_GET['count']>0) {
   if ($_GET['count']<=1000) {

@@ -1,43 +1,19 @@
-/*
- NOTE: The state of development here (at the moment) is "if it comiles, ship it". 
-
- In a nutshell, tweetApp will get 10 tweets, render them in view, get another 90 tweets, stick them at the bottom of the view. 
- A timer then fires every 10 seconds to check for new tweets, and sticks them at the top of the view. 
- TODO - Learn how to fucking Function with multiple params. Learn how to build a Service or Factory for $http.get(). 
-        This can probably be rewritten in about 10 lines
-*/ 
-
-var tweetApp = angular.module('tweetApp', ['angularMoment', 'ngAnimate']);    // Is this the best set up for this? doesn't feel like it. 
+var tweetApp = angular.module('tweetApp', ['angularMoment', 'ngAnimate']);
 tweetApp.controller('TweetCtrl', function ($scope, $http, $interval, $timeout){
-  // Get initial 20 tweets using json.php
-  $http.get('json.php?count=20').success(function(data) {
+  $http.get('json.php?count=100').success(function(data) {
     $scope.tweets = data;
-
-    // HACK to wait until first 20 tweets have rendered in view
-    $timeout(function() {
-      // TODO - remove duplication with Factory/Service
-      // Get next 80 tweets and push them to the end of tweets
-      $http.get('json.php?count=20&tweet_id_before=' + $scope.tweets[$scope.tweets.length-1].tweet_id).success(function(data) {
-        if(data.length>0) {
-          for (var i=0; i<data.length; i++) {
-            $scope.tweets.push(data[i]);
-          }
-        }
-      });
-    },0);
   });
 
-  // Last 80 tweets left to render at their leisure. 
-  // TODO - Does $scope.Timer wait for last lot of tweets to render or are we just luck with 10 second wait? 
   $scope.Timer = $interval(function () {
      $http.get('json.php?tweet_id_after=' + $scope.tweets[0].tweet_id).success(function(data) {
       if(data.length>0){
+        console.log(data.length + ' new tweets');
         for (var i=data.length-1; i>=0; i--){
           $scope.tweets.unshift(data[i]);
         }
-      } else {console.log("No new tweets");}
+      } // else {console.log("No new tweets");}
     });
-  }, 10000);
+  }, 5000);
 });
 
 // Tells view to accept tweet_text as html. 
@@ -46,6 +22,22 @@ tweetApp.filter('html', ['$sce', function ($sce) {
     return $sce.trustAsHtml(text);
   };  
 }])
+
+// Linkify t.co links #tags and @mentions
+tweetApp.filter('linkify', ['$sce', function ($sce) { 
+  return function (text) {
+    // t.co links
+    text = text.replace(/(https\:\/\/t\.co\/[a-zA-Z0-9]+)/g, '<a href="$1">$1</a>');
+    // @mentions
+    text = text.replace(/@(\w+)/g, '<a href="/?q=$1">@$1</a>');
+
+    // #tags
+    text = text.replace(/#(\w+)/g, '<a href="/?q=%23$1">#$1</a>');
+
+    return text;
+  };  
+}])
+
 
 // Proxies profile images, but should be able to handle any image with little work. 
 tweetApp.filter('proxy_image', function() {
