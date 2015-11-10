@@ -14,6 +14,7 @@ tweetApp.controller('TweetCtrl', function ($scope, $http, $interval, $timeout){
       } // else {console.log("No new tweets");}
     });
   }, 5000);
+
 });
 
 // Tells view to accept tweet_text as html. 
@@ -23,20 +24,37 @@ tweetApp.filter('html', ['$sce', function ($sce) {
   };  
 }])
 
+tweetApp.filter('highlight', function () { 
+  return function(text, phrase) {
+    if (phrase) {
+      text = '<span class="dummy">'+text+'</span>';
+      newtext = text.split('<');
+      for (index = 0; index < newtext.length; ++index) {
+        newtext[index] = '<'+newtext[index].replace(new RegExp('(>.*?)('+phrase+')', 'gi'), '$1<span class="highlighted">$2</span>');
+      }
+      newtext[0] = "";
+      newtext[1] = "";
+      newtext[newtext.length] = "";
+      text = newtext.join("");
+    }
+    return text; 
+  }
+})
+
 // Linkify t.co links #tags and @mentions
-tweetApp.filter('linkify', ['$sce', function ($sce) { 
+tweetApp.filter('linkify', function () { 
   return function (text) {
     // t.co links
     text = text.replace(/(https\:\/\/t\.co\/[a-zA-Z0-9]+)/g, '<a href="$1">$1</a>');
     // @mentions
-    text = text.replace(/@(\w+)/g, '<a href="/?q=$1">@$1</a>');
+    text = text.replace(/@(\w+)/g, ' <a href="/?q=$1">@$1</a>');
 
     // #tags
     text = text.replace(/#(\w+)/g, '<a href="/?q=%23$1">#$1</a>');
 
     return text;
   };  
-}])
+})
 
 
 // Proxies profile images, but should be able to handle any image with little work. 

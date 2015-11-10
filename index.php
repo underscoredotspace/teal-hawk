@@ -3,7 +3,6 @@
 <head>
 
 <meta charset="utf-8">
-<meta name=viewport content="width=device-width, initial-scale=1">
 <meta name="viewport" content="width=375">
 <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro" rel="stylesheet" type="text/css">
 
@@ -26,8 +25,8 @@
 <body data-ng-app="tweetApp">
   <div class="tweet-column" data-ng-controller="TweetCtrl">
     <span class="search-tweets">
-      <input data-ng-model="search.tweet_text" type="text" class="search-tweets">
-      <button ng-click="search=''">Clear</button>
+      <input data-ng-model="search.tweet_text" type="text" class="search-tweets" placeholder="Search">
+      <button ng-click="search={}">Clear</button>
       <span class="filtered-count">{{filteredtweets.length}} / {{tweets.length}}</span>
     </span>
     <div class="tweet-container">
@@ -40,7 +39,7 @@
             <span class="user-name">{{tweet.name}} </span>
             <span class="user-handle"> {{tweet.screen_name}}</span>
           </span>
-          <span class="tweet-text" id="tweet-id-{{tweet.tweet_id}}" data-ng-bind-html="tweet.tweet_text|linkify|html"></span>
+          <span class="tweet-text" id="tweet-id-{{tweet.tweet_id}}" data-ng-bind-html="tweet.tweet_text|linkify|highlight:search.tweet_text|html"></span>
           <span class="created-at" title="{{tweet.created_at|amCalendar}}" data-am-time-ago="tweet.created_at"></span>
         </span>
       </span>
