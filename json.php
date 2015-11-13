@@ -36,7 +36,10 @@ if(ctype_digit($_GET['count']) && $_GET['count']>0) {
   $connect->set_charset("utf8mb4");
   $result = mysqli_query($connect, "select * from tweets WHERE (is_rt=0 " . implode(" ", $query_strings) . ") order by tweet_id " . $tweet_limit . ";");
   $tweets = array();
-  while ($row = mysqli_fetch_array($result,MYSQLI_ASSOC)) { $tweets[] = $row;}
+  while ($row = mysqli_fetch_array($result,MYSQLI_ASSOC)) {
+    $row['tweet_text']=html_entity_decode($row['tweet_text'], ENT_QUOTES);
+    $tweets[] = $row;
+//    print_r ($row);
+  }
   echo json_encode($tweets);
-
 ?>
