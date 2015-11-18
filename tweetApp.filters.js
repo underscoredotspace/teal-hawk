@@ -22,8 +22,8 @@ tweetApp.filter('proxy_image', function() {
   };
 });  
 
-// Below not written by me. I think the two linky functions should be one
-tweetApp.filter('linkyUnsanitized', ['$sanitize', function($sanitize) {  
+// Below not written by me. I think the two linky functions should be one, and in the style of linkyUnsanitized
+tweetApp.filter('linkyUnsanitized', function() {  
   var LINKY_URL_REGEXP =  
         /((ftp|https?):\/\/|(mailto:)?[A-Za-z0-9._%+-]+@)\S*[^\s.;,(){}<>]/,  
       MAILTO_REGEXP = /^mailto:/;  
@@ -69,7 +69,7 @@ tweetApp.filter('linkyUnsanitized', ['$sanitize', function($sanitize) {
       html.push('</a>');  
     }  
   };  
-}]); 
+}); 
 
 tweetApp.filter('tweetLinky',['$filter',
     function($filter) {
@@ -81,12 +81,12 @@ tweetApp.filter('tweetLinky',['$filter',
             if (angular.isDefined(target)) {
                 targetAttr = ' target="' + target + '"';
             }
-            // replace #hashtags and send them to twitter
             var replacePattern1 = /(^|\s)#(\w*[a-zA-Z_]+\w*)/gim;
-            replacedText = text.replace(replacePattern1, '$1<a href="https://twitter.com/search?q=%23$2"' + targetAttr + '>#$2</a>');
-            // replace @mentions but keep them to our site
+            replacedText = text.replace(replacePattern1, '$1<a href="/?q=%23$2"' + targetAttr + '>#$2</a>');
+
             var replacePattern2 = /(^|\s)\@(\w*[a-zA-Z_]+\w*)/gim;
-            replacedText = replacedText.replace(replacePattern2, '$1<a href="https://twitter.com/$2"' + targetAttr + '>@$2</a>');
+            replacedText = replacedText.replace(replacePattern2, '$1<a href="/?q=$2"' + targetAttr + '>@$2</a>');
+
             return replacedText;
         };
     }   

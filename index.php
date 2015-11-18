@@ -18,6 +18,7 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-moment/0.9.0/angular-moment.min.js"></script>
   <script src="tweetApp.controller.js"></script>
   <script src="tweetApp.filters.js"></script>
+  <script src="tweetApp.directives.js"></script>
 </head>
 
 <!-- Start of tweetApp -->
@@ -27,7 +28,7 @@
     <!-- Search box and info -->
     <span class="search-tweets">
       <input data-ng-model="search.tweet_text" type="text" class="search-tweets" placeholder="Search">
-      <button ng-click="search={}">Clear</button>
+      <button ng-click="search={}" focus-input>Clear</button>
       <span class="filtered-count">{{filteredtweets.length}} / {{tweets.length}}</span>
     </span>
     <!-- Scrollable container for tweet stream -->
