@@ -1,7 +1,9 @@
 tweetApp.filter('highlight', function () {
   return function(text, phrase) {
     if (phrase) {
-      text = text.replace(new RegExp('('+phrase+')(?![^<]*>)', 'gi'), '<span class="highlighted">$1</span>');
+      phrase = phrase.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&");
+      console.log(phrase);
+      text = text.replace(new RegExp('('+phrase+')(?![^<]*>)', 'gim'), '<span class="highlighted">$1</span>');
     }
     return text;
   }   
@@ -71,6 +73,7 @@ tweetApp.filter('linkyUnsanitized', function() {
   };  
 }); 
 
+// If we get rid of this the ngSanitize requirement is gone - Linky used in this filter
 tweetApp.filter('tweetLinky',['$filter',
     function($filter) {
         return function(text, target) {

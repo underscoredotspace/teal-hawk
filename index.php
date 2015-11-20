@@ -4,7 +4,9 @@
   <!-- Browser set up -->
   <meta charset="utf-8">
   <meta name="viewport" content="width=375">
-  <title>AngularHose (teal-hawk)</title>
+  <link rel="mask-icon" sizes="any" href="/favicon.svg" color="#55acee">
+  <link href="favicon.ico" rel="shortcut icon" type="image/x-icon">
+  <title>TealHawk</title>
 
   <!-- Styles -->
   <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro" rel="stylesheet" type="text/css">
@@ -42,13 +44,16 @@
         <!-- on the right is actual tweet data -->
         <span class="right-column" >
           <span class="user">
-            <span class="user-name">{{tweet.name}} </span>
-            <span class="user-handle"> {{tweet.screen_name}}</span>
+            <span class="user-name" data-ng-bind="tweet.name"></span>
+            <span class="user-handle" data-ng-bind="tweet.screen_name"></span>
           </span>
           <!-- tweet-text is passed from json without any html encoding, so we need to add it in with filters -->
-          <span class="tweet-text" id="tweet-id-{{tweet.tweet_id}}"
-            data-ng-bind-html="tweet.tweet_text|linkyUnsanitized|tweetLinky|highlight:search.tweet_text"></span>
-          <span class="created-at" title="{{tweet.created_at|amCalendar}}" data-am-time-ago="tweet.created_at"></span>
+          <span class="tweet-text"
+            data-ng-bind-html="tweet.tweet_text|linky|tweetLinky|highlight:search.tweet_text"></span>
+          <span class="metadata">
+            <span class="created-at" title="{{tweet.created_at|amCalendar}}" data-am-time-ago="tweet.created_at"></span>
+            <span class="tweet-id" data-ng-bind="tweet.tweet_id"></span
+          </span>
         </span>
       </span>
     </div>
