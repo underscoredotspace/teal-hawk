@@ -20,7 +20,8 @@ tweetApp.controller('tweetCtrl', function ($scope, $http, $interval, $timeout){
       $http.get('json.php?tweet_id_after=' + newest_tweet_id).success(function(data) {
         // Only stick more into view if we actually got results
         if(data.length>0){
-          console.log(data.length + ' new tweets');
+          if(data.length>1){plural="s"}else{plural=''}
+          console.log(data.length + ' new tweet' + plural);
           for (var i=data.length-1; i>=0; i--){
             $scope.tweets.unshift(data[i]);
             console.log(data[i]);
