@@ -1,6 +1,8 @@
 # teal-hawk  
 
 Teal Hawk is a prototype Twitter analysis tool for real-time analysis of a brand's mentions. The intention is to allow real-time and business improvement analysts to gain actionable insight into what customers/press/moaners are saying about their brand.  
+
+This said - the main intention is to learn JS and Angular properly with limited time, so **don't try to use this in it's development state** please. 
   
 config.php must be created with the following:  
   
