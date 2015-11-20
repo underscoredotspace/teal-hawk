@@ -6,6 +6,7 @@ This said - the main intention is to learn JS and Angular properly with limited 
   
 config.php must be created with the following:  
   
+```php
 	<?php  
 	// Local SQL Server credentials  
 	$sql_dbname = "DBNAME";  
@@ -19,5 +20,6 @@ config.php must be created with the following:
 	$access_token = "TWITTERACCESSTOKEN";  
 	$access_secret = "TWITTERACESSSECRET";  
 	?>
-  
+```
+
 You will also need some method if capturing tweets from the Stream API. We are using [Phirehose](https://github.com/fennb/phirehose) which is not included in this codebase.  
