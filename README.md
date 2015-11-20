@@ -7,19 +7,19 @@ This said - the main intention is to learn JS and Angular properly with limited 
 config.php must be created with the following:  
   
 ```php
-	<?php  
-	// Local SQL Server credentials  
-	$sql_dbname = "DBNAME";  
-	$sql_host = "DBHOSTNAME";  
-	$sql_user = "DBUSERNAME";  
-	$sql_pass = "DBPASSWORD";  
-	
-	// Twitter API keys and tokens  
-	$consumer_key = "TWITTERCONSUMERKEY";  
-	$consumer_secret = "TWITTERCONSUMERSECRET";  
-	$access_token = "TWITTERACCESSTOKEN";  
-	$access_secret = "TWITTERACESSSECRET";  
-	?>
+<?php  
+// Local SQL Server credentials  
+$sql_dbname = "DBNAME";  
+$sql_host = "DBHOSTNAME";  
+$sql_user = "DBUSERNAME";  
+$sql_pass = "DBPASSWORD";  
+
+// Twitter API keys and tokens  
+$consumer_key = "TWITTERCONSUMERKEY";  
+$consumer_secret = "TWITTERCONSUMERSECRET";  
+$access_token = "TWITTERACCESSTOKEN";  
+$access_secret = "TWITTERACESSSECRET";  
+?>
 ```
 
 You will also need some method if capturing tweets from the Stream API. We are using [Phirehose](https://github.com/fennb/phirehose) which is not included in this codebase.  
