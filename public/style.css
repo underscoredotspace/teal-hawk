@@ -1,0 +1,132 @@
+HTML, BODY {
+  -webkit-font-smoothing: antialiased;
+  background-color: #404246;
+  padding: 0px;
+  margin: 0px;
+}
+DIV, SPAN, IMG {
+    border: 0px;
+    border-style: none;
+    padding: 0px;
+    margin: 0px;
+    font-family: 'Source Sans Pro', sans-serif;
+    font-size: 16px;
+}
+.highlighted {
+  background:#cca300;
+  color: #222426;
+}
+.tweet-container::-webkit-scrollbar {
+  width: 15px;
+}
+.tweet-container::-webkit-scrollbar-thumb {
+    background: #222426;
+}
+.tweet-column {
+  width: 375px;
+}
+SPAN.search-tweets {
+  position: fixed;
+  width: 375px;
+  background-color: #222426;
+  height: 30px;
+  border-width: 0px;
+  border-style: solid;
+  color: rgb(221, 221, 221);
+}
+INPUT.search-tweets, BUTTON.search-tweets {
+  height: 18px;
+  margin: 0px;
+  padding-left: 5px;
+  padding-right: 5px;
+  margin: 5px;
+  border-width: 0px;
+  outline-width: 0px;
+  width: 200px;
+}
+.filtered-count {
+  float: right;
+  padding-right: 20px;
+  line-height: 30px;
+}
+.tweet-container {
+  position: fixed;
+  top: 32px;
+  bottom: 0px;
+  overflow: scroll;
+  overflow-x: hidden;
+  width: 375px;
+}
+.tweet {
+    min-height: 62px;
+    float: left;
+    display: block;
+    border: 0px;
+    border-style: solid;
+    margin-bottom: 2px;
+    color: rgb(221, 221, 221);
+    background-color: #222426;
+}
+.tweet.ng-enter {
+  transition:0.5s linear all;
+  opacity:0;
+}
+.tweet.ng-enter.ng-enter-active {
+  opacity:1;
+}
+.left-column {
+    float: left;
+}
+.right-column {
+  width: 293px;
+  float: right;
+  min-height: 60px;
+  padding-right: 5px;
+}
+.user, .tweet-text, .created-at {
+    display: block;
+    padding: 2px;
+}
+.tweet-text{
+    text-align: left;
+    margin-right: 3px;
+}
+.user{
+  font-weight: bold;
+  border-bottom: solid;
+  border-width: 1px;
+  vertical-align: bottom;
+}
+.user-handle, .tweet-id {
+    float: right;
+    vertical-align: middle;
+    line-height: 18px;
+    font-size: 75%;
+}
+.user-name {
+  font-weight: bold;
+}
+.user-handle, .created-at {
+    color: #999;
+}
+.created-at {
+    font-size: 75%;
+    margin-bottom: 5px;
+    float:left;
+    color: #00C0F7;
+}
+IMG.profile-image {
+    margin: 0px;
+    padding: 10px;
+    width: 40px;
+    height: 40px;
+    float: left;
+}
+A, A:hover, A:visited {
+  color: #6AB825;
+  font-weight: bold;
+  text-decoration: none;
+}
+A:hover {
+  text-decoration: underline;
+}
