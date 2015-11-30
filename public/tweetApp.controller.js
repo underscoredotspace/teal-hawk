@@ -5,7 +5,7 @@
 var tweetApp = angular.module('tweetApp', ['angularMoment', 'ngAnimate', 'ngSanitize']);
 
 tweetApp.factory('socket', function(){
-  var socket = io.connect('http://underscore.space:3000')
+  var socket = io.connect(location.host)
   return socket;
 });
 
