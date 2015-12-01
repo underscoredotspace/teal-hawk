@@ -2,7 +2,6 @@ tweetApp.filter('highlight', function () {
   return function(text, phrase) {
     if (phrase) {
       phrase = phrase.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&");
-//      console.log(phrase);
       text = text.replace(new RegExp('('+phrase+')(?![^<]*>)', 'gim'), '<span class="highlighted">$1</span>');
     }
     return text;
@@ -85,10 +84,10 @@ tweetApp.filter('tweetLinky',['$filter',
                 targetAttr = ' target="' + target + '"';
             }
             var replacePattern1 = /(^|\s)#(\w*[a-zA-Z_]+\w*)/gim;
-            replacedText = text.replace(replacePattern1, '$1<a href="/?q=%23$2"' + targetAttr + '>#$2</a>');
+            replacedText = text.replace(replacePattern1, '$1<a href="#/search/$2"' + targetAttr + '>#$2</a>');
 
             var replacePattern2 = /(^|\s)\@(\w*[a-zA-Z_]+\w*)/gim;
-            replacedText = replacedText.replace(replacePattern2, '$1<a href="/?q=$2"' + targetAttr + '>@$2</a>');
+            replacedText = replacedText.replace(replacePattern2, '$1<a href="#/user/$2"' + targetAttr + '>@$2</a>');
 
             return replacedText;
         };

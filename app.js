@@ -1,12 +1,12 @@
 var express = require('express');
 var app = express();
-var mongodb = require('mongodb');
 var server = require('http').createServer(app);
-var io = require('socket.io').listen(server);
-var Twat = require('twat');
-
 server.listen(3000);
 
+var io = require('socket.io').listen(server);
+
+
+var mongodb = require('mongodb');
 mongodb.connect('mongodb://127.0.0.1:27017/tweets', function (err, db) {
   if (err) {
     throw err;
@@ -42,16 +42,21 @@ mongodb.connect('mongodb://127.0.0.1:27017/tweets', function (err, db) {
 
     // Config file for private stuff
     var config = require('./config.js');
+    
+    var Twat = require('twat');
 
-    // Connec to Twitter with 
+    // Connect to Twitter with Twat
     var twit = new Twat({
       consumer_key: config.consumer_key,
       consumer_secret: config.consumer_secret,
       access_token: config.access_token,
       access_token_secret: config.access_token_secret
     }); 
+    
+    var twitStreamParams = config.twitter;
 
-    twit.stream('statuses/filter', {'track': 'NatWest_Help, RBS_Help', 'follow': '284540385, 284537825'}, function (stream) {
+    // Open new Twitter stream with Twat
+    twit.stream('statuses/filter', twitStreamParams, function (stream) {
       stream.on('tweet', function (tweet) {
         console.log(tweet.retweeted_status + ' ' + tweet.id);
         if(tweet.retweeted_status) { 
