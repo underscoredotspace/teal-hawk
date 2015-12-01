@@ -18,4 +18,7 @@ exports.consumer_key = 'consumer_key';
 exports.consumer_secret = 'consumer_secret';  
 exports.access_token = 'access_token';  
 exports.access_token_secret = 'access_token_secret';
+
+// Stream parameters to get anil's @ mentions and his tweets/replies
+exports.twitter = {'track': 'anildash', 'follow': '36823'}
 ```
