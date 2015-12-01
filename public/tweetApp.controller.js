@@ -12,14 +12,14 @@ tweetApp.factory('socket', function(){
 tweetApp.controller('tweetCtrl', function ($scope, $filter, socket){
   $scope.tweets = []
 
-  socket.emit('initRequest', 10);
+  socket.emit('initRequest', 100);
 
-  socket.on('reconnecting', function(){
+  socket.on('reconnect', function(){
     if ($scope.tweets!=[]) {
-      console.log('reconnecting' + $scope.tweets[0].id);
+      console.log('reconnecting ' + $scope.tweets[0].id);
       socket.emit('updateRequest', $scope.tweets[0].id);
     } else {
-      socket.emit('initRequest', 10);
+      socket.emit('initRequest', 100);
     }
   });
 
