@@ -20,5 +20,5 @@ exports.access_token = 'access_token';
 exports.access_token_secret = 'access_token_secret';
 
 // Stream parameters to get anil's @ mentions and his tweets/replies
-exports.twitter = {'track': 'anildash', 'follow': '36823'}
+exports.twitter = {'track': 'anildash', 'follow': '36823'};
 ```
