@@ -50,7 +50,7 @@
           <!-- tweet-text is passed from json without any html encoding, so we need to add it in with filters -->
           <span class="tweet-text"
             data-ng-bind-html="tweet.text|linky|tweetLinky|highlight:search.text"></span>
-          <span class="metadata">
+          <span class="tweet-metadata">
             <span class="created-at" title="{{tweet.created_at|amCalendar}}" data-am-time-ago="tweet.created_at"></span>
             <span class="tweet-id" data-ng-bind="tweet.id"></span
           </span>
