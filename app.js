@@ -5,7 +5,6 @@ server.listen(3000);
 
 var io = require('socket.io').listen(server);
 
-
 var mongodb = require('mongodb');
 mongodb.connect('mongodb://127.0.0.1:27017/tweets', function (err, db) {
   if (err) {
@@ -25,7 +24,7 @@ mongodb.connect('mongodb://127.0.0.1:27017/tweets', function (err, db) {
         db.collection('tweets').find().sort([['id', -1]]).limit(limit).each(function (err, tweet) {
           if (tweet !== null) {
             // emit each Tweet back to client that made request
-            socket.emit('tweetinit', tweet);
+            socket.emit('bottomTweet', tweet);
           }
         });
 
@@ -34,14 +33,24 @@ mongodb.connect('mongodb://127.0.0.1:27017/tweets', function (err, db) {
 
       // This event is recieved from a client who lost connection and is reconnecting
       socket.on('updateRequest', function (lastTweet) {
-        // ## TODO ##
-        // Needs to only be actioned once as can fire multiple (many) times
         console.log('Up-to-date request recieved from client ' + socket.id + '. lastTweet: ' + lastTweet);
         db.collection('tweets').find({id: {$gt: lastTweet}}).each(function (err, tweet) {
           if (tweet !== null) {
-            socket.emit('tweet', tweet);
+            socket.emit('topTweet', tweet);
           }
         });
+      });
+      // This event is recieved when client goes to bottom of view and needs more tweets
+      socket.on('NextTweets', function (tweetParams) {
+        console.log('Next Tweets request recieved from client ' + socket.id + '. tweetParams: ' + tweetParams.last);
+
+        db.collection('tweets').find({id: {$lt: tweetParams.last}}).sort([['id', -1]]).limit(tweetParams.count).each(function (err, tweet) {
+//        db.collection('tweets').find({id: {$gt: lastTweet}}).each(function (err, tweet) {
+          if (tweet !== null) {
+            socket.emit('bottomTweet', tweet);
+          } 
+        }); 
+
       });
     });
 

@@ -34,7 +34,7 @@
       <span class="filtered-count" ng-bind="filteredtweets.length + '/' +tweets.length"></span>
     </span>
     <!-- Scrollable container for tweet stream -->
-    <div class="tweet-container">
+    <div class="tweet-container" scroll-bottom="showMore()">
       <span class="tweet" data-ng-repeat="tweet in filteredtweets  = (tweets|filter:search)|orderBy:id:reverse">
         <!-- on the left we currently only have profile image.
              Should have other user stats here, like followers/join data/location etc. -->
