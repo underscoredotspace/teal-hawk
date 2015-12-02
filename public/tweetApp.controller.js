@@ -12,29 +12,31 @@ tweetApp.factory('socket', function(){
 tweetApp.controller('tweetCtrl', function ($scope, $filter, socket){
   $scope.tweets = []
 
-  socket.emit('initRequest', 100);
+  socket.emit('initRequest', 10);
 
   socket.on('reconnect', function(){
     if ($scope.tweets!=[]) {
       console.log('reconnecting ' + $scope.tweets[0].id);
       socket.emit('updateRequest', $scope.tweets[0].id);
     } else {
-      socket.emit('initRequest', 100);
+      socket.emit('initRequest', 10);
     }
   });
 
-  socket.on('updateResult', function(newTweets) {    
-      $scope.tweets.unshift(newtweet);
+  socket.on('topTweet', function(newTweet) {    
+    console.log('topTweet recieved');
+      $scope.tweets.unshift(newTweet);
       $scope.$digest();    
   });
   
-  socket.on('tweet', function(newtweet) {
-      $scope.tweets.unshift(newtweet);
-      $scope.$digest();
-  });
-
-  socket.on('tweetinit', function(newtweet) {
-    $scope.tweets.push(newtweet);
+  socket.on('bottomTweet', function(newTweet) {
+    console.log('bottomTweet recieved');
+    $scope.tweets.push(newTweet);
     $scope.$digest();
   });
+
+  $scope.showMore = function() {
+    console.log('Next 10 tweets after ' + $scope.tweets[$scope.tweets.length-1].id + ' please');
+    socket.emit('NextTweets', {last: $scope.tweets[$scope.tweets.length-1].id, count: 10});
+  };
 });
