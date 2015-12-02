@@ -21,7 +21,7 @@ mongodb.connect('mongodb://127.0.0.1:27017/tweets', function (err, db) {
         console.log(limit + ' tweets requested by client ' + socket.id);
         
         // Request 'limit' Tweets from mongodb
-        db.collection('tweets').find().sort([['id', -1]]).limit(limit).each(function (err, tweet) {
+        db.collection('tweets').find().sort([['id_str', -1]]).limit(limit).each(function (err, tweet) {
           if (tweet !== null) {
             // emit each Tweet back to client that made request
             socket.emit('bottomTweet', tweet);
@@ -34,7 +34,7 @@ mongodb.connect('mongodb://127.0.0.1:27017/tweets', function (err, db) {
       // This event is recieved from a client who lost connection and is reconnecting
       socket.on('updateRequest', function (lastTweet) {
         console.log('Up-to-date request recieved from client ' + socket.id + '. lastTweet: ' + lastTweet);
-        db.collection('tweets').find({id: {$gt: lastTweet}}).each(function (err, tweet) {
+        db.collection('tweets').find({id_str: {$gt: lastTweet}}).each(function (err, tweet) {
           if (tweet !== null) {
             socket.emit('topTweet', tweet);
           }
@@ -44,8 +44,7 @@ mongodb.connect('mongodb://127.0.0.1:27017/tweets', function (err, db) {
       socket.on('NextTweets', function (tweetParams) {
         console.log('Next Tweets request recieved from client ' + socket.id + '. tweetParams: ' + tweetParams.last);
 
-        db.collection('tweets').find({id: {$lt: tweetParams.last}}).sort([['id', -1]]).limit(tweetParams.count).each(function (err, tweet) {
-//        db.collection('tweets').find({id: {$gt: lastTweet}}).each(function (err, tweet) {
+        db.collection('tweets').find({id_str: {$lt: tweetParams.last}}).sort([['id_str', -1]]).limit(tweetParams.count).each(function (err, tweet) {
           if (tweet !== null) {
             socket.emit('bottomTweet', tweet);
           } 
@@ -72,17 +71,17 @@ mongodb.connect('mongodb://127.0.0.1:27017/tweets', function (err, db) {
     // Open new Twitter stream with Twat
     twit.stream('statuses/filter', twitStreamParams, function (stream) {
       stream.on('tweet', function (tweet) {
-        console.log(tweet.retweeted_status + ' ' + tweet.id);
+        console.log(tweet.retweeted_status + ' ' + tweet.id_str);
         if(tweet.retweeted_status) { 
-          console.log('Tweet ' + tweet.id + 'is just RT; ignored.');
+          // console.log('Tweet ' + tweet.id_str + 'is just RT; ignored.');
         } else {
           tweet.created_at = new Date(tweet.created_at);
           io.sockets.emit('tweet', tweet);
-          console.log('Tweet ' + tweet.id + ' created at ' + tweet.created_at);
+          console.log('Tweet ' + tweet.id_str + ' created at ' + tweet.created_at);
 
           db.collection('tweets').insert(tweet, function (err, records) {
             if (err) throw err;
-            console.log('tweet id ' + tweet.id + ' inserted to mongodb');
+            console.log('tweet id ' + tweet.id_str + ' inserted to mongodb');
           });
         }
       });
