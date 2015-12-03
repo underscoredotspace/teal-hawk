@@ -52,8 +52,8 @@
           <span class="tweet-text"
             data-ng-bind-html="tweet.text|linkyUnsanitized|tweetLinky|highlight:search.text">
           </span>
-          <span class="tweet-media" ng-repeat="media in tweet.entities.media">
-            <img class="tweet-media" src="#" data-ng-src="media.media_url">
+          <span class="tweet-media" ng-repeat="media in tweet.entities.media|filter:{type: photo}">
+            <img class="tweet-media" src="#" data-ng-src="{{media.media_url + ':thumb'}}">
           </span>
           <span class="tweet-metadata">
             <span class="created-at" title="{{tweet.created_at|amCalendar}}" data-am-time-ago="tweet.created_at"></span>

@@ -67,6 +67,9 @@ INPUT.search-tweets, BUTTON.search-tweets {
     color: rgb(221, 221, 221);
     background-color: #222426;
 }
+.tweet-metadata {
+  display: block;
+}
 .tweet.ng-enter {
   transition:0.5s linear all;
   opacity:0;
@@ -92,7 +95,8 @@ INPUT.search-tweets, BUTTON.search-tweets {
     margin-right: 3px;
 }
 IMG.tweet-media {
-  max: 290px;
+  max-width: 290px;
+    height: auto;
 }
 .user{
   font-weight: bold;
