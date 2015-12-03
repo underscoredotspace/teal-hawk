@@ -49,7 +49,11 @@
           </span>
           <!-- tweet-text is passed from json without any html encoding, so we need to add it in with filters -->
           <span class="tweet-text"
-            data-ng-bind-html="tweet.text|linkyUnsanitized|tweetLinky|highlight:search.text"></span>
+            data-ng-bind-html="tweet.text|linkyUnsanitized|tweetLinky|highlight:search.text">
+          </span>
+          <span class="tweet-media" ng-repeat="media in tweet.entities.media">
+            <img class="tweet-media" src="#" data-ng-src="media.media_url">
+          </span>
           <span class="tweet-metadata">
             <span class="created-at" title="{{tweet.created_at|amCalendar}}" data-am-time-ago="tweet.created_at"></span>
             <span class="tweet-id" data-ng-bind="tweet.id_str"></span

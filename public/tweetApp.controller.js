@@ -14,6 +14,7 @@ tweetApp.controller('tweetCtrl', function ($scope, $filter, socket){
   $scope.tweets = []
   
   // tweet.entities.media.length
+  // tweet.entities.media[0].media_url
 
   socket.emit('initRequest', 10);
 

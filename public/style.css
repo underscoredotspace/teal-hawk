@@ -91,6 +91,9 @@ INPUT.search-tweets, BUTTON.search-tweets {
     text-align: left;
     margin-right: 3px;
 }
+IMG.tweet-media {
+  max: 290px;
+}
 .user{
   font-weight: bold;
   border-bottom: solid;
