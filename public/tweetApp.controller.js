@@ -4,12 +4,6 @@
 
 var tweetApp = angular.module('tweetApp', ['angularMoment', 'ngAnimate', 'ngSanitize']);
 
-tweetApp.factory('socket', function(){
-  var socket = io.connect('http://' + location.hostname + ':' + location.port)
-  console.log(location);
-  return socket;
-});
-
 tweetApp.controller('tweetCtrl', function ($scope, $filter, socket){
   $scope.tweets = []
   
@@ -17,6 +11,15 @@ tweetApp.controller('tweetCtrl', function ($scope, $filter, socket){
   // tweet.entities.media[0].media_url
 
   socket.emit('initRequest', 10);
+
+  socket.on('connect', function(){
+    console.log('connected');
+  });
+
+  socket.on('connect_error', function(err){
+    console.log('connection error: ' + err);
+  });
+
 
   socket.on('reconnect', function(){
     if ($scope.tweets!=[]) {

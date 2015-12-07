@@ -25,6 +25,12 @@ DIV, SPAN, IMG {
 .tweet-column {
   width: 375px;
 }
+.loading {
+  position: block;
+  bottom: 0px;
+  width: 375px;
+}
+
 SPAN.search-tweets {
   position: fixed;
   width: 375px;
@@ -78,7 +84,7 @@ INPUT.search-tweets, BUTTON.search-tweets {
   opacity:1;
 }
 .left-column {
-    float: left;
+  float: left;
 }
 .right-column {
   width: 293px;
@@ -95,8 +101,8 @@ INPUT.search-tweets, BUTTON.search-tweets {
     margin-right: 3px;
 }
 IMG.tweet-media {
-  max-width: 290px;
-    height: auto;
+  max-width: 140px;
+  height: auto;
 }
 .user{
   font-weight: bold;
@@ -113,8 +119,11 @@ IMG.tweet-media {
 .user-name {
   font-weight: bold;
 }
-.user-handle, .created-at {
+.created-at {
     color: #999;
+}
+.user-handle {
+    color: #BE67D2;
 }
 .created-at {
     font-size: 75%;

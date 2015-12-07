@@ -9,66 +9,69 @@
   <!-- Styles -->
   <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro" rel="stylesheet" type="text/css">
   <link href="style.css" rel="stylesheet" type="text/css">
-  <link href="load.css" rel="stylesheet" type="text/css">
 
-  <!-- AngularKS and Socket.io -->
+  <!-- AngularJS and Socket.io -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.5.0-beta.1/angular.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.5.0-beta.1/angular-animate.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.5.0-beta.1/angular-sanitize.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.9.0/moment.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-moment/0.9.0/angular-moment.min.js"></script>
   <script src="/socket.io/socket.io.js"></script>
+
   <!-- teal-hawk Scripts -->
   <script src="tweetApp.controller.js"></script>
+  <script src="tweetApp.factories.js"></script>
   <script src="tweetApp.filters.js"></script>
   <script src="tweetApp.directives.js"></script>
 </head>
 
 <!-- Start of tweetApp -->
 <body data-ng-app="tweetApp">
-  <!-- tweet-column should have the ability to be duplicated with different follow/track values -->
   <div class="tweet-column" data-ng-controller="tweetCtrl">
     <!-- Search box and info -->
     <span class="search-tweets">
       <input data-ng-model="search.text" type="text" class="search-tweets" placeholder="Search">
-      <button ng-click="search={}" focus-input>Clear</button>
-      <span class="filtered-count" ng-bind="filteredtweets.length + '/' +tweets.length"></span>
+      <button data-ng-click="search={}" focus-input>Clear</button>
+      <span class="filtered-count" data-ng-bind="filteredtweets.length + '/' +tweets.length"></span>
     </span>
+
     <!-- Scrollable container for tweet stream -->
-    <div class="tweet-container" scroll-bottom="showMore()">
+    <div class="tweet-container" data-scroll-bottom="showMore()">
       <span class="tweet" data-ng-repeat="tweet in filteredtweets  = (tweets|filter:search)|orderBy:id:reverse">
+
         <!-- on the left we currently only have profile image.
              Should have other user stats here, like followers/join data/location etc. -->
         <span class="left-column">
-          <img class="profile-image" src="#" data-ng-src="{{tweet.user.profile_image_url}}" alt="{{tweet.user.screen_name}}">
+          <img class="profile-image" src="#" data-ng-src="{{tweet.user.profile_image_url}}" title="{{tweet.user.screen_name}}">
         </span>
+
         <!-- on the right is actual tweet data -->
         <span class="right-column" >
+
           <span class="user">
             <span class="user-name" data-ng-bind="tweet.user.name"></span>
             <span class="user-handle" data-ng-bind="tweet.user.screen_name"></span>
           </span>
-          <!-- tweet-text is passed from json without any html encoding, so we need to add it in with filters -->
+
           <span class="tweet-text"
             data-ng-bind-html="tweet.text|linkyUnsanitized|tweetLinky|highlight:search.text">
           </span>
-          <span class="tweet-media" ng-repeat="media in tweet.entities.media|filter:{type: photo}">
-            <img class="tweet-media" src="#" data-ng-src="{{media.media_url + ':thumb'}}">
+
+          <span class="tweet-media" ng-repeat="media in tweet.extended_entities.media|filter:{type: photo}">
+            <a href="#" data-ng-href="{{media.media_url}}" target="_blank"><img class="tweet-media" src="#" data-ng-src="{{media.media_url + ':thumb'}}"></a>
           </span>
+
           <span class="tweet-metadata">
             <span class="created-at" title="{{tweet.created_at|amCalendar}}" data-am-time-ago="tweet.created_at"></span>
             <span class="tweet-id" data-ng-bind="tweet.id_str"></span
           </span>
-        </span>
-      </span>
-    </div>
-  </div>
+
+        </span> <!-- end right-column -->
+      </span> <!-- end tweet -->
+
+      
+    </div><!-- end tweet-container -->
+<div class="loading">Loading...</div>
+  </div><!-- end tweet-column -->
 </body>
 </html>
-<!--
-<div class="cssload-square">
-	<div class="cssload-square-part cssload-square-green"></div>
-	<div class="cssload-square-part cssload-square-pink"></div>
-	<div class="cssload-square-blend"></div>
-</div>
--->

@@ -76,7 +76,7 @@ mongodb.connect('mongodb://127.0.0.1:27017/tweets', function (err, db) {
           // console.log('Tweet ' + tweet.id_str + 'is just RT; ignored.');
         } else {
           tweet.created_at = new Date(tweet.created_at);
-          io.sockets.emit('tweet', tweet);
+          io.sockets.emit('topTweet', tweet);
           console.log('Tweet ' + tweet.id_str + ' created at ' + tweet.created_at);
 
           db.collection('tweets').insert(tweet, function (err, records) {
