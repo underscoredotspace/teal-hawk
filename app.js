@@ -17,14 +17,16 @@ mongodb.connect('mongodb://127.0.0.1:27017/tweets', function (err, db) {
       console.log(socket.id + ' connected');
       
       // This tells us a brand new client has connected and needs initial Tweets load
-      socket.on('initRequest', function(limit) {
+      socket.on('initRequest', function(reqParams) {
+        limit = reqParams[1];
+        tweetColumn = reqParams[0];
         console.log(limit + ' tweets requested by client ' + socket.id);
         
         // Request 'limit' Tweets from mongodb
         db.collection('tweets').find().sort([['id_str', -1]]).limit(limit).each(function (err, tweet) {
           if (tweet !== null) {
             // emit each Tweet back to client that made request
-            socket.emit('bottomTweet', tweet);
+            socket.emit('bottomTweet', [tweetColumn, tweet]);
           }
         });
 
@@ -32,21 +34,25 @@ mongodb.connect('mongodb://127.0.0.1:27017/tweets', function (err, db) {
       });
 
       // This event is recieved from a client who lost connection and is reconnecting
-      socket.on('updateRequest', function (lastTweet) {
+      socket.on('updateRequest', function (reqParams) {
+        lastTweet = reqParams[1];
+        tweetColumn = reqParams[0];
         console.log('Up-to-date request recieved from client ' + socket.id + '. lastTweet: ' + lastTweet);
         db.collection('tweets').find({id_str: {$gt: lastTweet}}).each(function (err, tweet) {
           if (tweet !== null) {
-            socket.emit('topTweet', tweet);
+            socket.emit('topTweet', [tweetColumn, tweet]);
           }
         });
       });
       // This event is recieved when client goes to bottom of view and needs more tweets
-      socket.on('NextTweets', function (tweetParams) {
+      socket.on('NextTweets', function (reqParams) {
+        tweetParams = reqParams[1];
+        tweetColumn = reqParams[0];
         console.log('Next Tweets request recieved from client ' + socket.id + '. tweetParams: ' + tweetParams.last);
 
         db.collection('tweets').find({id_str: {$lt: tweetParams.last}}).sort([['id_str', -1]]).limit(tweetParams.count).each(function (err, tweet) {
           if (tweet !== null) {
-            socket.emit('bottomTweet', tweet);
+            socket.emit('bottomTweet', [tweetColumn, tweet]);
           } 
         }); 
 
@@ -70,13 +76,14 @@ mongodb.connect('mongodb://127.0.0.1:27017/tweets', function (err, db) {
 
     // Open new Twitter stream with Twat
     twit.stream('statuses/filter', twitStreamParams, function (stream) {
+    //twit.stream('statuses/sample', function (stream) {
       stream.on('tweet', function (tweet) {
         console.log(tweet.retweeted_status + ' ' + tweet.id_str);
         if(tweet.retweeted_status) { 
           // console.log('Tweet ' + tweet.id_str + 'is just RT; ignored.');
         } else {
           tweet.created_at = new Date(tweet.created_at);
-          io.sockets.emit('topTweet', tweet);
+          io.sockets.emit('topTweet', ['*', tweet]);
           console.log('Tweet ' + tweet.id_str + ' created at ' + tweet.created_at);
 
           db.collection('tweets').insert(tweet, function (err, records) {

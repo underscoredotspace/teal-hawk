@@ -12,6 +12,10 @@ DIV, SPAN, IMG {
     font-family: 'Source Sans Pro', sans-serif;
     font-size: 16px;
 }
+BODY {
+  height: 0px;
+  font-size: 0px;
+}
 .highlighted {
   background:#cca300;
   color: #222426;
@@ -24,6 +28,11 @@ DIV, SPAN, IMG {
 }
 .tweet-column {
   width: 375px;
+  display: inline-block;
+  padding: 0px;
+  padding-right: 2px;
+  margin: 0px;
+  margin-top: -5px;
 }
 .loading {
   position: block;
