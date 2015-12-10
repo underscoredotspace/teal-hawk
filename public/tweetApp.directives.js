@@ -46,7 +46,7 @@ tweetApp.directive('tweetColumn', function(socket){
 
       socket.on('topTweet', function(newTweet) {
         console.log('topTweet recieved');
-          if (newTweet[0]==$attrs.tweetColumn)||(newTweet[0]=='*'){
+          if ((newTweet[0]==$attrs.tweetColumn)||(newTweet[0]=='*')){
             $scope.tweets.unshift(newTweet[1]);
             $scope.$digest();    
           }
