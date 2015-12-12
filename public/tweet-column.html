@@ -1,0 +1,44 @@
+<div class="tweet-column">
+<!-- Search box and info -->
+    <span class="search-tweets">
+      <input data-ng-model="search.text" type="text" class="search-tweets" placeholder="Search">
+      <button data-ng-click="search={}" focus-input>Clear</button>
+      <span class="filtered-count" data-ng-bind="filteredtweets.length + '/' +tweets.length"></span>
+    </span>
+
+    <!-- Scrollable container for tweet stream -->
+    <div class="tweet-container" data-scroll-bottom="showMore()">
+      <span class="tweet" data-ng-repeat="tweet in tweets|filter:search as filteredtweets track by $index">
+
+        <!-- on the left we currently only have profile image.
+             Should have other user stats here, like followers/join data/location etc. -->
+        <span class="left-column">
+          <img class="profile-image" src="#" data-ng-src="{{tweet.user.profile_image_url}}" title="{{tweet.user.screen_name}}">
+        </span>
+
+        <!-- on the right is actual tweet data -->
+        <span class="right-column" >
+
+          <span class="user">
+            <span class="user-name" data-ng-bind="tweet.user.name"></span>
+            <span class="user-handle" data-ng-bind="tweet.user.screen_name"></span>
+          </span>
+
+          <span class="tweet-text"
+            data-ng-bind-html="tweet.text|linkyUnsanitized|tweetLinky|highlight:search.text">
+          </span>
+
+          <span class="tweet-media" ng-repeat="media in tweet.extended_entities.media|filter:{type: photo}">
+            <a href="#" data-ng-href="{{media.media_url}}" target="_blank"><img class="tweet-media" src="#" data-ng-src="{{media.media_url + ':thumb'}}"></a>
+          </span>
+
+          <span class="tweet-metadata">
+            <span class="created-at" title="{{tweet.created_at|amCalendar}}" data-am-time-ago="tweet.created_at"></span>
+            <span class="tweet-id" data-ng-bind="tweet.id_str"></span
+          </span>
+
+        </span> <!-- end right-column -->
+      </span><!-- end tweet -->
+
+    </div><!-- end tweet-container -->
+  </div><!-- end tweet-column -->
