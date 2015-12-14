@@ -91,7 +91,9 @@ mongodb.connect('mongodb://127.0.0.1:27017/tweets', function (err, db) {
             });
         } else if (tweet.delete) {
           db.collection('tweets').deleteOne({id_str:tweet.delete.status.id_str}, function(err, records){
-            console.log('Tweet ' + tweet.delete.status.id_str + ' deleted from db')
+            if (err) throw err; 
+            console.log('Tweet ' + tweet.delete.status.id_str + ' deleted from db');
+            io.sockets.emit('deleteTweet', tweet.delete.status.id_str);
           });
           // delete tweet from database
           // broadcast to all clients that they shoudl also delete
