@@ -1,5 +1,7 @@
 var express = require('express');
 var app = express();
+app.use(express.static(__dirname + '/public'));
+
 var server = require('http').createServer(app);
 server.listen(3000);
 
@@ -44,6 +46,7 @@ mongodb.connect('mongodb://127.0.0.1:27017/tweets', function (err, db) {
           }
         });
       });
+      
       // This event is recieved when client goes to bottom of view and needs more tweets
       socket.on('NextTweets', function (reqParams) {
         tweetParams = reqParams[1];
@@ -58,55 +61,46 @@ mongodb.connect('mongodb://127.0.0.1:27017/tweets', function (err, db) {
 
       });
     });
-
+    
     // Config file for private stuff
     var config = require('./config.js');
     
-    var Twat = require('twat');
+    var Twitter = require('twitter');
 
-    // Connect to Twitter with Twat
-    var twit = new Twat({
+    var twit = new Twitter({
       consumer_key: config.consumer_key,
       consumer_secret: config.consumer_secret,
-      access_token: config.access_token,
+      access_token_key: config.access_token,
       access_token_secret: config.access_token_secret
-    }); 
+    });
     
     var twitStreamParams = config.twitter;
-
+    
     // Open new Twitter stream with Twat
     twit.stream('statuses/filter', twitStreamParams, function (stream) {
     //twit.stream('statuses/sample', function (stream) {
-      stream.on('tweet', function (tweet) {
-        console.log(tweet.retweeted_status + ' ' + tweet.id_str);
-        if(tweet.retweeted_status) { 
-          // console.log('Tweet ' + tweet.id_str + 'is just RT; ignored.');
-        } else {
-          tweet.created_at = new Date(tweet.created_at);
-          io.sockets.emit('topTweet', ['*', tweet]);
-          console.log('Tweet ' + tweet.id_str + ' created at ' + tweet.created_at);
+      stream.on('data', function (tweet) {
+        if((tweet.text) && (!tweet.retweeted_status)) {
+            tweet.created_at = new Date(tweet.created_at);
+            io.sockets.emit('topTweet', ['*', tweet]);
+            console.log('Tweet ' + tweet.id_str + ' created at ' + tweet.created_at);
 
-          db.collection('tweets').insert(tweet, function (err, records) {
-            if (err) throw err;
-            console.log('tweet id ' + tweet.id_str + ' inserted to mongodb');
+            db.collection('tweets').insert(tweet, function (err, records) {
+              if (err) throw err;
+              console.log('tweet id ' + tweet.id_str + ' inserted to mongodb');
+            });
+        } else if (tweet.delete) {
+          db.collection('tweets').deleteOne({id_str:tweet.delete.status.id_str}, function(err, records){
+            console.log('Tweet ' + tweet.delete.status.id_str + ' deleted from db')
           });
+          // delete tweet from database
+          // broadcast to all clients that they shoudl also delete
         }
       });
 
-      stream.on('error', function (type, info) {
-        console.log('Twitter stream error: ' + info);
-      });
-
-      stream.on('end', function (response) {
-        console.log('End request recieved from Twitter: ' + response);
-      });
-
-      stream.on('reconnect', function (info) {
-        console.log('Reconnect error: ' + info.error);    // The error causing reconnection
-        console.log('Reconnect attempt(s): ' + info.attempts); // Number of reconnects attempted
+      stream.on('error', function(error) {
+        console.log(error);
       });
     });
   }
 });
-
-app.use(express.static(__dirname + '/public'));
