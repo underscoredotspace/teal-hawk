@@ -95,14 +95,12 @@ mongodb.connect('mongodb://127.0.0.1:27017/tweets', function (err, db) {
             console.log('Tweet ' + tweet.delete.status.id_str + ' deleted from db');
             io.sockets.emit('deleteTweet', tweet.delete.status.id_str);
           });
-          // delete tweet from database
-          // broadcast to all clients that they shoudl also delete
         }
       });
 
-      stream.on('error', function(error) {
-        console.log(error);
-      });
+//      stream.on('error', function(error) {
+//        throw error;
+//      });
     });
   }
 });
