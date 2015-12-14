@@ -31,7 +31,7 @@ tweetApp.directive('tweetColumn', function(socket){
     templateUrl: 'tweet-column.html',
     replace: true,
     scope: {tweets: '='},
-    controller: function ($scope, $attrs) {
+    controller: function ($scope, $attrs, $filter) {
       $scope.tweets = [];
       socket.emit('initRequest', [$attrs.tweetColumn, 10]);
       
@@ -59,6 +59,12 @@ tweetApp.directive('tweetColumn', function(socket){
           console.log('bottomTweet recieved ' + $attrs.tweetColumn);
         }
       });
+      
+      socket.on('deleteTweet', function(deleteTweet){
+        console.log('Tweet ' + deleteTweet + ' deleted from ' + $attrs.tweetColumn);
+        $scope.tweets = $filter('filter')($scope.tweets, {id_str: '!' + deleteTweet});
+        $scope.$digest();
+      })
 
       $scope.showMore = function() {
         console.log('Next 10 tweets after ' + $scope.tweets[$scope.tweets.length-1].id + ' requested');
