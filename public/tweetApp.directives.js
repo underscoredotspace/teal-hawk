@@ -25,7 +25,7 @@ tweetApp.directive('scrollBottom', function () {
     };
 });
 
-tweetApp.directive('tweetColumn', function(socket){
+tweetApp.directive('tweetColumn', function(socket, $timeout){
   return {
     restrict: 'A', 
     templateUrl: 'tweet-column.html',
@@ -54,9 +54,11 @@ tweetApp.directive('tweetColumn', function(socket){
 
       socket.on('bottomTweet', function(newTweet) {
         if (newTweet[0]==$attrs.tweetColumn){
-          $scope.tweets.push(newTweet[1]);
-          $scope.$digest();
-          console.log('bottomTweet recieved ' + $attrs.tweetColumn);
+          $timeout(function() {
+            $scope.tweets.push(newTweet[1]);
+            $scope.$digest();
+            console.log('bottomTweet recieved ' + $attrs.tweetColumn);
+          });
         }
       });
       
