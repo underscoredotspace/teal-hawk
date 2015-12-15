@@ -77,7 +77,6 @@ BUTTON.search-tweets{
   width: 375px;
 }
 .tweet {
-    min-height: 62px;
     float: left;
     display: block;
     border: 0px;
