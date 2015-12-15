@@ -15,14 +15,14 @@
 #Authentication
 - Registration, 
 - Logins, 
--- with Google, 
--- Facebook
--- Twitter
--- etc.
+ - with Google, 
+ - Facebook
+ - Twitter
+ - etc.
 
-#Handle delete requests
+#Handle delete requests [done]
 - move to Twitter npm package to get *all* data [done]
-- handle difference between data types recieved in stream [started]
+- handle difference between data types recieved in stream [done]
 - when delete recieved:
--- remove from mongodb [done]
--- remove from any client views via socket.io
+ - remove from mongodb [done]
+ - remove from any client views via socket.io [done]
