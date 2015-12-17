@@ -33,6 +33,7 @@ tweetApp.directive('tweetColumn', function(socket, $timeout){
     scope: {tweets: '='},
     controller: function ($scope, $attrs, $filter) {
       $scope.tweets = [];
+      $scope.bottomLoading = false;
       socket.emit('initRequest', [$attrs.tweetColumn, 10]);
       
       socket.on('reconnect', function(){
@@ -62,6 +63,7 @@ tweetApp.directive('tweetColumn', function(socket, $timeout){
             }
           });
           $scope.$digest();
+          $scope.bottomLoading = false; // alows showMore function to fire again
         }
       });
       
@@ -72,8 +74,14 @@ tweetApp.directive('tweetColumn', function(socket, $timeout){
       })
 
       $scope.showMore = function() {
-        console.log('Next 10 tweets after ' + $scope.tweets[$scope.tweets.length-1].id_str + ' requested');
-        socket.emit('NextTweets', [$attrs.tweetColumn,{last: $scope.tweets[$scope.tweets.length-1].id_str, count: 10}]);
+        // not sure if this is the best way to do this, but it works. 
+        if ($scope.bottomLoading==false) {
+          $scope.bottomLoading = true; // set this to true until we get more bottomTweets
+          console.log('Next 10 tweets after ' + $scope.tweets[$scope.tweets.length-1].id_str + ' requested');
+          socket.emit('NextTweets', [$attrs.tweetColumn,{last: $scope.tweets[$scope.tweets.length-1].id_str, count: 10}]);
+        } else {
+          console.log('Can\'t request more yet - still loading');
+        }
       };
     }
   }
