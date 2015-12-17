@@ -47,17 +47,12 @@ tweetApp.directive('tweetColumn', function(socket, $timeout){
 
       socket.on('topTweet', function(newTweet) {
         if ((newTweet[0]==$attrs.tweetColumn)||(newTweet[0]=='*')){
-          if (typeof newTweet[1]=='object') {
-            $scope.tweets.unshift(newTweet[1]);
-            console.log('single topTweet recieved for column ' + $attrs.tweetColumn);
-          } else { // this should mean we're getting an array, so unshift them in reverse
-            console.log(newTweet[1].length + ' topTweet(s) recieved for column ' + $attrs.tweetColumn);
-            $scope.$evalAsync(function(){
-              for (var i=newTweet[1].length-1; i>=0; i--){
-                $scope.tweets.unshift(newTweet[1][i]);
-              }
-            });
-          }
+          console.log(newTweet[1].length + ' topTweet(s) recieved for column ' + $attrs.tweetColumn);
+          $scope.$evalAsync(function(){
+            for (var i=newTweet[1].length-1; i>=0; i--){
+              $scope.tweets.unshift(newTweet[1][i]);
+            }
+          });
           $scope.$digest();
         }
       });

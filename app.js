@@ -81,7 +81,8 @@ mongodb.connect('mongodb://127.0.0.1:27017/tweets', function (err, db) {
       stream.on('data', function (tweet) {
         if((tweet.text) && (!tweet.retweeted_status)) {
             tweet.created_at = new Date(tweet.created_at);
-            io.sockets.emit('topTweet', ['*', tweet]);
+            tweetOut = [tweet];
+            io.sockets.emit('topTweet', ['*', tweetOut]);
             console.log('Tweet ' + tweet.id_str + ' created at ' + tweet.created_at);
 
             db.collection('tweets').insert(tweet, function (err, records) {
