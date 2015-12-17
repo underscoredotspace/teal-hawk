@@ -46,19 +46,22 @@ tweetApp.directive('tweetColumn', function(socket, $timeout){
 
       socket.on('topTweet', function(newTweet) {
         if ((newTweet[0]==$attrs.tweetColumn)||(newTweet[0]=='*')){
-          $scope.tweets.unshift(newTweet[1]);
-          $scope.$digest();    
-          console.log('topTweet recieved for column ' + $attrs.tweetColumn);
+          for (var i=newTweet[1].length-1; i>=0; i--){
+            $scope.tweets.unshift(newTweet[1][i]);
+            console.log('topTweet recieved for column ' + $attrs.tweetColumn);
+          }
+          $scope.$digest();
         }
       });
 
       socket.on('bottomTweet', function(newTweet) {
         if (newTweet[0]==$attrs.tweetColumn){
-          $timeout(function() {
-            $scope.tweets.push(newTweet[1]);
-            $scope.$digest();
-            console.log('bottomTweet recieved ' + $attrs.tweetColumn);
+          $scope.$evalAsync(function(){
+            for (var i=newTweet[1].length-1; i>=0; i--){
+              $scope.tweets.push(newTweet[1][i]);
+            }
           });
+          $scope.$digest();
         }
       });
       
@@ -69,7 +72,7 @@ tweetApp.directive('tweetColumn', function(socket, $timeout){
       })
 
       $scope.showMore = function() {
-        console.log('Next 10 tweets after ' + $scope.tweets[$scope.tweets.length-1].id + ' requested');
+        console.log('Next 10 tweets after ' + $scope.tweets[$scope.tweets.length-1].id_str + ' requested');
         socket.emit('NextTweets', [$attrs.tweetColumn,{last: $scope.tweets[$scope.tweets.length-1].id_str, count: 10}]);
       };
     }

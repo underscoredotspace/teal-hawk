@@ -1,11 +1,12 @@
-#Filter for tweetColumn
+~~#Send bottomTweet in bulk rather than using Each method~~ [done]
+- ~~Make client do For Each loop as required~~ [done]
 
+#Filter for tweetColumn
 - Take filter parameters from Mongo collection.  
 - In server app.js within InitRequest, NextTweets and UpdateRequest.  
 - When new tweet received in client.  
 
 #Interface for creating/editing/deleting tweetColumn
-
 - Parse filter parameters from Mongo collection for editing.  
 - Show preview results (perhaps using REST).  
 - Save edited/new filter parameters to Mongo collection.  
@@ -20,9 +21,9 @@
  - Twitter
  - etc.
 
-#Handle delete requests [done]
-- move to Twitter npm package to get *all* data [done]
-- handle difference between data types recieved in stream [done]
-- when delete recieved:
- - remove from mongodb [done]
- - remove from any client views via socket.io [done]
+~~#Handle delete requests~~ [done]
+- ~~move to Twitter npm package to get *all* data~~ [done]
+- ~~handle difference between data types recieved in stream~~ [done]
+- ~~when delete recieved~~:
+ - ~~remove from mongodb~~ [done]
+ - ~~remove from any client views via socket.io~~ [done]
