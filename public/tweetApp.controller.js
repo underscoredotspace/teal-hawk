@@ -2,7 +2,7 @@
 //   Moment used for nice time presentation
 //   Animate for visual introduction of new data to view
 
-var tweetApp = angular.module('tweetApp', ['angularMoment', 'ngAnimate', 'ngSanitize']);
+var tweetApp = angular.module('tweetApp', ['angularMoment', 'ngAnimate']);
 
 tweetApp.controller('tweetController', function ($scope, $filter, socket){
       socket.on('connect', function(){

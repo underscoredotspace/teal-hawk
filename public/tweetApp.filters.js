@@ -8,6 +8,12 @@ tweetApp.filter('highlight', function () {
   }   
 });
 
+tweetApp.filter('trustHTML', ['$sce', function ($sce) { 
+    return function (text) {
+        return $sce.trustAsHtml(text);
+    };    
+}])
+
 // Proxies profile images, but should be able to handle any image with little work.
 tweetApp.filter('proxy_image', function() {
   return function(text) {
@@ -23,7 +29,7 @@ tweetApp.filter('proxy_image', function() {
   };
 });  
 
-// Below not written by me. I think the two linky functions should be one, and in the style of linkyUnsanitized
+// Below is not created by me, and is just ngSanitize Linky function with no sanitation
 tweetApp.filter('linkyUnsanitized', function() {  
   var LINKY_URL_REGEXP =  
         /((ftp|https?):\/\/|(mailto:)?[A-Za-z0-9._%+-]+@)\S*[^\s.;,(){}<>]/,  
@@ -72,13 +78,13 @@ tweetApp.filter('linkyUnsanitized', function() {
   };  
 }); 
 
-// If we get rid of this the ngSanitize requirement is gone - Linky used in this filter
+// This filter now requires linkyUnsanitized to remove requirement for ngSanitize
 tweetApp.filter('tweetLinky',['$filter',
     function($filter) {
         return function(text, target) {
             if (!text) return text;
     
-            var replacedText = $filter('linky')(text, target);
+            var replacedText = $filter('linkyUnsanitized')(text, target);
             var targetAttr = "";
             if (angular.isDefined(target)) {
                 targetAttr = ' target="' + target + '"';

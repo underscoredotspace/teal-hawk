@@ -25,7 +25,7 @@
           </span>
 
           <span class="tweet-text"
-            data-ng-bind-html="tweet.text|linkyUnsanitized|tweetLinky|highlight:search.text">
+            data-ng-bind-html="tweet.text|linkyUnsanitized|tweetLinky|highlight:search.text|trustHTML">
           </span>
 
           <span class="tweet-media" ng-repeat="media in tweet.extended_entities.media|filter:{type: photo}">
