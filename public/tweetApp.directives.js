@@ -59,6 +59,7 @@ tweetApp.directive('tweetColumn', function(socket, $timeout){
 
       socket.on('bottomTweet', function(newTweet) {
         if (newTweet[0]==$attrs.tweetColumn){
+          console.log(newTweet[1].length + ' bottomTweet(s) recieved for column ' + $attrs.tweetColumn);
           $scope.$evalAsync(function(){
             for (var i=0; i<=newTweet[1].length-1; i++){
               $scope.tweets.push(newTweet[1][i]);

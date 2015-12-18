@@ -78,6 +78,7 @@ mongodb.connect('mongodb://127.0.0.1:27017/tweets', function (err, db) {
     // Open new Twitter stream with Twat
     twit.stream('statuses/filter', twitStreamParams, function (stream) {
     //twit.stream('statuses/sample', function (stream) {
+      console.log('Connected to Twitter');
       stream.on('data', function (tweet) {
         if((tweet.text) && (!tweet.retweeted_status)) {
             tweet.created_at = new Date(tweet.created_at);
