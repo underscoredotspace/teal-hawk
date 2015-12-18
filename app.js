@@ -3,9 +3,8 @@ var app = express();
 app.use(express.static(__dirname + '/public'));
 
 var server = require('http').createServer(app);
-server.listen(3000);
-
 var io = require('socket.io').listen(server);
+server.listen(3000);
 
 var mongodb = require('mongodb');
 mongodb.connect('mongodb://127.0.0.1:27017/tweets', function (err, db) {

@@ -32,7 +32,7 @@ tweetApp.filter('proxy_image', function() {
 // Below is not created by me, and is just ngSanitize Linky function with no sanitation
 tweetApp.filter('linkyUnsanitized', function() {  
   var LINKY_URL_REGEXP =  
-        /((ftp|https?):\/\/|(mailto:)?[A-Za-z0-9._%+-]+@)\S*[^\s.;,(){}<>]/,  
+        /((ftp|https?):\/\/|(mailto:)?[A-Za-z0-9._%+-][^\.\s]+@)\S*[^\s.;,(){}<>]/,  
       MAILTO_REGEXP = /^mailto:/;  
   
   return function(text, target) {  
@@ -90,10 +90,10 @@ tweetApp.filter('tweetLinky',['$filter',
                 targetAttr = ' target="' + target + '"';
             }
             var replacePattern1 = /(^|\s)#(\w*[a-zA-Z_]+\w*)/gim;
-            replacedText = text.replace(replacePattern1, '$1<a href="#/search/$2"' + targetAttr + '>#$2</a>');
+            replacedText = text.replace(replacePattern1, '$1<a href="https://twitter.com/hashtag/$2"' + targetAttr + '>#$2</a>');
 
             var replacePattern2 = /(^|\s)\@(\w*[a-zA-Z_]+\w*)/gim;
-            replacedText = replacedText.replace(replacePattern2, '$1<a href="#/user/$2"' + targetAttr + '>@$2</a>');
+            replacedText = replacedText.replace(replacePattern2, '$1<a href="https://twitter.com/$2"' + targetAttr + '>@$2</a>');
 
             return replacedText;
         };
