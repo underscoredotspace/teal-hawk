@@ -15,6 +15,9 @@ tweetApp.directive('scrollBottom', function () {
     link: function (scope, element, attrs) {
       var raw = element[0];
       element.bind('scroll', function () {
+        if (document.activeElement.tagName=='INPUT'){
+          document.activeElement.blur();
+        }
         if (raw.scrollTop + raw.offsetHeight >= raw.scrollHeight) {
           scope.$apply(attrs.scrollBottom);
         }
