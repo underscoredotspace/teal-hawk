@@ -42,6 +42,7 @@ BODY {
 
 SPAN.search-tweets {
   position: fixed;
+  top: 0px;
   width: 375px;
   background-color: #222426;
   height: 35px; 

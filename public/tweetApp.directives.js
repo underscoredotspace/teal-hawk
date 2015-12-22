@@ -31,8 +31,10 @@ tweetApp.directive('tweetColumn', function(socket, $timeout){
     restrict: 'A', 
     templateUrl: 'tweet-column.html',
     replace: true,
-    scope: {tweets: '='},
+    scope: {column: '='},
     controller: function ($scope, $attrs, $filter) {
+      $attrs.tweetParams = $scope.$parent.column.parameters;
+      $attrs.tweetColumn = $scope.$parent.column.id;
       $scope.tweets = [];
       $scope.bottomLoading = false;
       socket.emit('initRequest', [$attrs.tweetColumn, 10]);

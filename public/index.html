@@ -26,11 +26,6 @@
 
 <!-- Start of tweetApp -->
 <body data-ng-controller="tweetController">
-  <div data-tweet-column="fdac"
-       data-tweet-filter="{'user.id_str': '284537825'}, {'entities.user_mentions.id_str':'284537825'}">
-  </div>
-<!--  <div tweet-column="e0b1"
-       tweet-filter="{'user.id_str': '284540385'}, {'entities.user_mentions.id_str':'284540385'}">
-  </div> -->
+  <span data-ng-repeat="column in columns|filter:{type:tweetColumn}|orderObjectBy:'position'"><div data-tweet-column="column"></div></span>
 </body>
 </html>

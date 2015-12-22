@@ -14,21 +14,6 @@ tweetApp.filter('trustHTML', ['$sce', function ($sce) {
     };    
 }])
 
-// Proxies profile images, but should be able to handle any image with little work.
-tweetApp.filter('proxy_image', function() {
-  return function(text) {
-    var out = "";
-    // to catch new egg profile pics
-    if (text.search("http://abs.twimg.com") >-1) {
-      out = "img.php?url=" + text;
-    } else {
-      // to catch normal profile images
-      out = text.replace("http://pbs.twimg.com/profile_images/", "img.php?url=");
-    }
-    return out;
-  };
-});  
-
 // Below is not created by me, and is just ngSanitize Linky function with no sanitation
 tweetApp.filter('linkyUnsanitized', function() {  
   var LINKY_URL_REGEXP =  
@@ -99,3 +84,23 @@ tweetApp.filter('tweetLinky',['$filter',
         };
     }   
 ]); 
+
+// Cribbed from http://stackoverflow.com/a/18186947/5487137
+// Don't see a better solution
+tweetApp.filter('orderObjectBy', function(){
+ return function(input, attribute) {
+    if (!angular.isObject(input)) return input;
+
+    var array = [];
+    for(var objectKey in input) {
+        array.push(input[objectKey]);
+    }
+
+    array.sort(function(a, b){
+        a = parseInt(a[attribute]);
+        b = parseInt(b[attribute]);
+        return a - b;
+    });
+    return array;
+ }
+});
