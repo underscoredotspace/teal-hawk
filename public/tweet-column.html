@@ -29,7 +29,7 @@
           </span>
 
           <span class="tweet-media" ng-repeat="media in tweet.extended_entities.media|filter:{type: photo}">
-            <a href="#" data-ng-href="{{media.media_url_https}}" target="_blank"><img class="tweet-media" src="#" data-ng-src="{{media.media_url + ':thumb'}}"></a>
+            <a href="#" data-ng-href="{{media.media_url_https}}" target="_blank"><img class="tweet-media" src="#" data-ng-src="{{media.media_url_https + ':thumb'}}"></a>
           </span>
 
           <span class="tweet-metadata">

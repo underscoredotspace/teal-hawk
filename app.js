@@ -6,6 +6,8 @@ var server = require('http').createServer(app);
 var io = require('socket.io').listen(server);
 server.listen(3000);
 
+var extend = require('util')._extend;
+
 var mongodb = require('mongodb');
 mongodb.connect('mongodb://127.0.0.1:27017/tweets', function (err, db) {
   if (err) {
@@ -23,14 +25,17 @@ mongodb.connect('mongodb://127.0.0.1:27017/tweets', function (err, db) {
         tweetColumn = reqParams[0];
         console.log(limit + ' tweets requested by client ' + socket.id);
         
-        // Request 'limit' Tweets from mongodb
-        db.collection('tweets').find().sort([['id_str', -1]]).limit(limit).toArray(function (err, tweet) {
-          if (tweet !== null) {
-            // emit each Tweet back to client that made request
-            socket.emit('bottomTweet', [tweetColumn, tweet]);
-          }
+        // db.columns.find({'id':'fdac'},{'parameters':1,"_id":0});
+        db.collection('columns').find({'id': tweetColumn},{'parameters':1,"_id":0}).limit(1).toArray(function(err, column) {
+          // Request 'limit' Tweets from mongodb
+          db.collection('tweets').find(JSON.parse(column[0].parameters)).sort([['id_str', -1]]).limit(limit).toArray(function (err, tweet) {
+            if (tweet !== null) {
+              // emit each Tweet back to client that made request
+              socket.emit('bottomTweet', [tweetColumn, tweet]);
+            }
+          }); 
         });
-
+        
         console.log('Initial ' + limit + ' tweets sent to client ' + socket.id);
       });
 
@@ -39,10 +44,13 @@ mongodb.connect('mongodb://127.0.0.1:27017/tweets', function (err, db) {
         lastTweet = reqParams[1];
         tweetColumn = reqParams[0];
         console.log('Up-to-date request recieved from client ' + socket.id + '. lastTweet: ' + lastTweet);
-        db.collection('tweets').find({id_str: {$gt: lastTweet}}).toArray(function (err, tweet) {
-          if (tweet !== null) {
-            socket.emit('topTweet', [tweetColumn, tweet]);
-          }
+        db.collection('columns').find({'id': tweetColumn},{'parameters':1,"_id":0}).limit(1).toArray(function(err, column) {
+          query = extend({id_str: {$gt: lastTweet}}, JSON.parse(column[0].parameters));
+          db.collection('tweets').find(query).toArray(function (err, tweet) {
+            if (tweet !== null) {
+              socket.emit('topTweet', [tweetColumn, tweet]);
+            }
+          });
         });
       });
       
@@ -51,13 +59,16 @@ mongodb.connect('mongodb://127.0.0.1:27017/tweets', function (err, db) {
         tweetParams = reqParams[1];
         tweetColumn = reqParams[0];
         console.log('Next ' + tweetParams.count + ' Tweets request recieved from client ' + socket.id + '. tweetParams: ' + tweetParams.last);
-
-        db.collection('tweets').find({id_str: {$lt: tweetParams.last}}).sort([['id_str', -1]]).limit(tweetParams.count).toArray(function (err, tweet) {
-          if (tweet !== null) {
-            socket.emit('bottomTweet', [tweetColumn, tweet]);
-          } 
-        }); 
-      });
+        db.collection('columns').find({'id': tweetColumn},{'parameters':1,"_id":0}).limit(1).toArray(function(err, column) {
+          // Request 'limit' Tweets from mongodb
+          query = extend({id_str: {$lt: tweetParams.last}}, JSON.parse(column[0].parameters));
+          db.collection('tweets').find(query).sort([['id_str', -1]]).limit(tweetParams.count).toArray(function (err, tweet) {
+            if (tweet !== null) {
+              socket.emit('bottomTweet', [tweetColumn, tweet]);
+            } 
+          }); 
+          });
+        });
     });
     
     // Config file for private stuff

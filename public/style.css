@@ -34,12 +34,6 @@ BODY {
   margin: 0px;
   margin-top: -5px;
 }
-.loading {
-  position: block;
-  bottom: 0px;
-  width: 375px;
-}
-
 SPAN.search-tweets {
   position: fixed;
   top: 0px;
