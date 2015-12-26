@@ -5,12 +5,12 @@ HTML, BODY {
   margin: 0px;
 }
 DIV, SPAN, IMG {
-    border: 0px;
-    border-style: none;
-    padding: 0px;
-    margin: 0px;
-    font-family: 'Source Sans Pro', sans-serif;
-    font-size: 16px;
+  border: 0px;
+  border-style: none;
+  padding: 0px;
+  margin: 0px;
+  font-family: 'Source Sans Pro', sans-serif;
+  font-size: 16px;
 }
 BODY {
   height: 0px;
@@ -24,7 +24,7 @@ BODY {
   width: 15px;
 }
 .tweet-container::-webkit-scrollbar-thumb {
-    background: #222426;
+  background: #222426;
 }
 .tweet-column {
   width: 375px;
@@ -76,13 +76,13 @@ BUTTON.search-tweets{
   width: 375px;
 }
 .tweet {
-    float: left;
-    display: block;
-    border: 0px;
-    border-style: solid;
-    margin-bottom: 2px;
-    color: rgb(221, 221, 221);
-    background-color: #222426;
+  float: left;
+  display: block;
+  border: 0px;
+  border-style: solid;
+  margin-bottom: 2px;
+  color: rgb(221, 221, 221);
+  background-color: #222426;
 }
 .tweet-metadata {
   display: block;
@@ -104,12 +104,12 @@ BUTTON.search-tweets{
   padding-right: 5px;
 }
 .user, .tweet-text, .created-at {
-    display: block;
-    padding: 2px;
+  display: block;
+  padding: 2px;
 }
 .tweet-text{
-    text-align: left;
-    margin-right: 3px;
+  text-align: left;
+  margin-right: 3px;
 }
 IMG.tweet-media {
   max-width: 140px;
@@ -122,10 +122,10 @@ IMG.tweet-media {
   vertical-align: bottom;
 }
 .user-handle, .tweet-id {
-    float: right;
-    vertical-align: middle;
-    line-height: 18px;
-    font-size: 75%;
+  float: right;
+  vertical-align: middle;
+  line-height: 18px;
+  font-size: 75%;
 }
 .tweet-id {
   display: none;
@@ -134,23 +134,23 @@ IMG.tweet-media {
   font-weight: bold;
 }
 .created-at {
-    color: #999;
+  color: #999;
 }
 .user-handle {
-    color: #BE67D2;
+  color: #BE67D2;
 }
 .created-at {
-    font-size: 75%;
-    margin-bottom: 5px;
-    float:left;
-    color: #00C0F7;
+  font-size: 75%;
+  margin-bottom: 5px;
+  float:left;
+  color: #00C0F7;
 }
 IMG.profile-image {
-    margin: 0px;
-    padding: 10px;
-    width: 40px;
-    height: 40px;
-    float: left;
+  margin: 0px;
+  padding: 10px;
+  width: 40px;
+  height: 40px;
+  float: left;
 }
 A, A:hover, A:visited {
   color: #6AB825;

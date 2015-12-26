@@ -9,15 +9,14 @@ tweetApp.filter('highlight', function () {
 });
 
 tweetApp.filter('trustHTML', ['$sce', function ($sce) { 
-    return function (text) {
-        return $sce.trustAsHtml(text);
-    };    
+  return function (text) {
+    return $sce.trustAsHtml(text);
+  };    
 }])
 
 // Below is not created by me, and is just ngSanitize Linky function with no sanitation
 tweetApp.filter('linkyUnsanitized', function() {  
-  var LINKY_URL_REGEXP =  
-        /((ftp|https?):\/\/|(mailto:)?[A-Za-z0-9._%+-][^\.\s]+@)\S*[^\s.;,(){}<>]/,  
+  var LINKY_URL_REGEXP = /((ftp|https?):\/\/|(mailto:)?[A-Za-z0-9._%+-][^\.\s]+@)\S*[^\s.;,(){}<>]/,  
       MAILTO_REGEXP = /^mailto:/;  
   
   return function(text, target) {  
@@ -65,42 +64,42 @@ tweetApp.filter('linkyUnsanitized', function() {
 
 // This filter now requires linkyUnsanitized to remove requirement for ngSanitize
 tweetApp.filter('tweetLinky',['$filter',
-    function($filter) {
-        return function(text, target) {
-            if (!text) return text;
-    
-            var replacedText = $filter('linkyUnsanitized')(text, target);
-            var targetAttr = "";
-            if (angular.isDefined(target)) {
-                targetAttr = ' target="' + target + '"';
-            }
-            var replacePattern1 = /(^|\s)#(\w*[a-zA-Z_]+\w*)/gim;
-            replacedText = text.replace(replacePattern1, '$1<a href="https://twitter.com/hashtag/$2"' + targetAttr + '>#$2</a>');
+  function($filter) {
+    return function(text, target) {
+      if (!text) return text;
 
-            var replacePattern2 = /(^|\s)\@(\w*[a-zA-Z_]+\w*)/gim;
-            replacedText = replacedText.replace(replacePattern2, '$1<a href="https://twitter.com/$2"' + targetAttr + '>@$2</a>');
+      var replacedText = $filter('linkyUnsanitized')(text, target);
+      var targetAttr = "";
+      if (angular.isDefined(target)) {
+        targetAttr = ' target="' + target + '"';
+      }
+      var replacePattern1 = /(^|\s)#(\w*[a-zA-Z_]+\w*)/gim;
+      replacedText = text.replace(replacePattern1, '$1<a href="https://twitter.com/hashtag/$2"' + targetAttr + '>#$2</a>');
 
-            return replacedText;
-        };
-    }   
+      var replacePattern2 = /(^|\s)\@(\w*[a-zA-Z_]+\w*)/gim;
+      replacedText = replacedText.replace(replacePattern2, '$1<a href="https://twitter.com/$2"' + targetAttr + '>@$2</a>');
+
+      return replacedText;
+    };
+  }   
 ]); 
 
 // Cribbed from http://stackoverflow.com/a/18186947/5487137
 // Don't see a better solution
 tweetApp.filter('orderObjectBy', function(){
- return function(input, attribute) {
+  return function(input, attribute) {
     if (!angular.isObject(input)) return input;
 
     var array = [];
     for(var objectKey in input) {
-        array.push(input[objectKey]);
+      array.push(input[objectKey]);
     }
 
     array.sort(function(a, b){
-        a = parseInt(a[attribute]);
-        b = parseInt(b[attribute]);
-        return a - b;
+      a = parseInt(a[attribute]);
+      b = parseInt(b[attribute]);
+      return a - b;
     });
     return array;
- }
+  }
 });
