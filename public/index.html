@@ -1,31 +1,31 @@
 <!DOCTYPE html>
 <html data-ng-app="tweetApp">
-<head>
-  <!-- Browser set up -->
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=375">
-  <title>TealHawk</title>
+  <head>
+    <!-- Browser set up -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=375">
+    <title>TealHawk</title>
 
-  <!-- Styles -->
-  <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro" rel="stylesheet" type="text/css">
-  <link href="style.css" rel="stylesheet" type="text/css">
+    <!-- Styles -->
+    <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro" rel="stylesheet" type="text/css">
+    <link href="style.css" rel="stylesheet" type="text/css">
 
-  <!-- AngularJS and Socket.io -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.5.0-beta.1/angular.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.5.0-beta.1/angular-animate.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.9.0/moment.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-moment/0.9.0/angular-moment.min.js"></script>
-  <script src="/socket.io/socket.io.js"></script>
+    <!-- AngularJS and Socket.io -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.5.0-beta.1/angular.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.5.0-beta.1/angular-animate.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.9.0/moment.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-moment/0.9.0/angular-moment.min.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
 
-  <!-- teal-hawk Scripts -->
-  <script src="tweetApp.controller.js"></script>
-  <script src="tweetApp.factories.js"></script>
-  <script src="tweetApp.filters.js"></script>
-  <script src="tweetApp.directives.js"></script>
-</head>
+    <!-- teal-hawk Scripts -->
+    <script src="tweetApp.controller.js"></script>
+    <script src="tweetApp.factories.js"></script>
+    <script src="tweetApp.filters.js"></script>
+    <script src="tweetApp.directives.js"></script>
+  </head>
 
-<!-- Start of tweetApp -->
-<body data-ng-controller="tweetController">
-  <span data-ng-repeat="column in columns|filter:{type:tweetColumn}|orderObjectBy:'position'"><div data-tweet-column="column"></div></span>
-</body>
+  <!-- Start of tweetApp -->
+  <body data-ng-controller="tweetController">
+    <span data-ng-repeat="column in columns|filter:{type:tweetColumn}|orderObjectBy:'position'"><div data-tweet-column="column"></div></span>
+  </body>
 </html>

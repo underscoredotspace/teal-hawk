@@ -26,33 +26,47 @@ tweetApp.directive('scrollBottom', function () {
   };
 });
 
-tweetApp.directive('tweetColumn', function(socket, $timeout){
+tweetApp.directive('tweetColumn', function(socket){
   return {
     restrict: 'A', 
     templateUrl: 'tweet-column.html',
     replace: true,
     scope: {column: '='},
-    controller: function ($scope, $attrs, $filter) {
-      $attrs.tweetParams = $scope.$parent.column.parameters;
-      $attrs.tweetColumn = $scope.$parent.column.id;
-      //console.log($attrs);
+    controller: function ($scope, $filter) {
+      $scope.tweetParams = $scope.$parent.column.parameters;
+      $scope.tweetColumn = $scope.$parent.column.id;
   
       $scope.tweets = [];
       $scope.bottomLoading = false;
-      socket.emit('initRequest', [$attrs.tweetColumn, 10]);
       
+      initRequest = function() {
+        socket.emit('initRequest', {
+          tweetColumn: $scope.tweetColumn, 
+          tweetCount: 10
+        });
+        console.log('Inital ' + 10 + ' tweets requested for column ' + $scope.tweetColumn);
+      };
+      
+      initRequest();
+      
+      // Fires after connection lost and regained
       socket.on('reconnect', function(){
         if ($scope.tweets!=[]) {
-          console.log('reconnecting ' + $scope.tweets[0].id_str);
-          socket.emit('updateRequest', [$attrs.tweetColumn, $scope.tweets[0].id_str]);
+          console.log('reconnecting...');
+          socket.emit('updateRequest', {
+            tweetColumn: $scope.tweetColumn,
+            lastTweet: $scope.tweets[0].id_str
+          });
+          console.log('Tweets after ' + $scope.tweets[0].id_str + ' requested for column ' + $scope.tweetColumn);
         } else {
-          socket.emit('initRequest', [$attrs.tweetColumn, 10]);
+          initRequest();
         }
       });
 
+      // Fires when new Tweet for top of stack sent by server
       socket.on('topTweet', function(newTweet) {
-        if ((newTweet[0]==$attrs.tweetColumn)||(newTweet[0]=='*')){
-          console.log(newTweet[1].length + ' topTweet(s) recieved for column ' + $attrs.tweetColumn);
+        if ((newTweet[0]==$scope.tweetColumn)||(newTweet[0]=='*')){
+          console.log(newTweet[1].length + ' topTweet(s) recieved for column ' + $scope.tweetColumn);
           $scope.$evalAsync(function(){
             for (var i=newTweet[1].length-1; i>=0; i--){
               $scope.tweets.unshift(newTweet[1][i]);
@@ -62,9 +76,10 @@ tweetApp.directive('tweetColumn', function(socket, $timeout){
         }
       });
 
+      // Fires when new Tweet for bottom of stack sent by server
       socket.on('bottomTweet', function(newTweet) {
-        if (newTweet[0]==$attrs.tweetColumn){
-          console.log(newTweet[1].length + ' bottomTweet(s) recieved for column ' + $attrs.tweetColumn);
+        if (newTweet[0]==$scope.tweetColumn){
+          console.log(newTweet[1].length + ' bottomTweet(s) recieved for column ' + $scope.tweetColumn);
           $scope.$evalAsync(function(){
             for (var i=0; i<=newTweet[1].length-1; i++){
               $scope.tweets.push(newTweet[1][i]);
@@ -75,18 +90,24 @@ tweetApp.directive('tweetColumn', function(socket, $timeout){
         }
       });
       
-      socket.on('deleteTweet', function(deleteTweet){
-        console.log('Tweet ' + deleteTweet + ' deleted from ' + $attrs.tweetColumn);
-        $scope.tweets = $filter('filter')($scope.tweets, {id_str: '!' + deleteTweet});
+      // Fires when deletion request is recieved from Twitter via server
+      socket.on('deleteTweet', function(id_str){
+        console.log('Tweet ' + id_str + ' deleted from ' + $scope.tweetColumn);
+        $scope.tweets = $filter('filter')($scope.tweets, {id_str: '!' + id_str});
         $scope.$digest();
       })
 
+      // Called by scrollBottom directive when bottom of column is reached by user
       $scope.showMore = function() {
-        // not sure if this is the best way to do this, but it works. 
         if ($scope.bottomLoading==false) {
-          $scope.bottomLoading = true; // set this to true until we get more bottomTweets
-          console.log('Next 10 tweets after ' + $scope.tweets[$scope.tweets.length-1].id_str + ' requested');
-          socket.emit('NextTweets', [$attrs.tweetColumn,{last: $scope.tweets[$scope.tweets.length-1].id_str, count: 10}]);
+          $scope.bottomLoading = true; // set this to true until we get more bottomTweets. 
+          var lastTweet = $scope.tweets[$scope.tweets.length-1].id_str;
+          console.log('Next 10 tweets after ' + lastTweet + ' requested');
+          socket.emit('NextTweets', {
+            lastTweet: lastTweet,
+            tweetColumn: $scope.tweetColumn,
+            tweetCount: 10
+          });
         } else {
           console.log('Can\'t request more yet - still loading');
         }

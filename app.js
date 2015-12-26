@@ -1,3 +1,4 @@
+/* global __dirname */
 var express = require('express');
 var app = express();
 app.use(express.static(__dirname + '/public'));
@@ -20,60 +21,59 @@ mongodb.connect('mongodb://127.0.0.1:27017/tweets', function (err, db) {
       console.log(socket.id + ' connected');
       
       // This tells us a brand new client has connected and needs initial Tweets load
-      socket.on('initRequest', function(reqParams) {
-        limit = reqParams[1];
-        tweetColumn = reqParams[0];
-        console.log(limit + ' tweets requested by client ' + socket.id);
+      socket.on('initRequest', function(initRequest) {
+        console.log('Initial ' + initRequest.tweetCount + ' tweets requested by client ' + socket.id + ' for column ' + initRequest.tweetColumn);
         
-        // db.columns.find({'id':'fdac'},{'parameters':1,"_id":0});
-        db.collection('columns').find({'id': tweetColumn},{'parameters':1,"_id":0}).limit(1).toArray(function(err, column) {
+        // Get column's search parameters from mongodb
+        db.collection('columns').find({'id': initRequest.tweetColumn},{'parameters':1,"_id":0}).limit(1).toArray(function(err, column) {
           // Request 'limit' Tweets from mongodb
-          db.collection('tweets').find(JSON.parse(column[0].parameters)).sort([['id_str', -1]]).limit(limit).toArray(function (err, tweet) {
+          db.collection('tweets').find(JSON.parse(column[0].parameters)).sort([['id_str', -1]]).limit(initRequest.tweetCount).toArray(function (err, tweet) {
             if (tweet !== null) {
-              // emit each Tweet back to client that made request
-              socket.emit('bottomTweet', [tweetColumn, tweet]);
+              // emit Tweets back to client/column that made request
+              socket.emit('bottomTweet', [initRequest.tweetColumn, tweet]);
             }
           }); 
         });
         
-        console.log('Initial ' + limit + ' tweets sent to client ' + socket.id);
+        console.log('Initial ' + initRequest.tweetCount + ' tweets sent to client ' + socket.id + ' for column ' + initRequest.tweetColumn);
       });
 
       // This event is recieved from a client who lost connection and is reconnecting
-      socket.on('updateRequest', function (reqParams) {
-        lastTweet = reqParams[1];
-        tweetColumn = reqParams[0];
-        console.log('Up-to-date request recieved from client ' + socket.id + '. lastTweet: ' + lastTweet);
-        db.collection('columns').find({'id': tweetColumn},{'parameters':1,"_id":0}).limit(1).toArray(function(err, column) {
-          query = extend({id_str: {$gt: lastTweet}}, JSON.parse(column[0].parameters));
+      socket.on('updateRequest', function (updateRequest) {
+        console.log('Up-to-date request recieved from client ' + socket.id + '. lastTweet: ' + updateRequest.lastTweet);
+        // Get column's search parameters from mongodb
+        db.collection('columns').find({'id': updateRequest.tweetColumn},{'parameters':1,"_id":0}).limit(1).toArray(function(err, column) {
+          var query = extend({id_str: {$gt: updateRequest.lastTweet}}, JSON.parse(column[0].parameters));
           db.collection('tweets').find(query).toArray(function (err, tweet) {
-            if (tweet !== null) {
-              socket.emit('topTweet', [tweetColumn, tweet]);
+            if ((tweet !== null) && (tweet.length>0)) {
+              socket.emit('topTweet', [updateRequest.tweetColumn, tweet]);
+              console.log(tweet.length + ' new tweets sent for column ' + updateRequest.tweetColumn);
+            } else {
+              console.log('No new tweets since ' + updateRequest.lastTweet + ' to send for column ' + updateRequest.tweetColumn);
             }
           });
         });
       });
       
       // This event is recieved when client goes to bottom of view and needs more tweets
-      socket.on('NextTweets', function (reqParams) {
-        tweetParams = reqParams[1];
-        tweetColumn = reqParams[0];
-        console.log('Next ' + tweetParams.count + ' Tweets request recieved from client ' + socket.id + '. tweetParams: ' + tweetParams.last);
-        db.collection('columns').find({'id': tweetColumn},{'parameters':1,"_id":0}).limit(1).toArray(function(err, column) {
+      socket.on('NextTweets', function (nextTweets) {
+        console.log('Next ' + nextTweets.tweetCount + ' Tweets after ' + nextTweets.lastTweet + ' requested by client ' +     socket.id + ' for column ' + nextTweets.tweetColumn);
+        var query = {id: nextTweets.tweetColumn};
+        var restrict = {parameters:1,_id:0};
+        db.collection('columns').find(query,restrict).limit(1).toArray(function(err, column) {
           // Request 'limit' Tweets from mongodb
-          query = extend({id_str: {$lt: tweetParams.last}}, JSON.parse(column[0].parameters));
-          db.collection('tweets').find(query).sort([['id_str', -1]]).limit(tweetParams.count).toArray(function (err, tweet) {
+          var query = extend({id_str: {$lt: nextTweets.lastTweet}}, JSON.parse(column[0].parameters));
+          db.collection('tweets').find(query).sort([['id_str', -1]]).limit(nextTweets.tweetCount).toArray(function (err, tweet) {
             if (tweet !== null) {
-              socket.emit('bottomTweet', [tweetColumn, tweet]);
+              socket.emit('bottomTweet', [nextTweets.tweetColumn, tweet]);
             } 
           }); 
-          });
         });
+      });
     });
     
-    // Config file for private stuff
+    // Config file for private Twitter keys etc.
     var config = require('./config.js');
-    
     var Twitter = require('twitter');
 
     var twit = new Twitter({
@@ -92,7 +92,7 @@ mongodb.connect('mongodb://127.0.0.1:27017/tweets', function (err, db) {
       stream.on('data', function (tweet) {
         if((tweet.text) && (!tweet.retweeted_status)) {
             tweet.created_at = new Date(tweet.created_at);
-            tweetOut = [tweet];
+            var tweetOut = [tweet];
             io.sockets.emit('topTweet', ['*', tweetOut]);
             console.log('Tweet ' + tweet.id_str + ' created at ' + tweet.created_at);
 
