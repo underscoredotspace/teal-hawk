@@ -31,42 +31,45 @@ tweetApp.directive('tweetColumn', function(socket){
     restrict: 'A', 
     templateUrl: 'tweet-column.html',
     replace: true,
-    scope: {column: '='},
-    controller: function ($scope, $filter) {
-      $scope.tweetParams = $scope.$parent.column.parameters;
-      $scope.tweetColumn = $scope.$parent.column.id;
-  
+    scope: false,
+    require: '^tweetController',
+    controller: function ($scope, $filter) {  
       $scope.tweets = [];
       $scope.bottomLoading = false;
       
-      initRequest = function() {
+      initRequest = function(columnID) {
         socket.emit('initRequest', {
-          tweetColumn: $scope.tweetColumn, 
+          tweetColumn: columnID, 
           tweetCount: 10
         });
-        console.log('Inital ' + 10 + ' tweets requested for column ' + $scope.tweetColumn);
+        console.log('Inital ' + 10 + ' tweets requested for column ' + columnID);
       };
       
-      initRequest();
+      $scope.$watch('$scope.columns', function() {
+        if($scope.columns!=[]) {
+          initRequest($scope.column.id);
+        }
+      });
       
       // Fires after connection lost and regained
       socket.on('reconnect', function(){
         if ($scope.tweets!=[]) {
           console.log('reconnecting...');
           socket.emit('updateRequest', {
-            tweetColumn: $scope.tweetColumn,
+            tweetColumn: $scope.column.id,
             lastTweet: $scope.tweets[0].id_str
           });
-          console.log('Tweets after ' + $scope.tweets[0].id_str + ' requested for column ' + $scope.tweetColumn);
+          console.log('Tweets after ' + $scope.tweets[0].id_str + ' requested for column ' + $scope.column.id);
         } else {
-          initRequest();
+          console.log('reconnected, but not sure how we get here');
+          initRequest($scope.column.id);
         }
       });
 
       // Fires when new Tweet for top of stack sent by server
       socket.on('topTweet', function(newTweet) {
-        if ((newTweet[0]==$scope.tweetColumn)||(newTweet[0]=='*')){
-          console.log(newTweet[1].length + ' topTweet(s) recieved for column ' + $scope.tweetColumn);
+        if ((newTweet[0]==$scope.column.id)||(newTweet[0]=='*')){
+          console.log(newTweet[1].length + ' topTweet(s) recieved for column ' + $scope.column.id);
           $scope.$evalAsync(function(){
             for (var i=newTweet[1].length-1; i>=0; i--){
               $scope.tweets.unshift(newTweet[1][i]);
@@ -78,8 +81,8 @@ tweetApp.directive('tweetColumn', function(socket){
 
       // Fires when new Tweet for bottom of stack sent by server
       socket.on('bottomTweet', function(newTweet) {
-        if (newTweet[0]==$scope.tweetColumn){
-          console.log(newTweet[1].length + ' bottomTweet(s) recieved for column ' + $scope.tweetColumn);
+        if (newTweet[0]==$scope.column.id){
+          console.log(newTweet[1].length + ' bottomTweet(s) recieved for column ' + $scope.column.id);
           $scope.$evalAsync(function(){
             for (var i=0; i<=newTweet[1].length-1; i++){
               $scope.tweets.push(newTweet[1][i]);
@@ -92,7 +95,7 @@ tweetApp.directive('tweetColumn', function(socket){
       
       // Fires when deletion request is recieved from Twitter via server
       socket.on('deleteTweet', function(id_str){
-        console.log('Tweet ' + id_str + ' deleted from ' + $scope.tweetColumn);
+        console.log('Tweet ' + id_str + ' deleted from ' + $scope.column.id);
         $scope.tweets = $filter('filter')($scope.tweets, {id_str: '!' + id_str});
         $scope.$digest();
       })
@@ -105,7 +108,7 @@ tweetApp.directive('tweetColumn', function(socket){
           console.log('Next 10 tweets after ' + lastTweet + ' requested');
           socket.emit('NextTweets', {
             lastTweet: lastTweet,
-            tweetColumn: $scope.tweetColumn,
+            tweetColumn: $scope.column.id,
             tweetCount: 10
           });
         } else {
