@@ -102,7 +102,7 @@ tweetApp.directive('tweetColumn', function(socket){
 
       // Called by scrollBottom directive when bottom of column is reached by user
       $scope.showMore = function() {
-        if ($scope.bottomLoading==false) {
+        if (($scope.bottomLoading==false) && (socket.connected)) {
           $scope.bottomLoading = true; // set this to true until we get more bottomTweets. 
           var lastTweet = $scope.tweets[$scope.tweets.length-1].id_str;
           console.log('Next 10 tweets after ' + lastTweet + ' requested');
@@ -112,7 +112,7 @@ tweetApp.directive('tweetColumn', function(socket){
             tweetCount: 10
           });
         } else {
-          console.log('Can\'t request more yet - still loading');
+          // either waiting already, or disconnected
         }
       };
     }
