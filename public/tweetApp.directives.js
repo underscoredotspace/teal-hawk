@@ -69,13 +69,28 @@ tweetApp.directive('tweetColumn', function(socket){
       // Fires when new Tweet for top of stack sent by server
       socket.on('topTweet', function(newTweet) {
         if ((newTweet[0]==$scope.column.id)||(newTweet[0]=='*')){
-          console.log(newTweet[1].length + ' topTweet(s) recieved for column ' + $scope.column.id);
-          $scope.$evalAsync(function(){
-            for (var i=newTweet[1].length-1; i>=0; i--){
-              $scope.tweets.unshift(newTweet[1][i]);
-            }
-          });
-          $scope.$digest();
+          if (newTweet[0]=='*') {
+              filterMatch = false;
+              angular.forEach($scope.criteria[$scope.column.id], function(criterion) {
+                if($filter('filter')(newTweet[1], criterion).length>0){
+                  filterMatch = true;
+                };
+              });
+          } else if(newTweet[0]==$scope.column.id) {
+            filterMatch = true;
+          }
+          
+          if (filterMatch) {
+            console.log(newTweet[1].length + ' topTweet(s) recieved for column ' + $scope.column.id);
+            $scope.$evalAsync(function(){
+              for (var i=newTweet[1].length-1; i>=0; i--){
+                $scope.tweets.unshift(newTweet[1][i]);
+              }
+            });
+            $scope.$digest();
+          } else {
+            // console.log('tweet recieved, but not for column ' + $scope.column.id);
+          }
         }
       });
 
