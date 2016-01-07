@@ -22,3 +22,5 @@ exports.access_token_secret = 'access_token_secret';
 // Stream parameters to get anil's @ mentions and his tweets/replies
 exports.twitter = {'track': 'anildash', 'follow': '36823'};
 ```
+
+If you like tracking from PIWIK or Google Analytics, put your code in a file called ````tracking.js```` - no need for any NOSCRIPT shit as this app requires JS to do anything. 
