@@ -1,7 +1,7 @@
 #Filter for tweetColumn
 - ~~Take filter parameters from Mongo collection.~~  
 - ~~In server app.js within InitRequest, NextTweets and UpdateRequest.~~  
-- When new tweet received in client.  
+- ~~When new tweet received in client.~~  
 
 #Show warning somehwere when offline
 - tba
