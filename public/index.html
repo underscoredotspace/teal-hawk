@@ -13,6 +13,7 @@
     <!-- AngularJS and Socket.io -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.5.0-beta.1/angular.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.5.0-beta.1/angular-animate.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.5.0-beta.1/angular-touch.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.9.0/moment.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-moment/0.9.0/angular-moment.min.js"></script>
     <script src="/socket.io/socket.io.js"></script>
@@ -30,6 +31,6 @@
 
   <!-- Start of tweetApp -->
   <body data-ng-controller="tweetController">
-    <span data-ng-repeat="column in columns|filter:{type:tweetColumn}|orderObjectBy:'position'"><div data-tweet-column="column"></div></span>
+    <span data-ng-repeat="column in columns|filter:{type:tweetColumn}|orderObjectBy:'position'"><div data-tweet-column="column" ng-show="{{column.id}}"></div></span>
   </body>
 </html>

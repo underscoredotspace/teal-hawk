@@ -3,4 +3,4 @@ config.js
 .idea/
 users
 .vscode/
-tracking.js
+public/tracking.js

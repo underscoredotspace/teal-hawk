@@ -1,9 +1,9 @@
-<div class="tweet-column">
+<div class="tweet-column" data-ng-swipe-right="prev('{{$index}}')" data-ng-swipe-left="prev('{{$index}}')"
+     ng-animate="{enter:'animated fadeIn',  leave:'animated fadeOut'}">
   <!-- Search box and info -->
   <span class="search-tweets">
     <input data-ng-model="search.text" type="text" class="search-tweets" placeholder="Search">
     <button data-ng-click="search={}" class="search-tweets" focus-input>Clear</button>
-    <span class="filtered-count" data-ng-bind="filteredtweets.length + '/' +tweets.length"></span>
   </span>
 
   <!-- Scrollable container for tweet stream -->

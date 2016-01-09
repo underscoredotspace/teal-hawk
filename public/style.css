@@ -88,7 +88,7 @@ BUTTON.search-tweets{
   display: block;
 }
 .tweet.ng-enter {
-  transition:0.2s linear all;
+  transition:0.5s linear all;
   opacity:0;
 }
 .tweet.ng-enter.ng-enter-active {
