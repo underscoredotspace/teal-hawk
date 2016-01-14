@@ -1,3 +1,10 @@
+var tweetApp = angular.module('tweetApp', ['angularMoment', 'ngAnimate', 'ngTouch']);
+
+tweetApp.factory('socket', function(){
+  var socket = io.connect();
+  return socket;
+});
+
 tweetApp.filter('highlight', function () {
   return function(text, phrase) {
     if (phrase) {

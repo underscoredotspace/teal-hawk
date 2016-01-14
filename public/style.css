@@ -1,8 +1,8 @@
 HTML, BODY {
   -webkit-font-smoothing: antialiased;
-  background-color: #404246;
   padding: 0px;
   margin: 0px;
+  background-color: #404246;
 }
 DIV, SPAN, IMG {
   border: 0px;
@@ -15,27 +15,138 @@ DIV, SPAN, IMG {
 BODY {
   height: 0px;
   font-size: 0px;
+  overflow: hidden;
 }
 .highlighted {
   background:#cca300;
   color: #222426;
 }
-.tweet-container::-webkit-scrollbar {
+.column-holder {
+  display: block;
+  white-space: nowrap;
+  position: absolute;
+  top: 0px;
+  bottom: 0px;
+  left: 0px;
+  right: 0px;
+  height: 100vh;
+  width: 100vw;
+  overflow-x: auto;
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
+}
+.tweets::-webkit-scrollbar {
   width: 15px;
 }
-.tweet-container::-webkit-scrollbar-thumb {
+.tweets::-webkit-scrollbar-thumb {
   background: #222426;
 }
-.tweet-column {
-  width: 375px;
+
+.tweets {
   display: inline-block;
+  position: relative;
+  height: calc(100vh - 22px);
+  overflow: scroll;
+  overflow-x: hidden;
+  width: 375px;
+  background-color: #404246;
+  padding: 2px;
+  -webkit-overflow-scrolling: touch;
+}
+.tweet {
   padding: 0px;
-  padding-right: 2px;
-  margin: 0px;
-  margin-top: -5px;
+  margin-bottom: 5px;
+  width: 100%;
+  color: rgb(221, 221, 221);
+  background-color: #222426;
+  white-space: nowrap;
+}
+
+.tweet-left-column {
+  display: inline-block;
+  white-space: normal;
+  text-align: center;
+  vertical-align: top;
+}
+.profile-image {
+  text-align: center;
+  margin: 10px;
+  width: 40px;
+  height: 40px;
+}
+
+.tweet-right-column {
+  display: inline-block;
+  white-space: normal;
+  width: 290px;
+}
+
+.tweet-user {
+  border-bottom-style: solid;
+  border-bottom-width: 1px;
+  white-space: nowrap;
+  height: 23px;
+  line-height: 23px;
+  padding-left: 3px;
+  padding-right: 3px;
+} 
+
+.tweet-user-name {
+/*  color: #BE67D2;*/
+  float: left;
+  line-height: 23px;
+  height: 23px;
+  vertical-align: top;
+  font-weight: bold;
+}
+
+.tweet-user-screenname {
+  color: #BE67D2;
+  display: inline-block;
+  float: right;
+  text-align: right;
+  line-height: inherit;
+  height: inherit;
+  vertical-align: top;
+  font-size: 75%;
+  font-weight: bold;
+}
+
+.tweet-text {
+/*  min-height: 40px;*/
+  text-align: justify;
+  padding-left: 3px;
+  padding-right: 3px;
+}
+
+.tweet-media {
+  padding-left: 3px;
+  padding-right: 3px;
+  
+}
+
+.tweet-media-image {
+  display: inline-block;
+  max-width: 140px;
+}
+
+.tweet-meta {
+  padding-left: 3px;
+  padding-right: 3px;
+}
+
+.tweet-id {
+  display: none;
+}
+
+.tweet-created-at {
+  color: rgb(0,192,247);
+  font-size: 75%;
+  vertical-align: middle;
+  line-height: 20px;
 }
 SPAN.search-tweets {
-  position: fixed;
+  position: absolute;
   top: 0px;
   width: 375px;
   background-color: #222426;
@@ -67,26 +178,6 @@ BUTTON.search-tweets{
   padding-right: 20px;
   line-height: 30px;
 }
-.tweet-container {
-  position: fixed;
-  top: 37px;
-  bottom: 0px;
-  overflow: scroll;
-  overflow-x: hidden;
-  width: 375px;
-}
-.tweet {
-  float: left;
-  display: block;
-  border: 0px;
-  border-style: solid;
-  margin-bottom: 2px;
-  color: rgb(221, 221, 221);
-  background-color: #222426;
-}
-.tweet-metadata {
-  display: block;
-}
 .tweet.ng-enter {
   transition:0.5s linear all;
   opacity:0;
@@ -94,69 +185,13 @@ BUTTON.search-tweets{
 .tweet.ng-enter.ng-enter-active {
   opacity:1;
 }
-.left-column {
-  float: left;
-}
-.right-column {
-  width: 293px;
-  float: right;
-  min-height: 60px;
-  padding-right: 5px;
-}
-.user, .tweet-text, .created-at {
-  display: block;
-  padding: 2px;
-}
-.tweet-text{
-  text-align: left;
-  margin-right: 3px;
-}
-IMG.tweet-media {
-  max-width: 140px;
-  height: auto;
-}
-.user{
-  font-weight: bold;
-  border-bottom: solid;
-  border-width: 1px;
-  vertical-align: bottom;
-}
-.user-handle, .tweet-id {
-  float: right;
-  vertical-align: middle;
-  line-height: 18px;
-  font-size: 75%;
-}
-.tweet-id {
-  display: none;
-}
-.user-name {
-  font-weight: bold;
-}
-.created-at {
-  color: #999;
-}
-.user-handle {
-  color: #BE67D2;
-}
-.created-at {
-  font-size: 75%;
-  margin-bottom: 5px;
-  float:left;
-  color: #00C0F7;
-}
-IMG.profile-image {
-  margin: 0px;
-  padding: 10px;
-  width: 40px;
-  height: 40px;
-  float: left;
-}
 A, A:hover, A:visited {
   color: #6AB825;
   font-weight: bold;
   text-decoration: none;
 }
 A:hover {
-  text-decoration: underline;
+  text-decoration: none;
+  border-bottom-style: solid;
+  border-bottom-width: 1px;
 }

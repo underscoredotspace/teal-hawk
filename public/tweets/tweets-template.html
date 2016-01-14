@@ -1,0 +1,31 @@
+<!-- Search box and info -->
+<!--
+  <span class="search-tweets">
+    <input data-ng-model="search.text" type="text" class="search-tweets" placeholder="Search">
+    <button data-ng-click="search={}" class="search-tweets" focus-input>Clear</button>
+  </span>
+-->
+
+<div class="tweets" data-scroll-bottom="showMore()">
+    <div class="tweet" data-ng-repeat="tweet in tweets|filter:search as filteredtweets track by $index">
+    <div class="tweet-left-column">
+      <img class="profile-image" src="#" data-ng-src="{{tweet.user.profile_image_url_https}}">
+    </div>
+    <div class="tweet-right-column">
+      <div class="tweet-user">
+        <span class="tweet-user-name" data-ng-bind="tweet.user.name"></span>
+        <span class="tweet-user-screenname" data-ng-bind="tweet.user.screen_name"></span>
+      </div>
+      <div class="tweet-text" data-ng-bind-html="tweet.text|linkyUnsanitized|tweetLinky|highlight:search.text|trustHTML"></div>
+      <div class="tweet-media">
+        <a href="#" data-ng-href="{{media.media_url_https}}" target="_blank" data-ng-repeat="media in tweet.extended_entities.media|filter:{type: photo}">
+          <img class="tweet-media-image" src="#" data-ng-src="{{media.media_url_https + ':thumb'}}">
+        </a>
+      </div>
+      <div class="tweet-meta">
+        <span class="tweet-id" data-ng-bind="tweet.id_str"></span>
+        <span class="tweet-created-at" data--am-time-ago="tweet.created_at"></span>
+      </div>
+    </div>
+  </div>
+</div>

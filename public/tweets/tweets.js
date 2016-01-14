@@ -1,3 +1,44 @@
+tweetApp.controller('tweetsController', function ($scope, $filter, socket){
+  socket.on('connect', function(){
+    console.log('connected');
+  });
+
+  socket.on('connect_error', function(err){
+    console.log('connection error: ' + err);
+  });
+  
+  $scope.columns = [{
+    "id": "fdac",
+    "position": 1,
+    "type": "tweetColumn",
+    "parameters": '{\"$or\":[{\"user.id_str\":\"284537825\"},{\"entities.user_mentions.id_str\":\"284537825\"}]}'
+  },{
+    "id": "e0b1",
+    "position": 2,
+    "type": "tweetColumn",
+    "parameters": '{\"$or\":[{\"user.id_str\":\"284540385\"},{\"entities.user_mentions.id_str\":\"284540385\"}]}'
+  },{
+    "id": "649a",
+    "position": 3,
+    "type": "tweetColumn",
+    "parameters": '{\"$or\":[{\"user.id_str\":\"284537825\"},{\"user.id_str\":\"284540385\"}]}'
+  }];
+  
+  $scope.criteria = [];
+  for (var count = 0; count <= $scope.columns.length-1; count++) {
+    oColumns = JSON.parse($scope.columns[count].parameters);
+    $scope.criteria[$scope.columns[count].id] = {};
+
+    if (oColumns.hasOwnProperty("$or")) {
+      for (var criterion in oColumns["$or"]) {
+        key = Object.keys(oColumns["$or"][criterion])[0];
+        value = oColumns["$or"][criterion][key];
+        $scope.criteria[$scope.columns[count].id][key] = value;
+      }
+    }    
+  }
+});
+
 tweetApp.directive('focusInput', function($timeout) {
   return {
     restrict: 'A',
@@ -18,7 +59,7 @@ tweetApp.directive('scrollBottom', function () {
         if (document.activeElement.tagName=='INPUT'){
           document.activeElement.blur();
         }
-        if (raw.scrollTop + raw.offsetHeight >= raw.scrollHeight) {
+        if (raw.scrollTop + raw.offsetHeight >= (raw.scrollHeight*(1/1.25))) {
           scope.$apply(attrs.scrollBottom);
         }
       });
@@ -29,7 +70,7 @@ tweetApp.directive('scrollBottom', function () {
 tweetApp.directive('tweetColumn', function(socket){
   return {
     restrict: 'A', 
-    templateUrl: 'tweet-column.html',
+    templateUrl: 'tweets/tweets-template.html',
     replace: true,
     scope: false,
     require: '^tweetController',
@@ -89,7 +130,7 @@ tweetApp.directive('tweetColumn', function(socket){
             });
             $scope.$digest();
           } else {
-            // console.log('tweet recieved, but not for column ' + $scope.column.id);
+            console.log('tweet recieved, but not for column ' + $scope.column.id);
           }
         }
       });

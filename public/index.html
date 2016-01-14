@@ -3,7 +3,7 @@
   <head>
     <!-- Browser set up -->
     <meta charset="utf-8">
-    <meta name="viewport" content="width=375">
+    <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes, minimal-ui">
     <title>TealHawk</title>
 
     <!-- Styles -->
@@ -19,18 +19,17 @@
     <script src="/socket.io/socket.io.js"></script>
 
     <!-- teal-hawk Scripts -->
-    <script src="tweetApp.controller.js"></script>
-    <script src="tweetApp.factories.js"></script>
-    <script src="tweetApp.filters.js"></script>
-    <script src="tweetApp.directives.js"></script>
+    <script src="shared.js"></script>
+    <script src="tweets/tweets.js"></script>
     
     <!-- Piwik/Google Tracking code -->
     <script src="tracking.js"></script>
-
   </head>
 
   <!-- Start of tweetApp -->
-  <body data-ng-controller="tweetController">
-    <span data-ng-repeat="column in columns|filter:{type:tweetColumn}|orderObjectBy:'position'"><div data-tweet-column="column" ng-show="{{column.id}}"></div></span>
+  <body data-ng-controller="tweetsController">
+    <div class="column-holder">
+      <div data-ng-repeat="column in columns|filter:{type:tweetColumn}|orderObjectBy:'position'" data-tweet-column="column"></div>
+    </div>
   </body>
 </html>
