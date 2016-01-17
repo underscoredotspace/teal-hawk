@@ -1,13 +1,9 @@
-<!-- Search box and info -->
-<!--
-  <span class="search-tweets">
+<div class="tweets" data-scroll-bottom="showMore()">
+  <div class="search-tweets">
     <input data-ng-model="search.text" type="text" class="search-tweets" placeholder="Search">
     <button data-ng-click="search={}" class="search-tweets" focus-input>Clear</button>
-  </span>
--->
-
-<div class="tweets" data-scroll-bottom="showMore()">
-    <div class="tweet" data-ng-repeat="tweet in tweets|filter:search as filteredtweets track by $index">
+  </div>
+  <div class="tweet" data-ng-repeat="tweet in tweets|filter:search as filteredtweets track by $index">
     <div class="tweet-left-column">
       <img class="profile-image" src="#" data-ng-src="{{tweet.user.profile_image_url_https}}">
     </div>

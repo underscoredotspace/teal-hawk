@@ -17,11 +17,6 @@ tweetApp.controller('tweetsController', function ($scope, $filter, socket){
     "position": 2,
     "type": "tweetColumn",
     "parameters": '{\"$or\":[{\"user.id_str\":\"284540385\"},{\"entities.user_mentions.id_str\":\"284540385\"}]}'
-  },{
-    "id": "649a",
-    "position": 3,
-    "type": "tweetColumn",
-    "parameters": '{\"$or\":[{\"user.id_str\":\"284537825\"},{\"user.id_str\":\"284540385\"}]}'
   }];
   
   $scope.criteria = [];
@@ -73,7 +68,7 @@ tweetApp.directive('tweetColumn', function(socket){
     templateUrl: 'tweets/tweets-template.html',
     replace: true,
     scope: false,
-    require: '^tweetController',
+    require: '^tweetsController',
     controller: function ($scope, $filter) {  
       $scope.tweets = [];
       $scope.bottomLoading = false;

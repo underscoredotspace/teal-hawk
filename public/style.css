@@ -3,6 +3,7 @@ HTML, BODY {
   padding: 0px;
   margin: 0px;
   background-color: #404246;
+  overflow: hidden;
 }
 DIV, SPAN, IMG {
   border: 0px;
@@ -45,17 +46,18 @@ BODY {
 .tweets {
   display: inline-block;
   position: relative;
-  height: calc(100vh - 22px);
+  height: calc(100% - 3px);
   overflow: scroll;
   overflow-x: hidden;
   width: 375px;
+/*  max-width: 100vw;*/
   background-color: #404246;
   padding: 2px;
   -webkit-overflow-scrolling: touch;
 }
 .tweet {
   padding: 0px;
-  margin-bottom: 5px;
+  margin-bottom: 3px;
   width: 100%;
   color: rgb(221, 221, 221);
   background-color: #222426;
@@ -145,15 +147,13 @@ BODY {
   vertical-align: middle;
   line-height: 20px;
 }
-SPAN.search-tweets {
-  position: absolute;
-  top: 0px;
-  width: 375px;
+DIV.search-tweets {
+  position: relative;
   background-color: #222426;
   height: 35px; 
-  border-width: 0px;
-  border-style: solid;
   color: rgb(221, 221, 221);
+  margin-bottom: 3px;
+  margin-top: 2px;
 }
 INPUT.search-tweets, BUTTON.search-tweets {
   height: 25px; 
