@@ -34,12 +34,23 @@ tweetApp.controller('tweetsController', function ($scope, $filter, socket){
   }
 });
 
-tweetApp.directive('focusInput', function($timeout) {
+tweetApp.directive('focusInput', function() {
   return {
     restrict: 'A',
     link: function(scope, element, attrs) {
       element.bind('click', function() {
         element.parent().find('input')[0].focus();
+      });
+    }
+  };
+});
+
+tweetApp.directive('scrollTop', function() {
+  return {
+    restrict: 'A',
+    link: function(scope, element, attrs) {
+      element.bind('focus', function() {
+        element.parent().parent()[0].scrollTop = 0;
       });
     }
   };
@@ -51,7 +62,7 @@ tweetApp.directive('scrollBottom', function () {
     link: function (scope, element, attrs) {
       var raw = element[0];
       element.bind('scroll', function () {
-        if (document.activeElement.tagName=='INPUT'){
+        if ((document.activeElement.tagName=='INPUT')&&(raw.scrollTop>0)){
           document.activeElement.blur();
         }
         if (raw.scrollTop + raw.offsetHeight >= (raw.scrollHeight*(1/1.25))) {

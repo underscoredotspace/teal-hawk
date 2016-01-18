@@ -1,7 +1,7 @@
 <div class="tweets" data-scroll-bottom="showMore()">
   <div class="search-tweets">
-    <input data-ng-model="search.text" type="text" class="search-tweets" placeholder="Search">
-    <button data-ng-click="search={}" class="search-tweets" focus-input>Clear</button>
+    <input data-ng-model="search.text" type="text" class="search-tweets" placeholder="Search" data-scroll-top>
+    <button data-ng-click="search={}" class="search-tweets" data-focus-input>Clear</button>
   </div>
   <div class="tweet" data-ng-repeat="tweet in tweets|filter:search as filteredtweets track by $index">
     <div class="tweet-left-column">
