@@ -5,27 +5,41 @@ app.use(express.static(__dirname + '/public'));
 var server = require('http').createServer(app);
 var io = require('socket.io').listen(server);
 server.listen(3000);
-
 var extend = require('util')._extend;
+var mongodb = require('mongodb').MongoClient;
+var tweetsDB = 'mongodb://127.0.0.1:27017/tweets'
 
-var mongodb = require('mongodb');
-mongodb.connect('mongodb://127.0.0.1:27017/tweets', function (err, db) {
+mongodb.connect(tweetsDB, function (err, db) {
   if (err) {
-    throw err;
+    console.error('Can\'t connect to mongodb. Exiting. ');
+    process.exit(1);
   } else {
     console.log('Connected to mongo');
 
-    io.on('connect', function (socket) {
+    io.sockets.on('connection', function (socket) {
       // Upon connection to single client for first time await listen events
       console.log(socket.id + ' connected');
       
-      // This tells us a brand new client has connected and needs initial Tweets load
+      socket.on('disconnect', function() {
+        console.log(socket.id + ' disconnected');
+      }); 
+      
+//      socket.on('logon', function(username){
+//        console.log(Date() + ': ' + username + ' logged on, requires column data');
+//        db.collection('users').find({username: username}, {columns: 1, _id: 0}).toArray(function(err, columns) {
+//          
+//        });
+//      });
+      
+      // This tells us the new client needs initial Tweets
       socket.on('initRequest', function(initRequest) {
-        console.log('Initial ' + initRequest.tweetCount + ' tweets requested by client ' + socket.id + ' for column ' + initRequest.tweetColumn);
+        // #TODO# - validate initRequest
+        console.log(Date() + ': initRequest from ' + socket.id + ' for ' + initRequest.tweetColumn);
         
         // Get column's search parameters from mongodb
         db.collection('columns').find({'id': initRequest.tweetColumn},{'parameters':1,"_id":0}).limit(1).toArray(function(err, column) {
           // Request 'limit' Tweets from mongodb
+          // #TODO# - make sure we got valid data to column[0]
           db.collection('tweets').find(JSON.parse(column[0].parameters)).sort([['id_str', -1]]).limit(initRequest.tweetCount).toArray(function (err, tweet) {
             if (tweet !== null) {
               // emit Tweets back to client/column that made request
@@ -34,29 +48,31 @@ mongodb.connect('mongodb://127.0.0.1:27017/tweets', function (err, db) {
           }); 
         });
         
-        console.log('Initial ' + initRequest.tweetCount + ' tweets sent to client ' + socket.id + ' for column ' + initRequest.tweetColumn);
-      });
+        console.log(Date() + ': initRequest to ' + socket.id + ' for ' + initRequest.tweetColumn);
+      }); // End of initRequest event
 
       // This event is recieved from a client who lost connection and is reconnecting
       socket.on('updateRequest', function (updateRequest) {
-        console.log('Up-to-date request recieved from client ' + socket.id + '. lastTweet: ' + updateRequest.lastTweet);
+        // #TODO# - validate updateRequest
+        console.log(Date() + ': ' + socket.id + ' reconnected.');
         // Get column's search parameters from mongodb
         db.collection('columns').find({'id': updateRequest.tweetColumn},{'parameters':1,"_id":0}).limit(1).toArray(function(err, column) {
           var query = extend({id_str: {$gt: updateRequest.lastTweet}}, JSON.parse(column[0].parameters));
           db.collection('tweets').find(query).toArray(function (err, tweet) {
             if ((tweet !== null) && (tweet.length>0)) {
               socket.emit('topTweet', [updateRequest.tweetColumn, tweet]);
-              console.log(tweet.length + ' new tweets sent for column ' + updateRequest.tweetColumn);
+              console.log(Date() + ': ' + tweet.length + ' tweets sent to ' + socket.id + ' for column ' + updateRequest.tweetColumn);
             } else {
               console.log('No new tweets since ' + updateRequest.lastTweet + ' to send for column ' + updateRequest.tweetColumn);
             }
           });
         });
-      });
+      }); // End of updateRequest event
       
       // This event is recieved when client goes to bottom of view and needs more tweets
       socket.on('NextTweets', function (nextTweets) {
-        console.log('Next ' + nextTweets.tweetCount + ' Tweets after ' + nextTweets.lastTweet + ' requested by client ' +     socket.id + ' for column ' + nextTweets.tweetColumn);
+        // #TODO# - validate nextTweets
+        console.log(Date() + ': nextTweets from ' + socket.id + ' for ' + nextTweets.tweetColumn + ' after ' + nextTweets.lastTweet);
         var query = {id: nextTweets.tweetColumn};
         var restrict = {parameters:1,_id:0};
         db.collection('columns').find(query,restrict).limit(1).toArray(function(err, column) {
@@ -69,48 +85,67 @@ mongodb.connect('mongodb://127.0.0.1:27017/tweets', function (err, db) {
           }); 
         });
       });
-    });
+    }); // End of NextTweets event
     
     // Config file for private Twitter keys etc.
     var config = require('./config.js');
-    var Twitter = require('twitter');
+    var Twitter = require('twit');
 
     var twit = new Twitter({
       consumer_key: config.consumer_key,
       consumer_secret: config.consumer_secret,
-      access_token_key: config.access_token,
+      access_token: config.access_token,
       access_token_secret: config.access_token_secret
     });
     
     var twitStreamParams = config.twitter;
     
     // Open new Twitter stream with Twat
-    twit.stream('statuses/filter', twitStreamParams, function (stream) {
+    var stream = twit.stream('statuses/filter', twitStreamParams);
     //twit.stream('statuses/sample', function (stream) {
-      console.log('Connected to Twitter');
-      stream.on('data', function (tweet) {
-        if((tweet.text) && (!tweet.retweeted_status)) {
-            tweet.created_at = new Date(tweet.created_at);
-            var tweetOut = [tweet];
-            io.sockets.emit('topTweet', ['*', tweetOut]);
-            console.log('Tweet ' + tweet.id_str + ' created at ' + tweet.created_at);
+    stream.on('connect', function() {
+      console.log(Date() + ': connected to Twitter');
+    });
+    
+    stream.on('tweet', function (tweet) {
+      tweet.created_at = new Date(tweet.created_at);
+      var tweetOut = [tweet];
+      io.sockets.emit('topTweet', ['*', tweetOut]);
+      console.log(tweet.created_at + ' new tweet ' + tweet.id_str);
 
-            db.collection('tweets').insert(tweet, function (err, records) {
-              if (err) throw err;
-              console.log('tweet id ' + tweet.id_str + ' inserted to mongodb');
-            });
-        } else if (tweet.delete) {
-          db.collection('tweets').deleteOne({id_str:tweet.delete.status.id_str}, function(err, records){
-            if (err) throw err; 
-            console.log('Tweet ' + tweet.delete.status.id_str + ' deleted from db');
-            io.sockets.emit('deleteTweet', tweet.delete.status.id_str);
-          });
+      db.collection('tweets').insert(tweet, function (err, records) {
+        if (err) {
+          console.log('Database error: ' + err)
+        } else {
+          console.log('tweet id ' + tweet.id_str + ' inserted to mongodb');
         }
       });
-
-//      stream.on('error', function(error) {
-//        throw error;
-//      });
     });
+      
+    stream.on('delete', function (deleteData) {
+      db.collection('tweets').deleteOne({id_str:deleteData.delete.status.id_str}, function(err, records){
+        if (err) throw err; 
+        console.log(Date() + ': tweet ' + deleteData.delete.status.id_str + ' deleted');
+        io.sockets.emit('deleteTweet', deleteData.delete.status.id_str);
+      });
+    });
+    
+    // bit of debugging here, needs to be handled rather than just spat out
+    stream.on('limit', function (limitMessage) {
+      console.log(Date() + ': ' + {limit: limitMessage});
+    });
+
+    stream.on('reconnect', function (request, response, connectInterval) {
+      console.log(Date() + ': reconnect: ' + connectInterval);
+    })
+
+    stream.on('error', function(error) {
+      console.error(Date() + ': ' + {error: error});
+    });
+
+    stream.on('warning', function(msg) {
+      console.error({warning: msg});
+    });
+    
   }
 });

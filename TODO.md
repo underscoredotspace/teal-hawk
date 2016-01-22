@@ -16,6 +16,7 @@
 - tba
 
 #Interface for creating/editing/deleting tweetColumn
+- [ ] Load column data from database to front-end
 - [ ] Parse filter parameters from Mongo collection for editing.  
 - [ ] Show preview results (perhaps using REST).  
 - [ ] Save edited/new filter parameters to Mongo collection.  
