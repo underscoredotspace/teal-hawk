@@ -7,11 +7,6 @@
 - [ ] bottomTweet 
 - [ ] topTweet 
 
-#Validation for socket requests
-- [ ] initRequest 
-- [ ] updateRequest
-- [ ] nextTweets
-
 #Show warning somehwere when offline
 - tba
 
@@ -25,8 +20,5 @@
 
 #Authentication
 - [ ] Registration, 
-- [ ] Logins, 
- - [ ] with Google, 
- - [ ] Facebook
- - [ ] Twitter
- - [ ] etc.
+- [x] Login with Twitter
+- [x] Validation for socket requests
