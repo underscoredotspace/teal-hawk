@@ -60,7 +60,7 @@ app.get('/',
   });
 
 app.get('/login',function(req,res){
-  res.sendFile(__dirname + '/login.html');
+  res.sendFile(__dirname + '/public/login.html');
 });
 
 app.get('/logout', function(req, res){
