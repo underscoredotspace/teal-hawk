@@ -23,7 +23,6 @@ passport.use(new Strategy({
   },
   function(token, tokenSecret, profile, cb) {
     if(profile.id=='42383066') {;
-    console.log(profile);
       return cb(null, {user_id: profile.id, user_name: profile.username, user_image: profile.photos[0].value});
     } else{
       return cb(null, false);
@@ -54,13 +53,17 @@ app.get('/login/twitter/callback',
   });
 
 app.get('/',
-  require('connect-ensure-login').ensureLoggedIn(),
+  require('connect-ensure-login').ensureLoggedIn('/login'),
   function(req,res){
-  res.sendFile(__dirname + '/public/index.html');
+    res.sendFile(__dirname + '/public/index.html');
   });
 
 app.get('/login',function(req,res){
-  res.sendFile(__dirname + '/public/login.html');
+  if (req.user) {
+    res.redirect('/');
+  } else {
+    res.sendFile(__dirname + '/public/login.html');
+  }
 });
 
 app.get('/logout', function(req, res){
