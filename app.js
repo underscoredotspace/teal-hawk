@@ -1,13 +1,99 @@
-var express = require('express');
-var app = express();
-app.use(express.static(__dirname + '/public'));
-
-var server = require('http').createServer(app);
-var io = require('socket.io').listen(server);
-server.listen(3000);
 var extend = require('util')._extend;
 var mongodb = require('mongodb').MongoClient;
 var tweetsDB = 'mongodb://127.0.0.1:27017/tweets'
+var config = require('./config.js');
+var Twitter = require('twit');
+var express = require('express');
+var app = express();
+var cookieParser = require('cookie-parser');
+var session = require('express-session');
+var passport = require('passport');
+var Strategy = require('passport-twitter').Strategy;
+var server = require('http').createServer(app);
+var MongoStore = require('connect-mongo')(session);
+var sessionStore = new MongoStore({url: tweetsDB});
+var io = require('socket.io').listen(server);
+var passportSocketIo = require("passport.socketio");
+var config = require('./config.js');
+
+passport.use(new Strategy({
+    consumerKey: config.twitter.consumer_key,
+    consumerSecret: config.twitter.consumer_secret,
+    callbackURL: config.twitter.callbackURL
+  },
+  function(token, tokenSecret, profile, cb) {
+    if(profile.id=='42383066') {;
+    console.log(profile);
+      return cb(null, {user_id: profile.id, user_name: profile.username, user_image: profile.photos[0].value});
+    } else{
+      return cb(null, false);
+    }
+  }
+));
+
+passport.serializeUser(function(user, cb) {
+  cb(null, user);
+});
+
+passport.deserializeUser(function(obj, cb) {
+  cb(null, obj);
+});
+
+app.use(session({key: config.passport.key, secret: config.passport.secret, store: sessionStore, saveUninitialized: false, resave: false }));
+app.use(cookieParser());
+app.use(passport.initialize());
+app.use(passport.session());
+
+app.get('/login/twitter',
+  passport.authenticate('twitter'));
+
+app.get('/login/twitter/callback',
+  passport.authenticate('twitter', { failureRedirect: '/login/#/baduser'}),
+  function(req, res) {
+      res.redirect('/');
+  });
+
+app.get('/',
+  require('connect-ensure-login').ensureLoggedIn(),
+  function(req,res){
+  res.sendFile(__dirname + '/public/index.html');
+  });
+
+app.get('/login',function(req,res){
+  res.sendFile(__dirname + '/login.html');
+});
+
+app.get('/logout', function(req, res){
+  req.logout();
+  res.redirect('/');
+});
+
+app.use(express.static(__dirname + '/public'));
+
+io.use(passportSocketIo.authorize({
+  cookieParser: cookieParser,
+  key:          config.passport.key,
+  secret:       config.passport.secret,
+  store:        sessionStore,
+  success:      onAuthorizeSuccess,
+  fail:         onAuthorizeFail
+}));
+
+function onAuthorizeSuccess(data, accept){
+  accept();
+}
+
+function onAuthorizeFail(data, message, error, accept){
+  accept(new Error(message));
+}
+
+io.sockets.on('connection', function(socket) {
+  console.log(socket.id + ' joined');
+  socket.on('disconnect', function() {
+    console.log(socket.id + ' left');
+  });
+});
+//
 
 mongodb.connect(tweetsDB, function (err, db) {
   if (err) {
@@ -23,13 +109,6 @@ mongodb.connect(tweetsDB, function (err, db) {
       socket.on('disconnect', function() {
         console.log(socket.id + ' disconnected');
       }); 
-      
-//      socket.on('logon', function(username){
-//        console.log(Date() + ': ' + username + ' logged on, requires column data');
-//        db.collection('users').find({username: username}, {columns: 1, _id: 0}).toArray(function(err, columns) {
-//          
-//        });
-//      });
       
       // This tells us the new client needs initial Tweets
       socket.on('initRequest', function(initRequest) {
@@ -87,22 +166,15 @@ mongodb.connect(tweetsDB, function (err, db) {
       });
     }); // End of NextTweets event
     
-    // Config file for private Twitter keys etc.
-    var config = require('./config.js');
-    var Twitter = require('twit');
-
     var twit = new Twitter({
-      consumer_key: config.consumer_key,
-      consumer_secret: config.consumer_secret,
-      access_token: config.access_token,
-      access_token_secret: config.access_token_secret
+      consumer_key: config.twitter.consumer_key,
+      consumer_secret: config.twitter.consumer_secret,
+      access_token: config.twitter.access_token,
+      access_token_secret: config.twitter.access_token_secret
     });
-    
-    var twitStreamParams = config.twitter;
-    
+
     // Open new Twitter stream with Twat
-    var stream = twit.stream('statuses/filter', twitStreamParams);
-    //twit.stream('statuses/sample', function (stream) {
+    var stream = twit.stream('statuses/filter', config.twitter.filter);
     stream.on('connect', function() {
       console.log(Date() + ': connected to Twitter');
     });
@@ -149,3 +221,5 @@ mongodb.connect(tweetsDB, function (err, db) {
     
   }
 });
+
+server.listen(3000);
