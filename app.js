@@ -52,12 +52,6 @@ app.get('/login/twitter/callback',
       res.redirect('/');
   });
 
-app.get('/',
-  require('connect-ensure-login').ensureLoggedIn('/login'),
-  function(req,res){
-    res.sendFile(__dirname + '/public/index.html');
-  });
-
 app.get('/login',function(req,res){
   if (req.user) {
     res.redirect('/');
@@ -69,6 +63,16 @@ app.get('/login',function(req,res){
 app.get('/logout', function(req, res){
   req.logout();
   res.redirect('/');
+});
+
+app.get('userbar.html', function(req, res) {
+  // 
+})
+
+app.get('*', 
+  require('connect-ensure-login').ensureLoggedIn('/login'),
+  function(req, res){
+    res.sendFile(__dirname + '/public' + req.url);
 });
 
 app.use(express.static(__dirname + '/public'));
@@ -89,14 +93,6 @@ function onAuthorizeSuccess(data, accept){
 function onAuthorizeFail(data, message, error, accept){
   accept(new Error(message));
 }
-
-io.sockets.on('connection', function(socket) {
-  console.log(socket.id + ' joined');
-  socket.on('disconnect', function() {
-    console.log(socket.id + ' left');
-  });
-});
-//
 
 mongodb.connect(tweetsDB, function (err, db) {
   if (err) {
