@@ -174,15 +174,25 @@ mongodb.connect(tweetsDB, function (err, db) {
 
     // Open new Twitter stream with Twat
     var stream = twit.stream('statuses/filter', config.twitter.filter);
-    stream.on('connect', function() {
+    stream.on('connected', function() {
       console.log(Date() + ': connected to Twitter');
     });
     
     stream.on('tweet', function (tweet) {
+      console.log(tweet.created_at + ' new tweet ' + tweet.id_str);
+      newTweet(tweet);
+    });
+    
+    // Not sure of value add here, but take it anyway. 
+    stream.on('quoted_tweet', function (tweet) {
+      console.log(tweet.created_at + ' new tweet ' + tweet.id_str);
+      newTweet(tweet);
+    });
+    
+    function newTweet(tweet) {
       tweet.created_at = new Date(tweet.created_at);
       var tweetOut = [tweet];
       io.sockets.emit('topTweet', ['*', tweetOut]);
-      console.log(tweet.created_at + ' new tweet ' + tweet.id_str);
 
       db.collection('tweets').insert(tweet, function (err, records) {
         if (err) {
@@ -191,7 +201,7 @@ mongodb.connect(tweetsDB, function (err, db) {
           console.log('tweet id ' + tweet.id_str + ' inserted to mongodb');
         }
       });
-    });
+    }
       
     stream.on('delete', function (deleteData) {
       db.collection('tweets').deleteOne({id_str:deleteData.delete.status.id_str}, function(err, records){
