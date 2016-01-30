@@ -5,6 +5,14 @@ tweetApp.factory('socket', function(){
   return socket;
 });
 
+tweetApp.directive('menuBar', function(){
+  return {
+    restrict: 'E', 
+    templateUrl: '/menu-bar',
+    replace: true
+  }
+});
+
 tweetApp.filter('highlight', function () {
   return function(text, phrase) {
     if (phrase) {

@@ -1,3 +1,4 @@
+"use strict";
 var extend = require('util')._extend;
 var mongodb = require('mongodb').MongoClient;
 var tweetsDB = 'mongodb://127.0.0.1:27017/tweets'
@@ -7,6 +8,7 @@ var express = require('express');
 var app = express();
 var cookieParser = require('cookie-parser');
 var session = require('express-session');
+var ejs = require('ejs');
 var passport = require('passport');
 var Strategy = require('passport-twitter').Strategy;
 var server = require('http').createServer(app);
@@ -38,6 +40,8 @@ passport.deserializeUser(function(obj, cb) {
   cb(null, obj);
 });
 
+app.set('views', __dirname + '/public/ejs_views');
+app.set('view engine', 'ejs');
 app.use(session({key: config.passport.key, secret: config.passport.secret, store: sessionStore, saveUninitialized: false, resave: false }));
 app.use(cookieParser());
 app.use(passport.initialize());
@@ -65,8 +69,8 @@ app.get('/logout', function(req, res){
   res.redirect('/');
 });
 
-app.get('userbar.html', function(req, res) {
-  // 
+app.get('/menu-bar', function(req, res) {
+  res.render('menu-bar', { user: req.user });
 })
 
 app.get('*', 

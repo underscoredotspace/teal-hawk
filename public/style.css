@@ -18,6 +18,16 @@ BODY {
   font-size: 0px;
   overflow: hidden;
 }
+.menu-bar {
+  position: absolute;
+  display: block;
+  top: 0px;
+  bottom: 0px;
+  left: 0px;
+  width: 68px;
+  margin: 2px;
+  background: #222426;
+}
 .highlighted {
   background:#cca300;
   color: #222426;
@@ -26,20 +36,17 @@ BODY {
   display: block;
   white-space: nowrap;
   position: absolute;
-  top: 0px;
-  bottom: 0px;
-  left: 0px;
+  left: 70px;
   right: 0px;
   height: 100vh;
-  width: 100vw;
   overflow-x: auto;
   overflow-y: hidden;
   -webkit-overflow-scrolling: touch;
 }
-.tweets::-webkit-scrollbar {
+::-webkit-scrollbar {
   width: 15px;
 }
-.tweets::-webkit-scrollbar-thumb {
+::-webkit-scrollbar-thumb {
   background: #222426;
 }
 
@@ -72,7 +79,7 @@ BODY {
 }
 .profile-image {
   text-align: center;
-  margin: 10px;
+  margin: 5px 10px 0px 10px;
   width: 40px;
   height: 40px;
 }
@@ -94,7 +101,6 @@ BODY {
 } 
 
 .tweet-user-name {
-/*  color: #BE67D2;*/
   float: left;
   line-height: 23px;
   height: 23px;
@@ -153,7 +159,7 @@ DIV.search-tweets {
   height: 35px; 
   color: rgb(221, 221, 221);
   margin-bottom: 3px;
-  margin-top: 2px;
+  margin-top: 0px;
 }
 INPUT.search-tweets, BUTTON.search-tweets {
   height: 25px; 
