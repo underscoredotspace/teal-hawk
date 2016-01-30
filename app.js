@@ -1,23 +1,30 @@
 "use strict";
 var extend = require('util')._extend;
+
 var mongodb = require('mongodb').MongoClient;
 var tweetsDB = 'mongodb://127.0.0.1:27017/tweets'
+var connectMongo = require('connect-mongo');
+
 var config = require('./config.js');
 var Twitter = require('twit');
 var express = require('express');
-var app = express();
 var cookieParser = require('cookie-parser');
 var session = require('express-session');
 var ejs = require('ejs');
-var passport = require('passport');
-var Strategy = require('passport-twitter').Strategy;
-var server = require('http').createServer(app);
-var MongoStore = require('connect-mongo')(session);
-var sessionStore = new MongoStore({url: tweetsDB});
-var io = require('socket.io').listen(server);
-var passportSocketIo = require("passport.socketio");
-var config = require('./config.js');
 
+var passport = require('passport');
+var passportSocketIo = require("passport.socketio");
+var http = require("http");
+var socketio = require('socket.io');
+
+var app = express();
+var server = http.createServer(app);
+var io = socketio.listen(server);
+var MongoStore = connectMongo(session);
+
+// Passport and Passport.SocketIO setup
+var sessionStore = new MongoStore({url: tweetsDB});
+var Strategy = require('passport-twitter').Strategy;
 passport.use(new Strategy({
     consumerKey: config.twitter.consumer_key,
     consumerSecret: config.twitter.consumer_secret,
@@ -40,6 +47,24 @@ passport.deserializeUser(function(obj, cb) {
   cb(null, obj);
 });
 
+io.use(passportSocketIo.authorize({
+  cookieParser: cookieParser,
+  key:          config.passport.key,
+  secret:       config.passport.secret,
+  store:        sessionStore,
+  success:      onAuthorizeSuccess,
+  fail:         onAuthorizeFail
+}));
+
+function onAuthorizeSuccess(data, accept){
+  accept();
+}
+
+function onAuthorizeFail(data, message, error, accept){
+  accept(new Error(message));
+}
+
+// Express setup
 app.set('views', __dirname + '/public/ejs_views');
 app.set('view engine', 'ejs');
 app.use(session({key: config.passport.key, secret: config.passport.secret, store: sessionStore, saveUninitialized: false, resave: false }));
@@ -47,6 +72,7 @@ app.use(cookieParser());
 app.use(passport.initialize());
 app.use(passport.session());
 
+// Express routes
 app.get('/login/twitter',
   passport.authenticate('twitter'));
 
@@ -79,25 +105,7 @@ app.get('*',
     res.sendFile(__dirname + '/public' + req.url);
 });
 
-app.use(express.static(__dirname + '/public'));
-
-io.use(passportSocketIo.authorize({
-  cookieParser: cookieParser,
-  key:          config.passport.key,
-  secret:       config.passport.secret,
-  store:        sessionStore,
-  success:      onAuthorizeSuccess,
-  fail:         onAuthorizeFail
-}));
-
-function onAuthorizeSuccess(data, accept){
-  accept();
-}
-
-function onAuthorizeFail(data, message, error, accept){
-  accept(new Error(message));
-}
-
+// Connect to mongodb, Twitter stream, and fire listen for socketio request
 mongodb.connect(tweetsDB, function (err, db) {
   if (err) {
     console.error('Can\'t connect to mongodb. Exiting. ');
