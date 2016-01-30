@@ -13,6 +13,19 @@ tweetApp.directive('menuBar', function(){
   }
 });
 
+tweetApp.directive('goThere', function($window){
+  return {
+    restrict: 'A', 
+    link: function($scope, $element, $attrs) {
+      $element.bind('click', function () {
+        $scope.$apply(function () {
+          $window.location.href = $attrs.goThere;
+        });
+      });
+    }
+  }
+});
+
 tweetApp.filter('highlight', function () {
   return function(text, phrase) {
     if (phrase) {
