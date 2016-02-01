@@ -157,9 +157,11 @@ tweetApp.directive('tweetColumn', function(socket){
       
       // Fires when deletion request is recieved from Twitter via server
       socket.on('deleteTweet', function(id_str){
-        console.log('Tweet ' + id_str + ' deleted from ' + $scope.column.id);
-        $scope.tweets = $filter('filter')($scope.tweets, {id_str: '!' + id_str});
-        $scope.$digest();
+        if ($filter('filter')($scope.tweets, {id_str: id_str}).length>0) {
+          console.log('Tweet ' + id_str + ' deleted from ' + $scope.column.id);
+          $scope.tweets = $filter('filter')($scope.tweets, {id_str: '!' + id_str});
+          $scope.$digest();
+        }
       })
 
       // Called by scrollBottom directive when bottom of column is reached by user
