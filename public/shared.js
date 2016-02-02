@@ -104,7 +104,7 @@ tweetApp.filter('tweetLinky',['$filter',
       var replacePattern1 = /(^|\s)#(\w*[a-zA-Z_]+\w*)/gim;
       replacedText = text.replace(replacePattern1, '$1<a href="https://twitter.com/hashtag/$2"' + targetAttr + '>#$2</a>');
 
-      var replacePattern2 = /(^|\s)\@(\w*[a-zA-Z_]+\w*)/gim;
+      var replacePattern2 = /(^|\s)\@(\w*[0-9a-zA-Z_]+\w*)/gim;
       replacedText = replacedText.replace(replacePattern2, '$1<a href="https://twitter.com/$2"' + targetAttr + '>@$2</a>');
 
       return replacedText;
