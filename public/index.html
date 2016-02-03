@@ -14,6 +14,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.5.0-beta.1/angular.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.5.0-beta.1/angular-animate.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.5.0-beta.1/angular-touch.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.5.0-beta.2/angular-route.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.9.0/moment.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-moment/0.9.0/angular-moment.min.js"></script>
     <script src="/socket.io/socket.io.js"></script>
@@ -27,10 +28,7 @@
   </head>
 
   <!-- Start of tweetApp -->
-  <body data-ng-controller="tweetsController">
-    <menu-bar></menu-bar>
-    <div class="column-holder">
-      <div data-ng-repeat="column in columns|filter:{type:tweetColumn}|orderObjectBy:'position'" data-tweet-column="column"></div>
-    </div>
+  <body>
+    <div ng-view></div>
   </body>
 </html>

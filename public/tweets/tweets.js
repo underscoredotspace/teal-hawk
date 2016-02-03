@@ -1,4 +1,4 @@
-tweetApp.controller('tweetsController', function ($scope, $filter, socket){
+tweetApp.controller('tweetDeck', function ($scope, $filter, socket){
   socket.on('connect', function(){
     console.log('connected');
   });
@@ -76,7 +76,7 @@ tweetApp.directive('scrollBottom', function () {
 tweetApp.directive('tweetColumn', function(socket){
   return {
     restrict: 'A', 
-    templateUrl: 'tweets/tweets-template.html',
+    templateUrl: 'tweets/tweet-column.html',
     replace: true,
     scope: false,
     require: '^tweetsController',

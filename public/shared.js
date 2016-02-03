@@ -1,4 +1,12 @@
-var tweetApp = angular.module('tweetApp', ['angularMoment', 'ngAnimate', 'ngTouch']);
+var tweetApp = angular.module('tweetApp', ['angularMoment', 'ngAnimate', 'ngTouch', 'ngRoute']);
+
+tweetApp.config(function($routeProvider) {
+  $routeProvider
+  .when('/', {
+    templateUrl: 'tweets/tweet-deck.html',
+    controller: 'tweetDeck'
+  });
+});
 
 tweetApp.factory('socket', function(){
   var socket = io.connect();

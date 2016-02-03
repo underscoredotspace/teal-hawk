@@ -1,0 +1,4 @@
+    <menu-bar></menu-bar>
+    <div class="column-holder">
+      <div data-ng-repeat="column in columns|filter:{type:tweetColumn}|orderObjectBy:'position'" data-tweet-column="column"></div>
+    </div>
