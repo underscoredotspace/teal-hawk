@@ -4,4 +4,3 @@ users
 .vscode/
 typings/
 public/tracking.js
-gulpfile.js
