@@ -17,6 +17,11 @@ tweetApp.controller('tweetDeck', function ($scope, $filter, socket){
     "position": 2,
     "type": "tweetColumn",
     "parameters": '{\"$or\":[{\"user.id_str\":\"284540385\"},{\"entities.user_mentions.id_str\":\"284540385\"}]}'
+  },{
+    "id": "ab28",
+    "position": 3,
+    "type": "tweetColumn",
+    "parameters": '{\"$or\":[{\"user.id_str\":\"42383066\"},{\"entities.user_mentions.id_str\":\"42383066\"}]}'
   }];
   
   $scope.criteria = [];
