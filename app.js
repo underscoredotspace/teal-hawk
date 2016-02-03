@@ -233,7 +233,8 @@ mongodb.connect(tweetsDB, function (err, db) {
     })
 
     stream.on('error', function(error) {
-      console.error(Date() + ': ' + {error: error});
+      console.log(Date() + ': error - ');
+      console.error(error);
     });
 
     stream.on('warning', function(msg) {
