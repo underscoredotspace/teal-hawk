@@ -197,7 +197,7 @@ mongodb.connect(tweetsDB, function (err, db) {
     
     // Not sure of value add here, but take it anyway. 
     stream.on('quoted_tweet', function (tweet) {
-      console.log(tweet.created_at + ' new tweet ' + tweet.id_str);
+      console.log(tweet.created_at + ' quoted tweet ' + tweet.id_str);
       newTweet(tweet);
     });
     

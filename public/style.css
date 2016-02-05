@@ -135,7 +135,6 @@ BUTTON {
 }
 
 .tweet-text {
-/*  min-height: 40px;*/
   text-align: justify;
   padding-left: 3px;
   padding-right: 3px;
@@ -149,7 +148,7 @@ BUTTON {
 
 .tweet-media-image {
   display: inline-block;
-  max-width: 140px;
+  max-width: 70px;
   padding-top: 3px;
 }
 
@@ -214,4 +213,8 @@ A:hover {
   text-decoration: none;
   border-bottom-style: solid;
   border-bottom-width: 1px;
+}
+A.tweet-media-image:hover {
+  text-decoration: none;
+  border-style: none;
 }

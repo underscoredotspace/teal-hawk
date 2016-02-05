@@ -4,4 +4,4 @@ users
 .vscode/
 typings/
 public/tracking.js
-test.html
+public/test.html
