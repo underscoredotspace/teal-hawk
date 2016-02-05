@@ -225,20 +225,31 @@ mongodb.connect(tweetsDB, function (err, db) {
     
     // bit of debugging here, needs to be handled rather than just spat out
     stream.on('limit', function (limitMessage) {
-      console.log(Date() + ': ' + {limit: limitMessage});
+      console.log(Date() + ': limit - ');
+      console.error(limitMessage);
+      console.log('end of limit');
     });
 
     stream.on('reconnect', function (request, response, connectInterval) {
       console.log(Date() + ': reconnect: ' + connectInterval);
     })
 
+    stream.on('parse-error', function(error) {
+      console.log(Date() + ': parse-error - ');
+      console.error(error);
+      console.log('end of parse-error');
+    });
+
     stream.on('error', function(error) {
       console.log(Date() + ': error - ');
       console.error(error);
+      console.log('end of error');
     });
 
     stream.on('warning', function(msg) {
-      console.error({warning: msg});
+      console.log(Date() + ': warning - ');
+      console.error(msg);
+      console.log('end of warning');
     });
     
   }
