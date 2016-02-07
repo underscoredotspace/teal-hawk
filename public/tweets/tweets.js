@@ -123,7 +123,6 @@ tweetApp.directive('tweetColumn', function(socket){
             if (tweet.extended_entities.media) {
             angular.forEach(tweet.extended_entities.media, function(media_item) {
               if (media_item.type=='photo') {
-                console.log(media_item);
                 tweet.text = tweet.text.replace(media_item.url, '');
               }
             });
