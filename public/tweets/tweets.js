@@ -117,9 +117,23 @@ tweetApp.directive('tweetColumn', function(socket){
           initRequest($scope.column.id);
         }
       });
+      
+      function removePhotoLink (tweet) {
+        if (tweet.extended_entities) {
+            if (tweet.extended_entities.media) {
+            angular.forEach(tweet.extended_entities.media, function(media_item) {
+              if (media_item.type=='photo') {
+                console.log(media_item);
+                tweet.text = tweet.text.replace(media_item.url, '');
+              }
+            });
+            }
+          }
+      }
 
       // Fires when new Tweet for top of stack sent by server
       socket.on('topTweet', function(newTweet) {
+        removePhotoLink(newTweet[1]);
         if ((newTweet[0]==$scope.column.id)||(newTweet[0]=='*')){
           if (newTweet[0]=='*') {
               filterMatch = false;
@@ -148,6 +162,9 @@ tweetApp.directive('tweetColumn', function(socket){
 
       // Fires when new Tweet for bottom of stack sent by server
       socket.on('bottomTweet', function(newTweet) {
+        for (var i=0; i<=newTweet[1].length-1; i++) {
+          removePhotoLink(newTweet[1][i]);
+        }
         if (newTweet[0]==$scope.column.id){
           console.log(newTweet[1].length + ' bottomTweet(s) recieved for column ' + $scope.column.id);
           $scope.$evalAsync(function(){

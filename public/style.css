@@ -149,7 +149,7 @@ BUTTON {
 .tweet-media-image {
   display: inline-block;
   max-width: 70px;
-  padding-top: 3px;
+  padding: 3px 6px 0px 0px;
 }
 
 .tweet-meta {
