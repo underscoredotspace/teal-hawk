@@ -1,5 +1,6 @@
 "use strict";
-var extend = require('util')._extend;
+//var extend = require('util')._extend;
+var extend = require('lodash/fp/extend');
 
 var mongodb = require('mongodb').MongoClient;
 var tweetsDB = 'mongodb://127.0.0.1:27017/tweets'
@@ -130,7 +131,8 @@ mongodb.connect(tweetsDB, function (err, db) {
         db.collection('columns').find({'id': initRequest.tweetColumn},{'parameters':1,"_id":0}).limit(1).toArray(function(err, column) {
           // Request 'limit' Tweets from mongodb
           // #TODO# - make sure we got valid data to column[0]
-          db.collection('tweets').find(JSON.parse(column[0].parameters)).sort([['id_str', -1]]).limit(initRequest.tweetCount).toArray(function (err, tweet) {
+          var searchQuery = extend(JSON.parse(column[0].parameters), {'retweeted_status':{'$exists':false}});
+          db.collection('tweets').find(searchQuery).sort([['id_str', -1]]).limit(initRequest.tweetCount).toArray(function (err, tweet) {
             if (tweet !== null) {
               // emit Tweets back to client/column that made request
               socket.emit('bottomTweet', [initRequest.tweetColumn, tweet]);
@@ -147,8 +149,8 @@ mongodb.connect(tweetsDB, function (err, db) {
         console.log(Date() + ': ' + socket.id + ' reconnected.');
         // Get column's search parameters from mongodb
         db.collection('columns').find({'id': updateRequest.tweetColumn},{'parameters':1,"_id":0}).limit(1).toArray(function(err, column) {
-          var query = extend({id_str: {$gt: updateRequest.lastTweet}}, JSON.parse(column[0].parameters));
-          db.collection('tweets').find(query).toArray(function (err, tweet) {
+          var searchQuery = extend({id_str: {$gt: updateRequest.lastTweet}}, extend(JSON.parse(column[0].parameters), {'retweeted_status':{'$exists':false}}));
+          db.collection('tweets').find(searchQuery).toArray(function (err, tweet) {
             if ((tweet !== null) && (tweet.length>0)) {
               socket.emit('topTweet', [updateRequest.tweetColumn, tweet]);
               console.log(Date() + ': ' + tweet.length + ' tweets sent to ' + socket.id + ' for column ' + updateRequest.tweetColumn);
@@ -167,7 +169,7 @@ mongodb.connect(tweetsDB, function (err, db) {
         var restrict = {parameters:1,_id:0};
         db.collection('columns').find(query,restrict).limit(1).toArray(function(err, column) {
           // Request 'limit' Tweets from mongodb
-          var query = extend({id_str: {$lt: nextTweets.lastTweet}}, JSON.parse(column[0].parameters));
+          var query = extend({id_str: {$lt: nextTweets.lastTweet}}, extend(JSON.parse(column[0].parameters), {'retweeted_status':{'$exists':false}}));
           db.collection('tweets').find(query).sort([['id_str', -1]]).limit(nextTweets.tweetCount).toArray(function (err, tweet) {
             if (tweet !== null) {
               socket.emit('bottomTweet', [nextTweets.tweetColumn, tweet]);
@@ -191,8 +193,8 @@ mongodb.connect(tweetsDB, function (err, db) {
     });
     
     stream.on('tweet', function (tweet) {
-      console.log(tweet.created_at + ' new tweet ' + tweet.id_str);
-      newTweet(tweet);
+        console.log(tweet.created_at + ' new tweet ' + tweet.id_str);
+        newTweet(tweet);
     });
     
     // Not sure of value add here, but take it anyway. 
@@ -204,8 +206,9 @@ mongodb.connect(tweetsDB, function (err, db) {
     function newTweet(tweet) {
       tweet.created_at = new Date(tweet.created_at);
       var tweetOut = [tweet];
-      io.sockets.emit('topTweet', ['*', tweetOut]);
-
+      if(!tweet.retweeted_status) {
+        io.sockets.emit('topTweet', ['*', tweetOut]);
+      }
       db.collection('tweets').insert(tweet, function (err, records) {
         if (err) {
           console.log('Database error: ' + err)

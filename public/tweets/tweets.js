@@ -149,8 +149,8 @@ tweetApp.directive('tweetColumn', function(socket){
             console.log(newTweet[1].length + ' topTweet(s) recieved for column ' + $scope.column.id);
             $scope.$evalAsync(function(){
               for (var i=newTweet[1].length-1; i>=0; i--){
-                $scope.tweets.unshift(newTweet[1][i]);
-              }
+                  $scope.tweets.unshift(newTweet[1][i]);
+                }
             });
             $scope.$digest();
           } else {

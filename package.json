@@ -9,6 +9,7 @@
     "ejs": "^2.4.1",
     "express": "4.13.3",
     "express-session": "^1.13.0",
+    "lodash": "^4.3.0",
     "mongodb": "2.0.49",
     "passport": "^0.3.2",
     "passport-twitter": "^1.0.3",
