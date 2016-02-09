@@ -13,6 +13,13 @@
         <span class="tweet-user-screenname" data-ng-bind="tweet.user.screen_name"></span>
       </div>
       <div class="tweet-text" data-ng-bind-html="tweet.text|linkyUnsanitized|tweetLinky|highlight:search.text|trustHTML"></div>
+      <div class="quoted-tweet" data-ng-if="tweet.is_quote_status">
+        <div class="quoted-tweet-user-screenname">{{'@' + tweet.quoted_status.user.screen_name}}</div>
+        <div data-ng-bind-html="tweet.quoted_status.text|linkyUnsanitized|tweetLinky|highlight:search.text|trustHTML"></div>
+        <a href="#" data-ng-href="{{media.media_url_https}}" class="tweet-media-image" target="_blank" data-ng-repeat="media in tweet.quoted_status.extended_entities.media|filter:{type: photo}">
+          <img class="tweet-media-image" src="#" data-ng-src="{{media.media_url_https + ':thumb'}}">
+        </a>
+      </div>
       <div class="tweet-media">
         <a href="#" data-ng-href="{{media.media_url_https}}" class="tweet-media-image" target="_blank" data-ng-repeat="media in tweet.extended_entities.media|filter:{type: photo}">
           <img class="tweet-media-image" src="#" data-ng-src="{{media.media_url_https + ':thumb'}}">

@@ -205,6 +205,9 @@ mongodb.connect(tweetsDB, function (err, db) {
     
     function newTweet(tweet) {
       tweet.created_at = new Date(tweet.created_at);
+      if (tweet.quote_status) {
+        tweet.quote_status.created_at = new Date(tweet.quote_satus.created_at);
+      }
       var tweetOut = [tweet];
       if(!tweet.retweeted_status) {
         io.sockets.emit('topTweet', ['*', tweetOut]);

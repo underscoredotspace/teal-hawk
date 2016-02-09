@@ -143,7 +143,18 @@ BUTTON {
 .tweet-media {
   padding-left: 3px;
   padding-right: 3px;
-  
+}
+.quoted-tweet {
+  text-align: justify;
+  margin-top: 5px;
+  border-style: dashed;
+  border-width: 1px 0px 1px 0px;
+  border-color: #cca300;
+  background-color: rgba(204, 163, 0, 0.1);
+  padding: 3px;
+}
+.quoted-tweet-user-screenname {
+  font-weight: bold;
 }
 
 .tweet-media-image {
