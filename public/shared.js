@@ -2,9 +2,14 @@ var tweetApp = angular.module('tweetApp', ['angularMoment', 'ngAnimate', 'ngTouc
 
 tweetApp.config(function($routeProvider) {
   $routeProvider
-  .when('/', {
+  .when('/deck', {
     templateUrl: 'tweets/tweet-deck.html',
     controller: 'tweetDeck'
+  // }).when('/config', {
+  //   templateUrl: 'tweets/tweet-deck.html',
+  //   controller: 'tweetDeck'
+  }).otherwise({
+    redirectTo: '/deck'
   });
 });
 

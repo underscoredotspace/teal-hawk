@@ -27,4 +27,6 @@ module.exports = {
 };
 ```
 
+There's actually a couple of other things you need to stick in mongodb. If you work that out, you get a prize. Registration, and column creation processes are needed to sort this. 
+
 If you like tracking from PIWIK or Google Analytics, put your code in a file called ````tracking.js```` - no need for any NOSCRIPT shit as this app requires JS to do anything.
