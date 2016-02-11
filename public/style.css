@@ -42,13 +42,15 @@ BUTTON {
   background:#cca300;
   color: #222426;
 }
-.column-holder {
+.main {
   display: block;
   white-space: nowrap;
   position: absolute;
   left: 72px;
   right: 0px;
   height: calc(100vh - 2px);
+}
+.column-holder {
   overflow-x: auto;
   overflow-y: hidden;
   -webkit-overflow-scrolling: touch;

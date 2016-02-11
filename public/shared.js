@@ -5,13 +5,15 @@ tweetApp.config(function($routeProvider) {
   .when('/deck', {
     templateUrl: 'tweets/tweet-deck.html',
     controller: 'tweetDeck'
-  // }).when('/config', {
-  //   templateUrl: 'tweets/tweet-deck.html',
-  //   controller: 'tweetDeck'
+  }).when('/config', {
+    templateUrl: 'config/index.html',
+    controller: 'configController'
   }).otherwise({
     redirectTo: '/deck'
   });
 });
+
+tweetApp.controller('configController', function () {});
 
 tweetApp.factory('socket', function(){
   var socket = io.connect();
@@ -33,6 +35,7 @@ tweetApp.directive('goThere', function($window){
       $element.bind('click', function () {
         $scope.$apply(function () {
           $window.location.href = $attrs.goThere;
+          document.activeElement.blur();
         });
       });
     }
