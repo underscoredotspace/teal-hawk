@@ -7,36 +7,23 @@ tweetApp.controller('tweetDeck', function ($scope, $filter, socket){
     console.log('connection error: ' + err);
   });
   
-  $scope.columns = [{
-    "id": "fdac",
-    "position": 1,
-    "type": "tweetColumn",
-    "parameters": '{\"$or\":[{\"user.id_str\":\"284537825\"},{\"entities.user_mentions.id_str\":\"284537825\"}]}'
-  },{
-    "id": "e0b1",
-    "position": 2,
-    "type": "tweetColumn",
-    "parameters": '{\"$or\":[{\"user.id_str\":\"284540385\"},{\"entities.user_mentions.id_str\":\"284540385\"}]}'
-  },{
-    "id": "ab28",
-    "position": 3,
-    "type": "tweetColumn",
-    "parameters": '{\"$or\":[{\"user.id_str\":\"42383066\"},{\"entities.user_mentions.id_str\":\"42383066\"}]}'
-  }];
-  
-  $scope.criteria = [];
-  for (var count = 0; count <= $scope.columns.length-1; count++) {
-    oColumns = JSON.parse($scope.columns[count].parameters);
-    $scope.criteria[$scope.columns[count].id] = {};
+  socket.on('columns', function (columns) {
+    $scope.columns = columns;
+    $scope.criteria = [];
+    for (var count = 0; count <= $scope.columns.length-1; count++) {
+      oColumns = JSON.parse($scope.columns[count].parameters);
+      $scope.criteria[$scope.columns[count].id] = {};
 
-    if (oColumns.hasOwnProperty("$or")) {
-      for (var criterion in oColumns["$or"]) {
-        key = Object.keys(oColumns["$or"][criterion])[0];
-        value = oColumns["$or"][criterion][key];
-        $scope.criteria[$scope.columns[count].id][key] = value;
-      }
-    }    
-  }
+      if (oColumns.hasOwnProperty("$or")) {
+        for (var criterion in oColumns["$or"]) {
+          key = Object.keys(oColumns["$or"][criterion])[0];
+          value = oColumns["$or"][criterion][key];
+          $scope.criteria[$scope.columns[count].id][key] = value;
+        }
+      }     
+    }
+    $scope.$apply();
+  });
 });
 
 tweetApp.directive('focusInput', function() {
