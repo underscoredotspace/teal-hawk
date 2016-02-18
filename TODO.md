@@ -18,6 +18,7 @@
 - [ ] Save edited/new filter parameters to Mongo collection
 - [ ] Update stream parameters for server-side app.js and restart as required
 - [ ] Delete tweetColumn
+- [ ] Appropriate route for new user with no columns
 
 #Authentication
 - [ ] Registration

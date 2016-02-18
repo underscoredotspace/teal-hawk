@@ -50,6 +50,11 @@ BUTTON {
   right: 0px;
   height: calc(100vh - 2px);
 }
+
+.new-column-button, .new-column-input {
+  display: block;
+}
+
 .column-holder {
   overflow-x: auto;
   overflow-y: hidden;

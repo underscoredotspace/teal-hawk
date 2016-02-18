@@ -6,14 +6,12 @@ tweetApp.config(function($routeProvider) {
     templateUrl: 'tweets/tweet-deck.html',
     controller: 'tweetDeck'
   }).when('/config', {
-    templateUrl: 'config/index.html',
+    templateUrl: 'config/config.html',
     controller: 'configController'
   }).otherwise({
     redirectTo: '/deck'
   });
 });
-
-tweetApp.controller('configController', function () {});
 
 tweetApp.factory('socket', function(){
   var socket = io.connect();

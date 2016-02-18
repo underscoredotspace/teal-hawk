@@ -102,7 +102,7 @@ app.get('/logout', function(req, res){
 
 app.get('/menu-bar', function(req, res) {
   res.render('menu-bar', { user: req.user });
-})
+});
 
 app.get('*', 
   require('connect-ensure-login').ensureLoggedIn('/login'),
@@ -129,63 +129,51 @@ mongodb.connect(tweetsDB, function (err, db) {
       socket.on('disconnect', function() {
         console.log(socket.id + ' disconnected');
       }); 
-      
+   
       // This tells us the new client needs initial Tweets
-      socket.on('initRequest', function(initRequest) {
+      socket.on('initRequest', function(tweetColumn) {
         // #TODO# - validate initRequest
-        console.log(Date() + ': initRequest from ' + socket.id + ' for ' + initRequest.tweetColumn);
+        console.log(Date() + ': initRequest from ' + socket.id + ' for ' + tweetColumn.id);
+        var searchQuery = {'$and': [JSON.parse(tweetColumn.parameters), {'retweeted_status':{'$exists':false}}]};
+        db.collection('tweets').find(searchQuery).sort([['id_str', -1]]).limit(tweetColumn.tweetCount).toArray(function (err, tweet) {
+          if (tweet !== null) {
+            // emit Tweets back to client/column that made request
+            socket.emit('bottomTweet', [tweetColumn.id, tweet]);
+          }
+        }); 
         
-        // Get column's search parameters from mongodb
-        db.collection('columns').find({'id': initRequest.tweetColumn},{'parameters':1,"_id":0}).limit(1).toArray(function(err, column) {
-          // Request 'limit' Tweets from mongodb
-          // #TODO# - make sure we got valid data to column[0]
-          var searchQuery = extend(JSON.parse(column[0].parameters), {'retweeted_status':{'$exists':false}});
-          db.collection('tweets').find(searchQuery).sort([['id_str', -1]]).limit(initRequest.tweetCount).toArray(function (err, tweet) {
-            if (tweet !== null) {
-              // emit Tweets back to client/column that made request
-              socket.emit('bottomTweet', [initRequest.tweetColumn, tweet]);
-            }
-          }); 
-        });
-        
-        console.log(Date() + ': initRequest to ' + socket.id + ' for ' + initRequest.tweetColumn);
+        console.log(Date() + ': initRequest to ' + socket.id + ' for ' + tweetColumn.id);
       }); // End of initRequest event
 
       // This event is recieved from a client who lost connection and is reconnecting
       socket.on('updateRequest', function (updateRequest) {
         // #TODO# - validate updateRequest
         console.log(Date() + ': ' + socket.id + ' reconnected.');
-        // Get column's search parameters from mongodb
-        db.collection('columns').find({'id': updateRequest.tweetColumn},{'parameters':1,"_id":0}).limit(1).toArray(function(err, column) {
-          var searchQuery = extend({id_str: {$gt: updateRequest.lastTweet}}, extend(JSON.parse(column[0].parameters), {'retweeted_status':{'$exists':false}}));
+
+          //var searchQuery = extend({id_str: {$gt: updateRequest.lastTweet}}, , {'retweeted_status':{'$exists':false}}));
+          var searchQuery = {'$and': [JSON.parse(updateRequest.parameters), {'retweeted_status':{'$exists':false}}, {id_str: {$gt: updateRequest.lastTweet}}]};
           db.collection('tweets').find(searchQuery).toArray(function (err, tweet) {
             if ((tweet !== null) && (tweet.length>0)) {
-              socket.emit('topTweet', [updateRequest.tweetColumn, tweet]);
-              console.log(Date() + ': ' + tweet.length + ' tweets sent to ' + socket.id + ' for column ' + updateRequest.tweetColumn);
+              socket.emit('topTweet', [updateRequest.id, tweet]);
+              console.log(Date() + ': ' + tweet.length + ' tweets sent to ' + socket.id + ' for column ' + updateRequest.id);
             } else {
-              console.log('No new tweets since ' + updateRequest.lastTweet + ' to send for column ' + updateRequest.tweetColumn);
+              console.log('No new tweets since ' + updateRequest.lastTweet + ' to send for column ' + updateRequest.id);
             }
           });
-        });
       }); // End of updateRequest event
       
       // This event is recieved when client goes to bottom of view and needs more tweets
       socket.on('NextTweets', function (nextTweets) {
-        // #TODO# - validate nextTweets
-        console.log(Date() + ': nextTweets from ' + socket.id + ' for ' + nextTweets.tweetColumn + ' after ' + nextTweets.lastTweet);
-        var query = {id: nextTweets.tweetColumn};
-        var restrict = {parameters:1,_id:0};
-        db.collection('columns').find(query,restrict).limit(1).toArray(function(err, column) {
-          // Request 'limit' Tweets from mongodb
-          var query = extend({id_str: {$lt: nextTweets.lastTweet}}, extend(JSON.parse(column[0].parameters), {'retweeted_status':{'$exists':false}}));
-          db.collection('tweets').find(query).sort([['id_str', -1]]).limit(nextTweets.tweetCount).toArray(function (err, tweet) {
-            if (tweet !== null) {
-              socket.emit('bottomTweet', [nextTweets.tweetColumn, tweet]);
-            } 
-          }); 
-        });
-      });
-    }); // End of NextTweets event
+        var searchQuery = {'$and': [JSON.parse(nextTweets.parameters), {'retweeted_status':{'$exists':false}}, {id_str: {$lt: nextTweets.lastTweet}}]};
+        db.collection('tweets').find(searchQuery).sort([['id_str', -1]]).limit(nextTweets.tweetCount).toArray(function (err, tweet) {
+          if (tweet !== null) {
+            // emit Tweets back to client/column that made request
+            socket.emit('bottomTweet', [nextTweets.id, tweet]);
+          }
+        }); 
+      }); // End of NextTweets event
+    }); //End of io.sockets.on('connection')
+          
     
     var twit = new Twitter({
       consumer_key: config.twitter.consumer_key,
@@ -264,8 +252,7 @@ mongodb.connect(tweetsDB, function (err, db) {
       console.log(Date() + ': warning - ');
       console.error(msg);
       console.log('end of warning');
-    });
-    
+    });  
   }
 });
 

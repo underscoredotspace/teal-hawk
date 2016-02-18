@@ -1,0 +1,16 @@
+<div class="main">
+  <h1>Follow</h1>
+  <button class="new-column-button" data-ng-click="addfollow()">Add</button>
+  <div class="new-column-criteria" data-ng-repeat="follow in follows track by $index">
+    <input data-ng-model="follow.search">
+    <button data-ng-click="removefollow($index)">X</button>
+  </div>
+
+  <h1>Track</h1>
+  <button class="new-column-button" data-ng-click="addtrack()">Add</button>
+  <div class="new-column-criteria" data-ng-repeat="track in tracks">
+    <input data-ng-model="track.search">
+    <button data-ng-click="removetrack($index)">X</button>
+  </div>
+  <button data-ng-click="showinputdata()">Show Objects</button>
+</div>
