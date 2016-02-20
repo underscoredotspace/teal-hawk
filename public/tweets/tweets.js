@@ -13,19 +13,6 @@ tweetApp.controller('tweetDeck', function ($scope, $filter, socket){
       $scope.columns = columns;
       $scope.$apply();
     };
-  //   $scope.criteria = [];
-  //   for (var count = 0; count <= $scope.columns.length-1; count++) {
-  //     oColumns = JSON.parse($scope.columns[count].parameters);
-  //     $scope.criteria[$scope.columns[count].id] = {};
-
-  //     if (oColumns.hasOwnProperty("$or")) {
-  //       for (var criterion in oColumns["$or"]) {
-  //         key = Object.keys(oColumns["$or"][criterion])[0];
-  //         value = oColumns["$or"][criterion][key];
-  //         $scope.criteria[$scope.columns[count].id][key] = value;
-  //       }
-  //     }     
-  //   }
   });
 });
 
@@ -79,7 +66,7 @@ tweetApp.directive('tweetColumn', function(socket){
       $scope.tweets = [];
       $scope.bottomLoading = false;
       
-      initRequest = function() {
+      var initRequest = function() {
         var tweetColumn = angular.extend({}, {tweetCount: 10}, $scope.column);
         socket.emit('initRequest', tweetColumn);
         console.log('Inital ' + 10 + ' tweets requested for column ' + $scope.column.id);
@@ -119,20 +106,7 @@ tweetApp.directive('tweetColumn', function(socket){
 
       // Fires when new Tweet for top of stack sent by server
       socket.on('topTweet', function(newTweet) {
-        var filterMatch = false;
-        if ((newTweet[0]==$scope.column.id)||(newTweet[0]=='*')){
-          if (newTweet[0]=='*') {
-              filterMatch = false;
-              angular.forEach($scope.criteria[$scope.column.id], function(criterion) {
-                if($filter('filter')(newTweet[1], criterion).length>0){
-                  filterMatch = true;
-                };
-              });
-          } else if(newTweet[0]==$scope.column.id) {
-            filterMatch = true;
-          }
-          
-          if (filterMatch) {
+        if (_.indexOf(newTweet[0],$scope.column.id)!=-1) {
             console.log(newTweet[1].length + ' topTweet(s) recieved for column ' + $scope.column.id);
             $scope.$evalAsync(function(){
               for (var i=newTweet[1].length-1; i>=0; i--){
@@ -144,9 +118,7 @@ tweetApp.directive('tweetColumn', function(socket){
           } else {
             console.log('tweet recieved, but not for column ' + $scope.column.id);
           }
-        }
       });
-
       // Fires when new Tweet for bottom of stack sent by server
       socket.on('bottomTweet', function (newTweet) {
         if (newTweet[0]==$scope.column.id){

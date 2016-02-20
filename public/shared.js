@@ -1,4 +1,4 @@
-var tweetApp = angular.module('tweetApp', ['angularMoment', 'ngAnimate', 'ngTouch', 'ngRoute']);
+var tweetApp = angular.module('tweetApp', ['angularMoment', 'ngAnimate', 'ngTouch', 'ngRoute']).constant('_', window._);;
 
 tweetApp.config(function($routeProvider) {
   $routeProvider

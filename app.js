@@ -1,7 +1,8 @@
 "use strict";
 //var extend = require('util')._extend;
-var extend = require('lodash/fp/extend');
-
+var _ = require("underscore");
+var extend = _.extend;
+var query = require("underscore-query")(_, false);
 var mongodb = require('mongodb').MongoClient;
 var tweetsDB = 'mongodb://127.0.0.1:27017/tweets'
 var connectMongo = require('connect-mongo');
@@ -33,7 +34,7 @@ passport.use(new Strategy({
   },
   function(token, tokenSecret, profile, cb) {
     mongodb.connect(tweetsDB, function (err, db) {
-      db.collection('users').find({'twitter_id': profile.id}).limit(1).toArray(function(err, user){
+      db.collection('users').find({'twitter_id': profile.id}).limit(1).toArray(function(err, user){        
         if (user.length>0) {
           return cb(null, {user_id: profile.id, user_name: profile.username, user_image: profile.photos[0].value});
         } else{
@@ -72,6 +73,7 @@ function onAuthorizeFail(data, message, error, accept){
 // Express setup
 app.set('views', __dirname + '/public/ejs_views');
 app.set('view engine', 'ejs');
+app.use('/bower_components',  express.static(__dirname + '/bower_components'));
 app.use(session({key: config.passport.key, secret: config.passport.secret, store: sessionStore, saveUninitialized: false, resave: false }));
 app.use(cookieParser());
 app.use(passport.initialize());
@@ -117,6 +119,7 @@ mongodb.connect(tweetsDB, function (err, db) {
     process.exit(1);
   } else {
     console.log('Connected to mongo');
+    var deckConnections = [];
 
     io.sockets.on('connection', function (socket) {
       // Upon connection to single client for first time await listen events
@@ -124,9 +127,17 @@ mongodb.connect(tweetsDB, function (err, db) {
       
       db.collection('users').find({twitter_id: socket.request.user.user_id}, {columns:1, _id: 0}).limit(1).toArray(function(err, usercolumns) {
         socket.emit('columns', usercolumns[0].columns);
+        usercolumns[0].columns.forEach(function(column) {
+          deckConnections.push(extend(column, {socket: socket.id}));
+        });
       });
       
       socket.on('disconnect', function() {
+        deckConnections.forEach(function(connection, index) {
+          if (connection.socket == socket.id) {
+            deckConnections.splice(index,1);
+          }
+        })
         console.log(socket.id + ' disconnected');
       }); 
    
@@ -200,13 +211,22 @@ mongodb.connect(tweetsDB, function (err, db) {
     });
     
     function newTweet(tweet) {
+      // Fit date formats for AngularMoment
       tweet.created_at = new Date(tweet.created_at);
       if (tweet.quote_status) {
         tweet.quote_status.created_at = new Date(tweet.quote_satus.created_at);
       }
-      var tweetOut = [tweet];
+      
+      // Check to see if any open connections have columns that need this tweet
+      var outColumns = [];
+      deckConnections.forEach(function(connection, index) {
+        if(query([tweet], JSON.parse(connection.parameters)).length>0) {
+          outColumns.push(connection.id);
+        }
+      });
+      
       if(!tweet.retweeted_status) {
-        io.sockets.emit('topTweet', ['*', tweetOut]);
+        io.sockets.emit('topTweet', [_.uniq(outColumns), [tweet]]);
       }
       db.collection('tweets').insert(tweet, function (err, records) {
         if (err) {
