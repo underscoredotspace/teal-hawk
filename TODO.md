@@ -1,18 +1,6 @@
-#Filter for tweetColumn
-- [x] Take filter parameters from Mongo collection
-- [x] In server app.js within InitRequest, NextTweets and UpdateRequest
-- [x] When new tweet received in client
-
-#Consistent socket data - not arrays please
-- [ ] bottomTweet
-- [ ] topTweet
-
-#Show warning somehwere when offline
-- tba
-
 #Interface for creating/editing/deleting tweetColumn
 - [X] Load column data from database to front-end
-- [ ] Ability to add new tweet column
+- [ ] **Ability to add new tweet column**
 - [ ] Parse filter parameters from Mongo collection for editing
 - [ ] Show preview results (perhaps using REST)
 - [ ] Save edited/new filter parameters to Mongo collection
@@ -25,3 +13,6 @@
 - [x] Login with Twitter
 - [x] Log out
 - [x] Validation for socket requests
+
+#Show warning somehwere when offline
+- tba
