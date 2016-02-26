@@ -16,8 +16,14 @@ tweetApp.controller('configController', function ($scope) {
     $scope.tracks.splice(index,1);
   };
   
+  // var newColumn = {
+  //   tweets: ['123456', ]
+  // };
+  
   $scope.showinputdata = function () {
-    var raw = {from: [], to: []};
+    var raw = {} //{from: [], to: []};
+    
+    //raw.to = _.pluck($scope.mentions, '')
     
     if ($scope.follows.length == 1) {
       raw.to = $scope.follows[0].search;
@@ -40,18 +46,18 @@ tweetApp.controller('configController', function ($scope) {
   
   function object2mongo (raw) {
     var errors = [];
-    var fail = false;
     var mongoQuery = {};
     var queryTo = {};
     var queryFrom = {};
     
+    raw = angular.extend({from: [], to: []}, raw);
+    
     if ((raw.from.length==0) && (raw.to.length==0)) {
-      fail = true;
       errors.push('one or more of "to" or "from" property required');
     } else {
     
       if (raw.hasOwnProperty('to')) {
-        // if raw.to isn't valid, push error text and fail=true
+        // if raw.to isn't valid, push error text
         if (raw.to.length == 1) {
           queryTo = {"entities.user_mentions":{"$elemMatch":{"id_str":raw.to[0]}}};
         } else if ((raw.to.length > 1)) { // if $scope.to.length > 1;
@@ -59,8 +65,8 @@ tweetApp.controller('configController', function ($scope) {
         }
       }
       if (raw.hasOwnProperty('from')) {
-        // if raw.from isn't valid, push error text and fail=true
-        if (typeof(raw.from) == 'string') {
+        // if raw.from isn't valid, push error text
+        if (raw.from.length == 1) {
           queryFrom = {"user.id_str":raw.from};
         } else if ((raw.from.length > 1) && (raw.from.length!=0)) { // if $scope.to.length > 1;
           queryFrom = {"user.id_str":{"$in":raw.from}};
@@ -75,7 +81,7 @@ tweetApp.controller('configController', function ($scope) {
         mongoQuery =  {"$or": [queryFrom, queryTo]};
       }
     }
-    if (fail == false) {
+    if (errors != []) {
       return {mongoQuery: mongoQuery};
     } else {
       return {errors: errors};

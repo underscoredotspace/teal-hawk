@@ -156,4 +156,94 @@ tweetApp.directive('tweetColumn', function(socket){
       };
     }
   }
-})
+});
+
+tweetApp.directive('addTweetColumn', function(){
+  return {
+    restrict: 'A', 
+    templateUrl: '/tweets/add-column.html',
+    replace: true, 
+    controller: function($scope) {
+      $scope.tos = [{user: ''}];
+      $scope.froms = [{user: ''}];
+      
+      $scope.addTo = function () {
+        $scope.tos.push({user: ''});
+      };
+      $scope.addFrom = function () {
+        $scope.froms.push({user: ''});
+      };
+      
+      $scope.addColumn = function () {
+        var tos = _.uniq(_.compact(_.pluck($scope.tos, 'user')));
+        var froms = _.uniq(_.compact(_.pluck($scope.froms, 'user')));
+        console.log(JSON.stringify(object2mongo({to: tos, from: froms})));
+      }
+      
+      function object2mongo (raw) {
+        var errors = [];
+        var mongoQuery = {};
+        var queryTo = {};
+        var queryFrom = {};
+        
+        console.log(JSON.stringify(raw));
+        
+        if ((raw.from.length==0) && (raw.to.length==0)) {
+          errors.push('one or more of "to" or "from" property required');
+        } else {
+        
+          if (raw.hasOwnProperty('to')) {
+            // if raw.to isn't valid, push error text
+            if (Array.isArray(raw.to) && (raw.to.length>1)) {
+              queryTo = {"entities.user_mentions":{"$elemMatch":{"id_str":{"$in":raw.to}}}};
+            } else if (Array.isArray(raw.to)) {
+              queryTo = {"entities.user_mentions":{"$elemMatch":{"id_str":raw.to[0]}}};
+            }
+          }
+          
+          if (raw.hasOwnProperty('from')) {
+            // if raw.from isn't valid, push error text
+            if (Array.isArray(raw.from) && (raw.from.length>1)) {
+              queryFrom = {"user.id_str":{"$in":raw.from}};
+            } else if (Array.isArray(raw.from)) {
+              queryFrom = {"user.id_str":raw.from[0]};
+            }
+          }
+          
+          raw = _.extend({from: [], to: []}, raw);
+          console.log(JSON.stringify(raw));
+          
+          if ((raw.from.length>0) && (raw.to.length==0)) {
+            mongoQuery = queryFrom;
+          } else if ((raw.to.length>0) && (raw.from.length==0)) {
+            mongoQuery =  queryTo;
+          // } else if ((raw.to.length==0) && (raw.from.length==0)) {
+          //   errors.push('one or more of "to" or "from" property required');
+          } else {
+            mongoQuery =  {"$or": [queryFrom, queryTo]};
+          }
+        }
+        
+        if (errors.length==0) {
+          return {mongoQuery: mongoQuery};
+        } else {
+          return {errors: errors};
+        }
+      }
+      
+      // staging data only
+      $scope.listen_users = [
+        {
+          id_str: '42383066',
+          screen_name: '_DotSpace' 
+        },{
+          id_str: '284540385',
+          screen_name: 'NatWest_Help' 
+        },{
+          id_str: '284537825',
+          screen_name: 'RBS_Help' 
+        },
+      ]
+    }
+  }
+});

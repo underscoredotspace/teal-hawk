@@ -1,0 +1,30 @@
+<div class="add-tweet-column">
+  <div class="add-column-title ">Add Column</div>
+  <div class="add-column-column-holder">
+    <div class="add-column-column ">
+        <div class="">Tweets</div>
+        <div ng-repeat="from in froms" class="">
+          <select name="tweets"  data-ng-model="from.user">
+            <option value-"blank"></option>
+            <option data-ng-repeat="user in listen_users" value="{{user.id_str}}">{{user.screen_name}}</option>
+          </select>
+        </div>
+        <button data-ng-click="addFrom()">+</button>
+      </div>
+      
+      <div class="add-column-column">
+        <div class="">Mentions</div>
+        <div data-ng-repeat="to in tos" class="">
+          <select name="mentions" data-ng-model="to.user">
+            <option value-"blank"></option>
+            <option data-ng-repeat="user in listen_users" value="{{user.id_str}}">{{user.screen_name}}</option>
+          </select>
+        </div>
+        <button data-ng-click="addTo()">+</button>
+      </div>
+  </div>
+  <div class="add-column-buttons">
+    <button data-ng-click="">Cancel</button>
+    <button data-ng-click="addColumn()">Add</button>
+  </div>
+</div>
