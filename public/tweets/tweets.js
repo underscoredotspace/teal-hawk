@@ -1,4 +1,6 @@
-tweetApp.controller('tweetDeck', function ($scope, $filter, socket){
+tweetApp.controller('tweetDeck', function ($scope, $filter, socket, $routeParams){
+  if ($routeParams.param == 'reload') {socket.emit('reload', []);}
+  
   socket.on('connect', function(){
     console.log('connected');
   });

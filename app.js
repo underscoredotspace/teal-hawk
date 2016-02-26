@@ -125,12 +125,18 @@ mongodb.connect(tweetsDB, function (err, db) {
       // Upon connection to single client for first time await listen events
       console.log(socket.id + ' connected');
       
-      db.collection('users').find({twitter_id: socket.request.user.user_id}, {columns:1, _id: 0}).limit(1).toArray(function(err, usercolumns) {
-        socket.emit('columns', usercolumns[0].columns);
-        usercolumns[0].columns.forEach(function(column) {
-          deckConnections.push(extend(column, {socket: socket.id}));
+      var loggedIn = function () {
+        db.collection('users').find({twitter_id: socket.request.user.user_id}, {columns:1, _id: 0}).limit(1).toArray(function(err, usercolumns) {
+          socket.emit('columns', usercolumns[0].columns);
+          usercolumns[0].columns.forEach(function(column) {
+            deckConnections.push(extend(column, {socket: socket.id}));
+          });
         });
-      });
+      }      
+      
+      loggedIn();
+      
+      socket.on('reload', function () {loggedIn()});  
       
       socket.on('disconnect', function() {
         deckConnections.forEach(function(connection, index) {
