@@ -67,6 +67,7 @@ tweetApp.directive('tweetColumn', function(socket){
     controller: function ($scope, $filter) {
       $scope.tweets = [];
       $scope.bottomLoading = false;
+      $scope.settingsVisible = false;
       
       var initRequest = function() {
         var tweetColumn = angular.extend({}, {tweetCount: 10}, $scope.column);
@@ -175,6 +176,12 @@ tweetApp.directive('addTweetColumn', function(){
       $scope.addFrom = function () {
         $scope.froms.push({user: ''});
       };
+      $scope.delTo = function (index) {
+        if ($scope.tos.length!=1) {$scope.tos.splice(index,1);}
+      };
+      $scope.delFrom = function (index) {
+        if ($scope.froms.length!=1) {$scope.froms.splice(index,1);}
+      };
       
       $scope.addColumn = function () {
         var tos = _.uniq(_.compact(_.pluck($scope.tos, 'user')));
@@ -188,6 +195,7 @@ tweetApp.directive('addTweetColumn', function(){
         var queryTo = {};
         var queryFrom = {};
         
+        raw = _.extend({from: [], to: []}, raw);
         console.log(JSON.stringify(raw));
         
         if ((raw.from.length==0) && (raw.to.length==0)) {
@@ -212,7 +220,6 @@ tweetApp.directive('addTweetColumn', function(){
             }
           }
           
-          raw = _.extend({from: [], to: []}, raw);
           console.log(JSON.stringify(raw));
           
           if ((raw.from.length>0) && (raw.to.length==0)) {

@@ -51,15 +51,14 @@ BUTTON {
   height: calc(100vh - 2px);
 }
 
-.pink {
-  border-style: solid;
-  border-width: 1px;
-  border-color: hotpink;
-  padding: 2px;
-  margin: 1px;
+.column-settings-button {
+  line-height: 25px;
+  vertical-align: middle;
+  height: 25px; 
+  padding: 0 5px 0 10px;
 }
 .add-tweet-column {
-  display: none;
+  /*display: none;*/
   position: relative;
   background-color: #222426;
   color: rgb(221, 221, 221);
@@ -67,18 +66,27 @@ BUTTON {
   margin-top: 0px;
   padding: 3px;
 }
-
 .add-column-column-holder {
   white-space: nowrap;
 }
-
 .add-column-buttons {
   text-align: right;
 }
-
 .add-column-column {
   display: inline-block;
   vertical-align: top;
+}
+.listen-users {
+  width: 150px;
+}
+.add-listen-user {
+  line-height: 35px;
+  vertical-align: middle;
+  width: calc(354px / 2);
+  text-align: center;
+}
+.del-listen-user {
+  padding: 0px 5px 0px 5px;
 }
 
 .column-holder {
@@ -228,7 +236,7 @@ INPUT.search-tweets, BUTTON.search-tweets {
   margin: 5px;
   outline-width: 0px;
   border-width: 0px;
-  width: calc(375px - 98px);
+  width: calc(375px - 98px - 40px);
   max-width: calc(100vw - 174px);
   font-size: 16px;
   vertical-align: middle;

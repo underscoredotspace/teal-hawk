@@ -4,27 +4,29 @@
     <div class="add-column-column ">
         <div class="">Tweets</div>
         <div ng-repeat="from in froms" class="">
-          <select name="tweets"  data-ng-model="from.user">
+          <select class="listen-users" name="tweets" data-ng-model="from.user">
             <option value-"blank"></option>
             <option data-ng-repeat="user in listen_users" value="{{user.id_str}}">{{user.screen_name}}</option>
           </select>
+          <span class="del-listen-user" data-ng-click="delFrom($index)"><i class="fa fa-trash"></i></span>
         </div>
-        <button data-ng-click="addFrom()">+</button>
+        <div class="add-listen-user"><span data-ng-click="addFrom()"><i class="fa fa-plus"></i></span></div>
       </div>
       
       <div class="add-column-column">
         <div class="">Mentions</div>
         <div data-ng-repeat="to in tos" class="">
-          <select name="mentions" data-ng-model="to.user">
+          <select class="listen-users" name="mentions" data-ng-model="to.user">
             <option value-"blank"></option>
             <option data-ng-repeat="user in listen_users" value="{{user.id_str}}">{{user.screen_name}}</option>
           </select>
+          <span class="del-listen-user" data-ng-click="delTo($index)"><i class="fa fa-trash"></i></span>
         </div>
-        <button data-ng-click="addTo()">+</button>
+        <div class="add-listen-user"><span data-ng-click="addTo()"><i class="fa fa-plus"></i></span></div>
       </div>
   </div>
   <div class="add-column-buttons">
-    <button data-ng-click="">Cancel</button>
+    <button data-ng-click="settingsVisible=false">Cancel</button>
     <button data-ng-click="addColumn()">Add</button>
   </div>
 </div>
