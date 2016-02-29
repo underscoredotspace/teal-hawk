@@ -196,7 +196,6 @@ tweetApp.directive('addTweetColumn', function(){
         var queryFrom = {};
         
         raw = _.extend({from: [], to: []}, raw);
-        console.log(JSON.stringify(raw));
         
         if ((raw.from.length==0) && (raw.to.length==0)) {
           errors.push('one or more of "to" or "from" property required');
@@ -219,9 +218,7 @@ tweetApp.directive('addTweetColumn', function(){
               queryFrom = {"user.id_str":raw.from[0]};
             }
           }
-          
-          console.log(JSON.stringify(raw));
-          
+                    
           if ((raw.from.length>0) && (raw.to.length==0)) {
             mongoQuery = queryFrom;
           } else if ((raw.to.length>0) && (raw.from.length==0)) {

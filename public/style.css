@@ -237,7 +237,7 @@ INPUT.search-tweets, BUTTON.search-tweets {
   outline-width: 0px;
   border-width: 0px;
   width: calc(375px - 98px - 40px);
-  max-width: calc(100vw - 174px);
+  max-width: calc(100vw - 174px  - 40px);
   font-size: 16px;
   vertical-align: middle;
 }
