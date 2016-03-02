@@ -1,6 +1,8 @@
 <div class="menu-bar">
-  <button class="menu-button" data-go-there="#/deck/reload">Deck</button>
-  <button class="menu-button" data-go-there="#/config">Settings</button>
-  <button class="menu-button" data-go-there="/logout">Log out</button>
+  <div class="menu-buttons">
+    <button class="menu-button" data-go-there="#/deck/reload">Deck</button>
+    <button class="menu-button" data-ng-click="newColumn()">Add Column</button>
+    <button class="menu-button" data-go-there="/logout">Log out</button>
+  </div>
   <img class="menu-user-image" src="<%= user.user_image %>" alt="<%= user.user_name %>" title="<%= user.user_name %>">
 </div>

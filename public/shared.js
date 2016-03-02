@@ -21,11 +21,16 @@ tweetApp.factory('socket', function(){
   return socket;
 });
 
-tweetApp.directive('menuBar', function(){
+tweetApp.directive('menuBar', function($rootScope) {
   return {
     restrict: 'E', 
     templateUrl: '/menu-bar',
-    replace: true
+    replace: true, 
+    link: function($scope) {
+      $scope.newColumn = function() {
+        $rootScope.$broadcast('newColumn', '');
+      }
+    }
   }
 });
 

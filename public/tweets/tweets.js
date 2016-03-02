@@ -16,6 +16,21 @@ tweetApp.controller('tweetDeck', function ($scope, $filter, socket, $routeParams
       $scope.$apply();
     };
   });
+  
+  $scope.$on('newColumn', function () {    
+    var newID = Math.random().toString(36).substr(2, 4);
+    while (_.where($scope.columns, {id: newID}).length!=0) {
+      newID = Math.random().toString(36).substr(2, 4);
+    }
+    
+    $scope.columns.push({
+      id: newID,
+      parameters: '',
+      position: $scope.columns.length + 1,
+      type: "tweetColumn"
+    });
+    console.log('new column ' + newID + ' created');
+  });
 });
 
 tweetApp.directive('focusInput', function() {
@@ -67,7 +82,6 @@ tweetApp.directive('tweetColumn', function(socket){
     controller: function ($scope, $filter) {
       $scope.tweets = [];
       $scope.bottomLoading = false;
-      $scope.settingsVisible = false;
       
       var initRequest = function() {
         var tweetColumn = angular.extend({}, {tweetCount: 10}, $scope.column);
@@ -75,11 +89,21 @@ tweetApp.directive('tweetColumn', function(socket){
         console.log('Inital ' + 10 + ' tweets requested for column ' + $scope.column.id);
       };
       
-      $scope.$watch('$scope.columns', function() {
-        if($scope.columns!=[]) {
+      $scope.$watch('$scope.column', function() {
+        if(($scope.column!=[]) && (!angular.equals($scope.column.parameters, ''))) {
           initRequest();
+        };
+        if(angular.equals($scope.column.parameters, '')) {
+          $scope.settingsVisible = true;
         }
       });
+      
+      socket.on('columnAdded', function(columnID){
+        if(columnID==$scope.column.id) {
+          $scope.tweets = [];
+          initRequest();
+        }
+      })
       
       // Fires after connection lost and regained
       socket.on('reconnect', function(){
@@ -161,7 +185,7 @@ tweetApp.directive('tweetColumn', function(socket){
   }
 });
 
-tweetApp.directive('addTweetColumn', function(){
+tweetApp.directive('addTweetColumn', function(socket){
   return {
     restrict: 'A', 
     templateUrl: '/tweets/add-column.html',
@@ -186,7 +210,9 @@ tweetApp.directive('addTweetColumn', function(){
       $scope.addColumn = function () {
         var tos = _.uniq(_.compact(_.pluck($scope.tos, 'user')));
         var froms = _.uniq(_.compact(_.pluck($scope.froms, 'user')));
-        console.log(JSON.stringify(object2mongo({to: tos, from: froms})));
+        $scope.column.parameters = JSON.stringify(object2mongo({to: tos, from: froms}));
+        socket.emit('newColumn', {id: $scope.column.id, parameters: $scope.column.parameters, position: $scope.column.position, type: $scope.column.type});
+        $scope.settingsVisible=false;        
       }
       
       function object2mongo (raw) {
@@ -231,7 +257,7 @@ tweetApp.directive('addTweetColumn', function(){
         }
         
         if (errors.length==0) {
-          return {mongoQuery: mongoQuery};
+          return mongoQuery;
         } else {
           return {errors: errors};
         }

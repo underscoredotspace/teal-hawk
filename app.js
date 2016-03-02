@@ -161,6 +161,12 @@ mongodb.connect(tweetsDB, function (err, db) {
         
         console.log(Date() + ': initRequest to ' + socket.id + ' for ' + tweetColumn.id);
       }); // End of initRequest event
+      
+      socket.on('newColumn', function(newColumn){
+        // add new column to database 
+        deckConnections.push(extend(newColumn, {socket: socket.id}));
+        socket.emit('columnAdded', newColumn.id);
+      })
 
       // This event is recieved from a client who lost connection and is reconnecting
       socket.on('updateRequest', function (updateRequest) {

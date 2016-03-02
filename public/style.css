@@ -35,8 +35,18 @@ BUTTON {
   background: #222426;
   text-align: center;
 }
+.menu-button {
+  width: 60px;
+  max-width: 60px;
+  margin: 2px;
+}
+.menu-buttons {
+  height: calc(100vh - 60px);
+}
 .menu-user-image {
   border-radius: 22px;
+  height: 48px;
+  width: 48px;
 }
 .highlighted {
   background:#cca300;
