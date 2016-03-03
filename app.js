@@ -163,9 +163,13 @@ mongodb.connect(tweetsDB, function (err, db) {
       }); // End of initRequest event
       
       socket.on('newColumn', function(newColumn){
-        // add new column to database 
+        db.collection("users").update({twitter_id: socket.request.user.user_id}, {$push: {columns: newColumn}});
         deckConnections.push(extend(newColumn, {socket: socket.id}));
         socket.emit('columnAdded', newColumn.id);
+      });
+      
+      socket.on('delColumn', function(columnID){
+        db.collection("users").update({twitter_id: socket.request.user.user_id}, {$pull: {columns: {id: columnID}}});
       })
 
       // This event is recieved from a client who lost connection and is reconnecting

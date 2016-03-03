@@ -143,7 +143,7 @@ tweetApp.directive('tweetColumn', function(socket){
             });
             $scope.$digest();
           } else {
-            console.log('tweet recieved, but not for column ' + $scope.column.id);
+            // console.log('tweet recieved, but not for column ' + $scope.column.id);
           }
       });
       // Fires when new Tweet for bottom of stack sent by server
@@ -185,12 +185,12 @@ tweetApp.directive('tweetColumn', function(socket){
   }
 });
 
-tweetApp.directive('addTweetColumn', function(socket){
+tweetApp.directive('addTweetColumn', function(socket, $filter){
   return {
     restrict: 'A', 
     templateUrl: '/tweets/add-column.html',
     replace: true, 
-    controller: function($scope) {
+    controller: function($scope, $rootScope) {
       $scope.tos = [{user: ''}];
       $scope.froms = [{user: ''}];
       
@@ -213,6 +213,12 @@ tweetApp.directive('addTweetColumn', function(socket){
         $scope.column.parameters = JSON.stringify(object2mongo({to: tos, from: froms}));
         socket.emit('newColumn', {id: $scope.column.id, parameters: $scope.column.parameters, position: $scope.column.position, type: $scope.column.type});
         $scope.settingsVisible=false;        
+      }
+      
+      $scope.delColumn = function() {
+        socket.emit('delColumn', $scope.column.id);
+        console.log($filter('filter')($scope.columns, {id: '!' + $scope.column.id}));
+        $scope.$parent.columns = $filter('filter')($scope.columns, {id: '!' + $scope.column.id});
       }
       
       function object2mongo (raw) {
