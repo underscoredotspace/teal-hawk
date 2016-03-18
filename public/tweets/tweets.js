@@ -99,7 +99,7 @@ tweetApp.directive('tweetColumn', function(socket){
           initRequest();
         };
         if(angular.equals($scope.column.parameters, '')) {
-          $scope.settingsVisible = true;
+          $scope.toggleSettings();
         }
       });
       
@@ -212,12 +212,30 @@ tweetApp.directive('addTweetColumn', function(socket, $filter){
         if ($scope.froms.length!=1) {$scope.froms.splice(index,1);}
       };
       
+      $scope.toggleSettings =  function() {
+        if ($scope.column.parameters=='') {
+          $scope.column.isNew = true;
+        } else {
+          $scope.column.isNew = false;
+        }
+        $scope.settingsVisible = !$scope.settingsVisible;
+      }
+      
       $scope.addColumn = function () {
         var tos = _.uniq(_.compact(_.pluck($scope.tos, 'user')));
         var froms = _.uniq(_.compact(_.pluck($scope.froms, 'user')));
         $scope.column.parameters = JSON.stringify(object2mongo({to: tos, from: froms}));
         socket.emit('newColumn', {id: $scope.column.id, parameters: $scope.column.parameters, position: $scope.column.position, type: $scope.column.type});
-        $scope.settingsVisible=false;        
+        $scope.toggleSettings();     
+      }
+      
+      $scope.updateColumn = function() {
+        console.log('doesn\'t update server yet');
+        var tos = _.uniq(_.compact(_.pluck($scope.tos, 'user')));
+        var froms = _.uniq(_.compact(_.pluck($scope.froms, 'user')));
+        $scope.column.parameters = JSON.stringify(object2mongo({to: tos, from: froms}));
+        // socket.emit('editColumn', {id: $scope.column.id, parameters: $scope.column.parameters, position: $scope.column.position, type: $scope.column.type});
+        $scope.toggleSettings();
       }
       
       $scope.delColumn = function() {

@@ -27,7 +27,8 @@
   </div>
   <div class="add-column-buttons">
     <button data-ng-click="delColumn()">Delete</button>
-    <button data-ng-click="settingsVisible=false">Cancel</button>
-    <button data-ng-click="addColumn()">Add</button>
+    <button data-ng-click="toggleSettings()">Cancel</button>
+    <button data-ng-click="addColumn()" data-ng-show="column.isNew">Add</button>
+    <button data-ng-click="updateColumn()" data-ng-show="!column.isNew">Update</button>
   </div>
 </div>
