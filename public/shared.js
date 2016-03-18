@@ -29,6 +29,7 @@ tweetApp.directive('menuBar', function($rootScope) {
     link: function($scope) {
       $scope.newColumn = function() {
         $rootScope.$broadcast('newColumn', '');
+        document.activeElement.blur();
       }
     }
   }

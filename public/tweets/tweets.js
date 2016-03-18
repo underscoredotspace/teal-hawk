@@ -31,6 +31,11 @@ tweetApp.controller('tweetDeck', function ($scope, $filter, socket, $routeParams
     });
     console.log('new column ' + newID + ' created');
   });
+  
+  // When we move away from the Deck, turn listeners off, to prevent duplication when we come back. 
+  $scope.$on('$destroy', function (event) {
+    socket.removeAllListeners();
+  });
 });
 
 tweetApp.directive('focusInput', function() {
@@ -135,8 +140,8 @@ tweetApp.directive('tweetColumn', function(socket){
       socket.on('topTweet', function(newTweet) {
         if (_.indexOf(newTweet[0],$scope.column.id)!=-1) {
             console.log(newTweet[1].length + ' topTweet(s) recieved for column ' + $scope.column.id);
-            $scope.$evalAsync(function(){
-              for (var i=newTweet[1].length-1; i>=0; i--){
+            $scope.$evalAsync(function () {
+              for (var i=newTweet[1].length-1; i>=0; i--) {
                 removePhotoLink(newTweet[1]);
                 $scope.tweets.unshift(newTweet[1][i]);
               }
@@ -217,7 +222,6 @@ tweetApp.directive('addTweetColumn', function(socket, $filter){
       
       $scope.delColumn = function() {
         socket.emit('delColumn', $scope.column.id);
-        console.log($filter('filter')($scope.columns, {id: '!' + $scope.column.id}));
         $scope.$parent.columns = $filter('filter')($scope.columns, {id: '!' + $scope.column.id});
       }
       

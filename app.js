@@ -270,6 +270,7 @@ mongodb.connect(tweetsDB, function (err, db) {
 
     stream.on('reconnect', function (request, response, connectInterval) {
       console.log(Date() + ': reconnect: ' + connectInterval);
+      console.log(response);
     })
 
     stream.on('parse-error', function(error) {
