@@ -26,7 +26,7 @@ tweetApp.controller('tweetDeck', function ($scope, $filter, socket, $routeParams
     $scope.columns.push({
       id: newID,
       parameters: '',
-      position: $scope.columns.length + 1,
+      position: _.max($scope.columns, 'position').position + 1,
       type: "tweetColumn"
     });
     console.log('new column ' + newID + ' created');
@@ -211,6 +211,33 @@ tweetApp.directive('addTweetColumn', function(socket, $filter){
       $scope.delFrom = function (index) {
         if ($scope.froms.length!=1) {$scope.froms.splice(index,1);}
       };
+      
+      $scope.moveColumnLeft = function () {
+        if ($scope.column.position==_.min($scope.columns, 'position').position) {
+          console.log('already as left as we can go!')
+        } else {
+          // move column left
+          // var columnIndex = _.indexOf(_.pluck($scope.columns, 'position').sort(), $scope.column.position);
+          // console.log(columnIndex);
+          // var posBuffer = $scope.columns[columnIndex-1].position;
+          // $scope.columns[columnIndex-1].position = $scope.columns[columnIndex].position;
+          // $scope.columns[columnIndex].position = posBuffer;
+          // console.log(_.pluck($scope.columns, 'position').sort());
+        }
+      }
+      $scope.moveColumnRight = function () {
+        if ($scope.column.position==_.max($scope.columns, 'position').position) {
+          console.log('already as right as we can go!')
+        } else {
+          // move column right
+          // var columnIndex = _.indexOf(_.pluck($scope.columns, 'position'), $scope.column.position);
+          // console.log(columnIndex);
+          // var posBuffer = $scope.columns[columnIndex+1].position;
+          // $scope.columns[columnIndex+1].position = $scope.columns[columnIndex].position;
+          // $scope.columns[columnIndex].position = posBuffer;
+          // console.log(_.pluck($scope.columns, 'position').sort());
+        }
+      }
       
       $scope.toggleSettings =  function() {
         if ($scope.column.parameters=='') {

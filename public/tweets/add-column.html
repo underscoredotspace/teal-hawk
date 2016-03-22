@@ -1,5 +1,6 @@
 <div class="add-tweet-column">
-  <div class="add-column-title ">Add Column</div>
+  <div class="add-column-title" data-ng-show="!column.isNew">Edit Column</div>
+  <div class="add-column-title" data-ng-show="column.isNew">Add Column</div>
   <div class="add-column-column-holder">
     <div class="add-column-column ">
         <div class="">Tweets</div>
@@ -25,9 +26,14 @@
         <div class="add-listen-user"><span data-ng-click="addTo()"><i class="fa fa-plus"></i></span></div>
       </div>
   </div>
+  <div class="move-column-buttons">
+    <button data-ng-click="moveColumnLeft()"><i class="fa fa-arrow-left"></i></button>
+    <button data-ng-click="moveColumnRight()"><i class="fa fa-arrow-right"></i></button>
+  </div>
   <div class="add-column-buttons">
-    <button data-ng-click="delColumn()">Delete</button>
-    <button data-ng-click="toggleSettings()">Cancel</button>
+    <button data-ng-click="delColumn()" data-ng-show="!column.isNew">Delete</button>
+    <button data-ng-click="toggleSettings()" data-ng-show="!column.isNew">Cancel</button>
+    <button data-ng-click="delColumn()" data-ng-show="column.isNew">Cancel</button>
     <button data-ng-click="addColumn()" data-ng-show="column.isNew">Add</button>
     <button data-ng-click="updateColumn()" data-ng-show="!column.isNew">Update</button>
   </div>

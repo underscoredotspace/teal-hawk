@@ -3,6 +3,7 @@
 - [X] Ability to add new tweet column
 - [ ] Parse filter parameters from Mongo collection for editing
 - [ ] **Edit existing column**
+- [ ] Move column left or right
 - [ ] Show preview results (perhaps using REST)
 - [ ] Save edited/new filter parameters to Mongo collection
 - [ ] Update stream parameters for server-side app.js and restart as required

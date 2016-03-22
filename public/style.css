@@ -80,7 +80,11 @@ BUTTON {
   white-space: nowrap;
 }
 .add-column-buttons {
-  text-align: right;
+  float: right;
+  display: inline-block;
+}
+.move-column-buttons {
+  display: inline-block;
 }
 .add-column-column {
   display: inline-block;
