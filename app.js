@@ -205,9 +205,9 @@ mongodb.connect(tweetsDB, function (err, db) {
     var twit = new Twitter({
       consumer_key: config.twitter.consumer_key,
       consumer_secret: config.twitter.consumer_secret,
-      app_only_auth: true,
-      // access_token: config.twitter.access_token,
-      // access_token_secret: config.twitter.access_token_secret,
+      // app_only_auth: true,
+      access_token: config.twitter.access_token,
+      access_token_secret: config.twitter.access_token_secret,
       timeout_ms: 60*1000
     });
 
