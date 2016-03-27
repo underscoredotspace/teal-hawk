@@ -23,10 +23,16 @@ tweetApp.controller('tweetDeck', function ($scope, $filter, socket, $routeParams
       newID = Math.random().toString(36).substr(2, 4);
     }
     
+    if ($scope.columns.length != 0) {
+      newPosition = _.max($scope.columns, 'position').position + 1;
+    } else {
+      newPosition = 1;
+    }
+    
     $scope.columns.push({
       id: newID,
       parameters: '',
-      position: _.max($scope.columns, 'position').position + 1,
+      position: newPosition,
       type: "tweetColumn"
     });
     console.log('new column ' + newID + ' created');
@@ -98,9 +104,6 @@ tweetApp.directive('tweetColumn', function(socket){
         if(($scope.column!=[]) && (!angular.equals($scope.column.parameters, ''))) {
           initRequest();
         };
-        if(angular.equals($scope.column.parameters, '')) {
-          $scope.toggleSettings();
-        }
       });
       
       socket.on('columnAdded', function(columnID){
@@ -196,15 +199,20 @@ tweetApp.directive('addTweetColumn', function(socket, $filter){
     templateUrl: '/tweets/add-column.html',
     replace: true, 
     controller: function($scope, $rootScope) {
-      $scope.tos = [{user: ''}];
-      $scope.froms = [{user: ''}];
+      $scope.setupSettings = function() {
+        $scope.tos = [{user: ''}];
+        $scope.froms = [{user: ''}];
+        
+        $scope.addTo = function () {
+          $scope.tos.push({user: ''});
+        };
+        $scope.addFrom = function () {
+          $scope.froms.push({user: ''});
+        };
+      }
       
-      $scope.addTo = function () {
-        $scope.tos.push({user: ''});
-      };
-      $scope.addFrom = function () {
-        $scope.froms.push({user: ''});
-      };
+      $scope.setupSettings();
+      
       $scope.delTo = function (index) {
         if ($scope.tos.length!=1) {$scope.tos.splice(index,1);}
       };
@@ -246,6 +254,11 @@ tweetApp.directive('addTweetColumn', function(socket, $filter){
           $scope.column.isNew = false;
         }
         $scope.settingsVisible = !$scope.settingsVisible;
+        $scope.setupSettings();
+      }
+      
+      if(angular.equals($scope.column.parameters, '')) {
+        $scope.toggleSettings();
       }
       
       $scope.addColumn = function () {
@@ -267,7 +280,14 @@ tweetApp.directive('addTweetColumn', function(socket, $filter){
       
       $scope.delColumn = function() {
         socket.emit('delColumn', $scope.column.id);
+        deletedPosition = $scope.column.position;
         $scope.$parent.columns = $filter('filter')($scope.columns, {id: '!' + $scope.column.id});
+        $scope.$parent.columns.forEach(function(element, index) {
+          if (element.position > deletedPosition) {
+            $scope.$parent.columns[index].position = $scope.$parent.columns[index].position -1;
+            // socket.emit('editColumn', {id: $scope.column.id, parameters: $scope.column.parameters, position: $scope.column.position, type: $scope.column.type});
+          } 
+        });
       }
       
       function object2mongo (raw) {

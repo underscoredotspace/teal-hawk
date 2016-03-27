@@ -5,10 +5,8 @@
 - [ ] **Edit existing column**
 - [ ] Move column left or right
 - [ ] Show preview results (perhaps using REST)
-- [ ] Save edited/new filter parameters to Mongo collection
-- [ ] Update stream parameters for server-side app.js and restart as required
+- [ ] Save edited/~~new~~ filter parameters to Mongo collection
 - [X] Delete tweetColumn
-- [ ] Appropriate route for new user with no columns
 
 #Authentication
 - [ ] Registration
@@ -18,3 +16,11 @@
 
 #Show warning somehwere when offline
 - tba
+
+#Tweet Deck Features
+- [ ] Filter by conversation
+- [ ] User stats available on hover of profile image
+- [ ] Appropriate route for new user with no columns
+
+#Admin pages
+- [ ] Update stream parameters for server-side app.js and restart as required
