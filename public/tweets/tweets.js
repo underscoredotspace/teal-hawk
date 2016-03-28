@@ -138,6 +138,18 @@ tweetApp.directive('tweetColumn', function(socket){
             }
           }
       }
+      
+      function removeQuotedLink (tweet) {
+        if (tweet.quoted_status) {
+            if (tweet.entities.urls) {
+            angular.forEach(tweet.entities.urls, function(url_item) {
+              if (url_item.display_url.substr(0, 12) =='twitter.com/') {
+                tweet.text = tweet.text.replace(url_item.url, '');
+              }
+            });
+            }
+          }
+      }
 
       // Fires when new Tweet for top of stack sent by server
       socket.on('topTweet', function(newTweet) {
@@ -146,6 +158,7 @@ tweetApp.directive('tweetColumn', function(socket){
             $scope.$evalAsync(function () {
               for (var i=newTweet[1].length-1; i>=0; i--) {
                 removePhotoLink(newTweet[1]);
+                removeQuotedLink(newTweet[1]);
                 $scope.tweets.unshift(newTweet[1][i]);
               }
             });
@@ -161,6 +174,7 @@ tweetApp.directive('tweetColumn', function(socket){
           $scope.$evalAsync(function () {
             for (var i=0; i<=newTweet[1].length-1; i++) {
               removePhotoLink(newTweet[1][i]);
+              removeQuotedLink(newTweet[1][i]);
               $scope.tweets.push(newTweet[1][i]);
             }
           });
