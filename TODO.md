@@ -4,7 +4,7 @@
 - [ ] Parse filter parameters from Mongo collection for editing
 - [ ] **Edit existing column**
 - [ ] Move column left or right
-- [ ] Show preview results (perhaps using REST)
+- [ ] Show preview results
 - [ ] Save edited/~~new~~ filter parameters to Mongo collection
 - [X] Delete tweetColumn
 
@@ -14,13 +14,17 @@
 - [x] Log out
 - [x] Validation for socket requests
 
-#Show warning somehwere when offline
-- tba
+#Better communication with user
+- [ ] Toast messages
+- [ ] User warnings (e.g. when column can't be moved)
+- [ ] User error messages?
+- [ ] Persistent message when offline
+- [ ] New toast when back online
 
 #Tweet Deck Features
 - [ ] Filter by conversation
 - [ ] User stats available on hover of profile image
-- [ ] Appropriate route for new user with no columns
+- [X] Appropriate route for new user with no columns
 
 #Admin pages
 - [ ] Update stream parameters for server-side app.js and restart as required
