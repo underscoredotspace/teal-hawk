@@ -211,8 +211,6 @@ tweetApp.directive('addTweetColumn', function(socket, $filter){
         };
       }
       
-      $scope.setupSettings();
-      
       $scope.delTo = function (index) {
         if ($scope.tos.length!=1) {$scope.tos.splice(index,1);}
       };
@@ -225,12 +223,12 @@ tweetApp.directive('addTweetColumn', function(socket, $filter){
           console.log('already as left as we can go!')
         } else {
           // move column left
-          // var columnIndex = _.indexOf(_.pluck($scope.columns, 'position').sort(), $scope.column.position);
-          // console.log(columnIndex);
-          // var posBuffer = $scope.columns[columnIndex-1].position;
-          // $scope.columns[columnIndex-1].position = $scope.columns[columnIndex].position;
-          // $scope.columns[columnIndex].position = posBuffer;
-          // console.log(_.pluck($scope.columns, 'position').sort());
+          var thisColumn = _.indexOf(_.pluck($scope.columns, 'position'), $scope.column.position);
+          var leftColumn = _.indexOf(_.pluck($scope.columns, 'position'), $scope.column.position-1);
+          var leftPosition = $scope.columns[leftColumn].position;
+          $scope.columns[leftColumn].position = $scope.columns[thisColumn].position;
+          $scope.columns[thisColumn].position = leftPosition;
+          // update server
         }
       }
       $scope.moveColumnRight = function () {
@@ -238,12 +236,12 @@ tweetApp.directive('addTweetColumn', function(socket, $filter){
           console.log('already as right as we can go!')
         } else {
           // move column right
-          // var columnIndex = _.indexOf(_.pluck($scope.columns, 'position'), $scope.column.position);
-          // console.log(columnIndex);
-          // var posBuffer = $scope.columns[columnIndex+1].position;
-          // $scope.columns[columnIndex+1].position = $scope.columns[columnIndex].position;
-          // $scope.columns[columnIndex].position = posBuffer;
-          // console.log(_.pluck($scope.columns, 'position').sort());
+          var thisColumn = _.indexOf(_.pluck($scope.columns, 'position'), $scope.column.position);
+          var rightColumn = _.indexOf(_.pluck($scope.columns, 'position'), $scope.column.position+1);
+          var rightPosition = $scope.columns[rightColumn].position;
+          $scope.columns[rightColumn].position = $scope.columns[thisColumn].position;
+          $scope.columns[thisColumn].position = rightPosition;
+          // update server
         }
       }
       
