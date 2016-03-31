@@ -127,8 +127,8 @@ tweetApp.directive('tweetColumn', function(socket){
       // Fires after connection lost and regained
       socket.on('reconnect', function(){
         console.log('reconnect please');
-        if ($scope.tweets!=[] || $scope.column!=[]) {
-          console.log('reconnecting...');
+        console.log($scope);
+        if ($scope.tweets.length!=0) {
           var updateRequest = angular.extend({}, {lastTweet: $scope.tweets[0].id_str}, $scope.column);
           socket.emit('updateRequest', updateRequest);
           console.log('Tweets after ' + updateRequest.lastTweet + ' requested for column ' + $scope.column.id);
@@ -283,6 +283,11 @@ tweetApp.directive('addTweetColumn', function(socket, $filter){
         }
         $scope.settingsVisible = !$scope.settingsVisible;
         $scope.setupSettings();
+        
+        if(!$scope.settingsVisible && $scope.column.parameters == '') {
+          $scope.$parent.columns = $filter('filter')($scope.columns, {id: '!' + $scope.column.id});
+          $scope.column = [];
+        }
       }
       
       if(angular.equals($scope.column.parameters, '')) {
