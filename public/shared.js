@@ -59,6 +59,26 @@ tweetApp.filter('highlight', function () {
   }   
 });
 
+// Filter to replace t.co links with the real path
+tweetApp.filter('replaceURLs', function () {
+  return function(text, urls) {
+    // text is tweet.text string
+    // urls is tweet.entities.urls array
+    
+    return text;
+  }   
+});
+
+// Filter to replace text @mentions with links
+tweetApp.filter('replaceMentions', function () {
+  return function(text, mentions) {
+    // text is tweet.text string
+    // urls is tweet.entities.mentions array
+    
+    return text;
+  }   
+});
+
 tweetApp.filter('trustHTML', ['$sce', function ($sce) { 
   return function (text) {
     return $sce.trustAsHtml(text);

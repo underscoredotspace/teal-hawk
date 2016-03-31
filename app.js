@@ -126,9 +126,9 @@ mongodb.connect(tweetsDB, function (err, db) {
       console.log(socket.id + ' connected');
       
       var loggedIn = function () {
-        db.collection('users').find({twitter_id: socket.request.user.user_id}, {columns:1, _id: 0}).limit(1).toArray(function(err, usercolumns) {
-          socket.emit('columns', usercolumns[0].columns);
-          usercolumns[0].columns.forEach(function(column) {
+        db.collection('users').find({twitter_id: socket.request.user.user_id}, {columns:1, _id: 0}).limit(1).toArray(function(err, user) {
+          socket.emit('columns', user[0].columns);
+          user[0].columns.forEach(function(column) {
             deckConnections.push(extend(column, {socket: socket.id}));
           });
         });
@@ -139,11 +139,10 @@ mongodb.connect(tweetsDB, function (err, db) {
       socket.on('reload', function () {loggedIn()});  
       
       socket.on('disconnect', function() {
-        deckConnections.forEach(function(connection, index) {
-          if (connection.socket == socket.id) {
-            deckConnections.splice(index,1);
-          }
-        })
+        // filter out any columns that belong to this socket
+        deckConnections = _.filter(deckConnections, function(deckConnection){
+          return deckConnection.socket != socket.id;
+        });
         console.log(socket.id + ' disconnected');
       }); 
    
@@ -170,13 +169,22 @@ mongodb.connect(tweetsDB, function (err, db) {
       
       socket.on('delColumn', function(columnID){
         db.collection("users").update({twitter_id: socket.request.user.user_id}, {$pull: {columns: {id: columnID}}});
+        deckConnections.splice(_.indexOf(_.pluck(deckConnections, 'id'), columnID), 1);
+      })
+      
+      // Hacky, but edit column by deleting by ID then adding in with same ID
+      socket.on('editColumn', function (column) {
+        db.collection("users").update({twitter_id: socket.request.user.user_id}, {$pull: {columns: {id: column.id}}});
+        db.collection("users").update({twitter_id: socket.request.user.user_id}, {$push: {columns: column}});
+        deckConnections.splice(_.indexOf(_.pluck(deckConnections, 'id'), column.id), 1);
+        deckConnections.push(extend(column, {socket: socket.id}));
       })
 
       // This event is recieved from a client who lost connection and is reconnecting
       socket.on('updateRequest', function (updateRequest) {
         // #TODO# - validate updateRequest
         console.log(Date() + ': ' + socket.id + ' reconnected.');
-
+        if (updateRequest.hasOwnProperty('parameters')) {
           //var searchQuery = extend({id_str: {$gt: updateRequest.lastTweet}}, , {'retweeted_status':{'$exists':false}}));
           var searchQuery = {'$and': [JSON.parse(updateRequest.parameters), {'retweeted_status':{'$exists':false}}, {id_str: {$gt: updateRequest.lastTweet}}]};
           db.collection('tweets').find(searchQuery).toArray(function (err, tweet) {
@@ -187,6 +195,7 @@ mongodb.connect(tweetsDB, function (err, db) {
               console.log('No new tweets since ' + updateRequest.lastTweet + ' to send for column ' + updateRequest.id);
             }
           });
+        }
       }); // End of updateRequest event
       
       // This event is recieved when client goes to bottom of view and needs more tweets

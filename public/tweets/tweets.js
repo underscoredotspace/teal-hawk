@@ -17,7 +17,8 @@ tweetApp.controller('tweetDeck', function ($scope, $filter, socket, $routeParams
     };
   });
   
-  $scope.$on('newColumn', function () {    
+  $scope.$on('newColumn', function () {   
+    // create semi-uuid 
     var newID = Math.random().toString(36).substr(2, 4);
     while (_.where($scope.columns, {id: newID}).length!=0) {
       newID = Math.random().toString(36).substr(2, 4);
@@ -29,6 +30,7 @@ tweetApp.controller('tweetDeck', function ($scope, $filter, socket, $routeParams
       newPosition = 1;
     }
     
+    // create new tweet column with no params
     $scope.columns.push({
       id: newID,
       parameters: '',
@@ -44,6 +46,7 @@ tweetApp.controller('tweetDeck', function ($scope, $filter, socket, $routeParams
   });
 });
 
+// When you click a button, this puts focus back to the appropriate input box
 tweetApp.directive('focusInput', function() {
   return {
     restrict: 'A',
@@ -55,6 +58,7 @@ tweetApp.directive('focusInput', function() {
   };
 });
 
+// Hack to scroll to top of tweet column when search box focused. Thanks Apple. 
 tweetApp.directive('scrollTop', function() {
   return {
     restrict: 'A',
@@ -66,15 +70,18 @@ tweetApp.directive('scrollTop', function() {
   };
 });
 
+// Detect when tweet column is scrolled
 tweetApp.directive('scrollBottom', function () {
   return {
     restrict: 'A',
     link: function (scope, element, attrs) {
       var raw = element[0];
       element.bind('scroll', function () {
+        // This un-focuses the search box when we scroll down. Related to scrollTop hack
         if ((document.activeElement.tagName=='INPUT')&&(raw.scrollTop>0)){
           document.activeElement.blur();
         }
+        // Detects when we're getting to the bottom of the tweet column so we can request more tweets
         if (raw.scrollTop + raw.offsetHeight >= (raw.scrollHeight*(1/1.25))) {
           scope.$apply(attrs.scrollBottom);
         }
@@ -95,9 +102,11 @@ tweetApp.directive('tweetColumn', function(socket){
       $scope.bottomLoading = false;
       
       var initRequest = function() {
-        var tweetColumn = angular.extend({}, {tweetCount: 10}, $scope.column);
-        socket.emit('initRequest', tweetColumn);
-        console.log('Inital ' + 10 + ' tweets requested for column ' + $scope.column.id);
+          console.log('initRequest:');
+          var tweetColumn = angular.extend({}, {tweetCount: 10}, $scope.column);
+          socket.emit('initRequest', tweetColumn);
+          console.log('Inital ' + 10 + ' tweets requested for column ' + $scope.column.id);
+        
       };
       
       $scope.$watch('$scope.column', function() {
@@ -106,6 +115,8 @@ tweetApp.directive('tweetColumn', function(socket){
         };
       });
       
+      // Fired back once new column added to database, following newColumn socket event in addTweetColumn
+      // Lets us know when to load tweets into new column
       socket.on('columnAdded', function(columnID){
         if(columnID==$scope.column.id) {
           $scope.tweets = [];
@@ -116,17 +127,15 @@ tweetApp.directive('tweetColumn', function(socket){
       // Fires after connection lost and regained
       socket.on('reconnect', function(){
         console.log('reconnect please');
-        if ($scope.tweets!=[]) {
+        if ($scope.tweets!=[] || $scope.column!=[]) {
           console.log('reconnecting...');
           var updateRequest = angular.extend({}, {lastTweet: $scope.tweets[0].id_str}, $scope.column);
           socket.emit('updateRequest', updateRequest);
           console.log('Tweets after ' + updateRequest.lastTweet + ' requested for column ' + $scope.column.id);
-        } else {
-          console.log('reconnected, but not sure how we get here');
-          initRequest($scope.column.id);
         }
       });
       
+      // Since we're showing photos within tweet, removes the t.co links in tweet.text
       function removePhotoLink (tweet) {
         if (tweet.extended_entities) {
             if (tweet.extended_entities.media) {
@@ -139,6 +148,7 @@ tweetApp.directive('tweetColumn', function(socket){
           }
       }
       
+      // Since we're showing quoted_status within tweet, removes the t.co links in tweet.text
       function removeQuotedLink (tweet) {
         if (tweet.quoted_status) {
             if (tweet.entities.urls) {
@@ -192,7 +202,7 @@ tweetApp.directive('tweetColumn', function(socket){
         }
       })
 
-      // Called by scrollBottom directive when bottom of column is reached by user
+      // Called by scrollBottom directive when bottom of column is approached by user. Loads more tweets. 
       $scope.showMore = function() {
         if (($scope.bottomLoading==false) && (socket.connected)) {
           $scope.bottomLoading = true; // set this to true until we get more bottomTweets. 
@@ -207,6 +217,7 @@ tweetApp.directive('tweetColumn', function(socket){
   }
 });
 
+// Directive that enables us to create[/amend] criteria for new column, move column or delete column. 
 tweetApp.directive('addTweetColumn', function(socket, $filter){
   return {
     restrict: 'A', 
@@ -234,7 +245,7 @@ tweetApp.directive('addTweetColumn', function(socket, $filter){
       
       $scope.moveColumnLeft = function () {
         if ($scope.column.position==_.min($scope.columns, 'position').position) {
-          console.log('already as left as we can go!')
+          console.log('already as left as we can go!'); // Should be toast for user
         } else {
           // move column left
           var thisColumn = _.indexOf(_.pluck($scope.columns, 'position'), $scope.column.position);
@@ -243,11 +254,14 @@ tweetApp.directive('addTweetColumn', function(socket, $filter){
           $scope.columns[leftColumn].position = $scope.columns[thisColumn].position;
           $scope.columns[thisColumn].position = leftPosition;
           // update server
+          socket.emit('editColumn', {id: $scope.column.id, parameters: $scope.column.parameters, position: $scope.column.position, type: $scope.column.type});
+          socket.emit('editColumn', {id: $scope.columns[leftColumn].id, parameters: $scope.columns[leftColumn].parameters, position: $scope.columns[leftColumn].position, type: $scope.columns[leftColumn].type});
+          
         }
       }
       $scope.moveColumnRight = function () {
         if ($scope.column.position==_.max($scope.columns, 'position').position) {
-          console.log('already as right as we can go!')
+          console.log('already as right as we can go!'); // Should be toast for user
         } else {
           // move column right
           var thisColumn = _.indexOf(_.pluck($scope.columns, 'position'), $scope.column.position);
@@ -256,6 +270,8 @@ tweetApp.directive('addTweetColumn', function(socket, $filter){
           $scope.columns[rightColumn].position = $scope.columns[thisColumn].position;
           $scope.columns[thisColumn].position = rightPosition;
           // update server
+          socket.emit('editColumn', {id: $scope.column.id, parameters: $scope.column.parameters, position: $scope.column.position, type: $scope.column.type});
+          socket.emit('editColumn', {id: $scope.columns[rightColumn].id, parameters: $scope.columns[rightColumn].parameters, position: $scope.columns[rightColumn].position, type: $scope.columns[rightColumn].type});
         }
       }
       
@@ -294,10 +310,12 @@ tweetApp.directive('addTweetColumn', function(socket, $filter){
         socket.emit('delColumn', $scope.column.id);
         deletedPosition = $scope.column.position;
         $scope.$parent.columns = $filter('filter')($scope.columns, {id: '!' + $scope.column.id});
+        $scope.column = [];
+        $scope.tweets = [];
         $scope.$parent.columns.forEach(function(element, index) {
           if (element.position > deletedPosition) {
             $scope.$parent.columns[index].position = $scope.$parent.columns[index].position -1;
-            // socket.emit('editColumn', {id: $scope.column.id, parameters: $scope.column.parameters, position: $scope.column.position, type: $scope.column.type});
+            socket.emit('editColumn', {id: $scope.columns[index].id, parameters: $scope.columns[index].parameters, position: $scope.columns[index].position, type: $scope.columns[index].type});
           } 
         });
       }
