@@ -174,3 +174,91 @@ tweetApp.filter('orderObjectBy', function(){
     return array;
   }
 });
+
+tweetApp.service('paramsParse', function() {
+  return {
+    object2mongo: function(object) {
+      var errors = [];
+      var mongoQuery = {};
+      var queryTo = {};
+      var queryFrom = {};
+      
+      object = _.extend({from: [], to: []}, object);
+      
+      if ((object.from.length==0) && (object.to.length==0)) {
+        errors.push('one or more of "to" or "from" property required');
+      } else {
+      
+        if (object.hasOwnProperty('to')) {
+          // if object.to isn't valid, push error text
+          if (Array.isArray(object.to) && (object.to.length>1)) {
+            queryTo = {"entities.user_mentions":{"$elemMatch":{"id_str":{"$in":object.to}}}};
+          } else if (Array.isArray(object.to)) {
+            queryTo = {"entities.user_mentions":{"$elemMatch":{"id_str":object.to[0]}}};
+          }
+        }
+        
+        if (object.hasOwnProperty('from')) {
+          // if object.from isn't valid, push error text
+          if (Array.isArray(object.from) && (object.from.length>1)) {
+            queryFrom = {"user.id_str":{"$in":object.from}};
+          } else if (Array.isArray(object.from)) {
+            queryFrom = {"user.id_str":object.from[0]};
+          }
+        }
+                  
+        if ((object.from.length>0) && (object.to.length==0)) {
+          mongoQuery = queryFrom;
+        } else if ((object.to.length>0) && (object.from.length==0)) {
+          mongoQuery =  queryTo;
+        } else {
+          mongoQuery =  {"$or": [queryFrom, queryTo]};
+        }
+      }
+      
+      if (errors.length==0) {
+        return mongoQuery;
+      } else {
+        return {errors: errors};
+      }
+    }, 
+    mongo2object: function(mongo) {
+      var to = [];
+      var from = [];
+      
+      if (mongo.hasOwnProperty('$or')) {
+        mongo = mongo['$or'];
+        mongo = _.extend(mongo[0], mongo[1]);
+      }
+      
+      if (mongo.hasOwnProperty('user.id_str')) {
+        if (mongo['user.id_str'].hasOwnProperty('$in')) {
+          from = _.compact(mongo['user.id_str']['$in']);
+        } else if (_.isArray(mongo['user.id_str'])) {
+          from = _.compact(_.pluck(mongo, 'user.id_str'));
+        } else {
+          from = mongo['user.id_str']
+        }
+      }
+      
+      if (mongo.hasOwnProperty('entities.user_mentions')) {
+        if (mongo['entities.user_mentions'].$elemMatch.id_str.hasOwnProperty('$in')) {
+          to = _.compact(mongo['entities.user_mentions'].$elemMatch.id_str.$in);
+        } else {
+          to = mongo['entities.user_mentions'].$elemMatch.id_str
+        }
+      }
+      
+      if (!_.isArray(to)) {
+        to = [to];
+      }
+      
+      if (!_.isArray(from)) {
+        from = [from];
+      }
+      
+      object = {to: to, from: from};
+      return object;
+    }
+  }
+});

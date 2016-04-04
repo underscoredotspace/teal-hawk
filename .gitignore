@@ -1,9 +1,7 @@
 node_modules/
 bower_components/
 /config.js
-users
+tests/
 .vscode/
 typings/
 public/tracking.js
-public/test.html
-test.js

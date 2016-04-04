@@ -96,7 +96,6 @@ tweetApp.directive('tweetColumn', function(socket){
     templateUrl: 'tweets/tweet-column.html',
     replace: true,
     scope: false,
-    require: '^tweetsController',
     controller: function ($scope, $filter) {
       $scope.tweets = [];
       $scope.bottomLoading = false;
@@ -106,7 +105,6 @@ tweetApp.directive('tweetColumn', function(socket){
           var tweetColumn = angular.extend({}, {tweetCount: 10}, $scope.column);
           socket.emit('initRequest', tweetColumn);
           console.log('Inital ' + 10 + ' tweets requested for column ' + $scope.column.id);
-        
       };
       
       $scope.$watch('$scope.column', function() {
@@ -117,17 +115,25 @@ tweetApp.directive('tweetColumn', function(socket){
       
       // Fired back once new column added to database, following newColumn socket event in addTweetColumn
       // Lets us know when to load tweets into new column
-      socket.on('columnAdded', function(columnID){
+      socket.on('columnAdded', function(columnID) {
+        resetColumn(columnID);
+      });
+      
+      // Fired when column parameters are amended. 
+      $scope.$on('columnUpdated', function(event, columnID) {
+        resetColumn(columnID);
+      });
+      
+      function resetColumn (columnID) {
         if(columnID==$scope.column.id) {
           $scope.tweets = [];
           initRequest();
         }
-      })
+      }
       
       // Fires after connection lost and regained
       socket.on('reconnect', function(){
         console.log('reconnect please');
-        console.log($scope);
         if ($scope.tweets.length!=0) {
           var updateRequest = angular.extend({}, {lastTweet: $scope.tweets[0].id_str}, $scope.column);
           socket.emit('updateRequest', updateRequest);
@@ -223,10 +229,23 @@ tweetApp.directive('addTweetColumn', function(socket, $filter){
     restrict: 'A', 
     templateUrl: '/tweets/add-column.html',
     replace: true, 
-    controller: function($scope, $rootScope) {
+    controller: function($scope, $rootScope, paramsParse) {
       $scope.setupSettings = function() {
-        $scope.tos = [{user: ''}];
-        $scope.froms = [{user: ''}];
+        if($scope.column.isNew) {
+          $scope.tos = [{user: ''}];
+          $scope.froms = [{user: ''}];
+        } else {
+          objectArray = paramsParse.mongo2object(JSON.parse($scope.column.parameters));
+          $scope.tos = [];
+          objectArray.to.forEach(function(element, index){
+            $scope.tos.push({user: element});
+          });
+          
+          $scope.froms = [];
+          objectArray.from.forEach(function(element, index){
+            $scope.froms.push({user: element});
+          });
+        }
         
         $scope.addTo = function () {
           $scope.tos.push({user: ''});
@@ -256,7 +275,6 @@ tweetApp.directive('addTweetColumn', function(socket, $filter){
           // update server
           socket.emit('editColumn', {id: $scope.column.id, parameters: $scope.column.parameters, position: $scope.column.position, type: $scope.column.type});
           socket.emit('editColumn', {id: $scope.columns[leftColumn].id, parameters: $scope.columns[leftColumn].parameters, position: $scope.columns[leftColumn].position, type: $scope.columns[leftColumn].type});
-          
         }
       }
       $scope.moveColumnRight = function () {
@@ -297,18 +315,28 @@ tweetApp.directive('addTweetColumn', function(socket, $filter){
       $scope.addColumn = function () {
         var tos = _.uniq(_.compact(_.pluck($scope.tos, 'user')));
         var froms = _.uniq(_.compact(_.pluck($scope.froms, 'user')));
-        $scope.column.parameters = JSON.stringify(object2mongo({to: tos, from: froms}));
-        socket.emit('newColumn', {id: $scope.column.id, parameters: $scope.column.parameters, position: $scope.column.position, type: $scope.column.type});
-        $scope.toggleSettings();     
+        if (!((tos.length===0) && (froms.length===0))) {
+          $scope.column.parameters = JSON.stringify(paramsParse.object2mongo({to: tos, from: froms}));
+          socket.emit('newColumn', {id: $scope.column.id, parameters: $scope.column.parameters, position: $scope.column.position, type: $scope.column.type});
+          $scope.toggleSettings();
+        } else {
+          console.log('One or more users must be selected under Tweets and/or Mentions');
+          // toast error message
+        }
       }
       
       $scope.updateColumn = function() {
-        console.log('doesn\'t update server yet');
         var tos = _.uniq(_.compact(_.pluck($scope.tos, 'user')));
         var froms = _.uniq(_.compact(_.pluck($scope.froms, 'user')));
-        $scope.column.parameters = JSON.stringify(object2mongo({to: tos, from: froms}));
-        // socket.emit('editColumn', {id: $scope.column.id, parameters: $scope.column.parameters, position: $scope.column.position, type: $scope.column.type});
-        $scope.toggleSettings();
+        if (!((tos.length===0) && (froms.length===0))) {
+          $scope.column.parameters = JSON.stringify(paramsParse.object2mongo({to: tos, from: froms}));
+          socket.emit('editColumn', {id: $scope.column.id, parameters: $scope.column.parameters, position: $scope.column.position, type: $scope.column.type});
+          $scope.toggleSettings();
+          $rootScope.$broadcast('columnUpdated', $scope.column.id);
+        } else {
+          console.log('One or more users must be selected under Tweets and/or Mentions');
+          // toast error message
+        }
       }
       
       $scope.delColumn = function() {
@@ -324,55 +352,7 @@ tweetApp.directive('addTweetColumn', function(socket, $filter){
           } 
         });
       }
-      
-      function object2mongo (raw) {
-        var errors = [];
-        var mongoQuery = {};
-        var queryTo = {};
-        var queryFrom = {};
-        
-        raw = _.extend({from: [], to: []}, raw);
-        
-        if ((raw.from.length==0) && (raw.to.length==0)) {
-          errors.push('one or more of "to" or "from" property required');
-        } else {
-        
-          if (raw.hasOwnProperty('to')) {
-            // if raw.to isn't valid, push error text
-            if (Array.isArray(raw.to) && (raw.to.length>1)) {
-              queryTo = {"entities.user_mentions":{"$elemMatch":{"id_str":{"$in":raw.to}}}};
-            } else if (Array.isArray(raw.to)) {
-              queryTo = {"entities.user_mentions":{"$elemMatch":{"id_str":raw.to[0]}}};
-            }
-          }
-          
-          if (raw.hasOwnProperty('from')) {
-            // if raw.from isn't valid, push error text
-            if (Array.isArray(raw.from) && (raw.from.length>1)) {
-              queryFrom = {"user.id_str":{"$in":raw.from}};
-            } else if (Array.isArray(raw.from)) {
-              queryFrom = {"user.id_str":raw.from[0]};
-            }
-          }
-                    
-          if ((raw.from.length>0) && (raw.to.length==0)) {
-            mongoQuery = queryFrom;
-          } else if ((raw.to.length>0) && (raw.from.length==0)) {
-            mongoQuery =  queryTo;
-          // } else if ((raw.to.length==0) && (raw.from.length==0)) {
-          //   errors.push('one or more of "to" or "from" property required');
-          } else {
-            mongoQuery =  {"$or": [queryFrom, queryTo]};
-          }
-        }
-        
-        if (errors.length==0) {
-          return mongoQuery;
-        } else {
-          return {errors: errors};
-        }
-      }
-      
+                  
       // staging data only
       $scope.listen_users = [
         {

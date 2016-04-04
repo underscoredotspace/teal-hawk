@@ -1,12 +1,12 @@
 #Interface for creating/editing/deleting tweetColumn
 - [X] Load column data from database to front-end
 - [X] Ability to add new tweet column
-- [ ] **Parse filter parameters from Mongo collection for editing**
-- [ ] Edit existing column
+- [X] Parse filter parameters from Mongo collection for editing
+- [X] Edit existing column
 - [x] Move column left or right
 - [ ] Show preview results
-- [ ] Save edited/~~new~~ filter parameters to Mongo collection
-- [X] Delete tweetColumn
+- [x] Save edited/new filter parameters to Mongo collection
+- [X] Delete tweet column
 
 #Authentication
 - [ ] Registration
