@@ -240,11 +240,17 @@ tweetApp.directive('addTweetColumn', function(socket, $filter){
           objectArray.to.forEach(function(element, index){
             $scope.tos.push({user: element});
           });
+          if ($scope.tos.length === 0) {
+            $scope.tos.push({user: ''});
+          }
           
           $scope.froms = [];
           objectArray.from.forEach(function(element, index){
             $scope.froms.push({user: element});
           });
+          if ($scope.froms.length === 0) {
+            $scope.froms.push({user: ''});
+          }
         }
         
         $scope.addTo = function () {
@@ -328,13 +334,19 @@ tweetApp.directive('addTweetColumn', function(socket, $filter){
       $scope.updateColumn = function() {
         var tos = _.uniq(_.compact(_.pluck($scope.tos, 'user')));
         var froms = _.uniq(_.compact(_.pluck($scope.froms, 'user')));
-        if (!((tos.length===0) && (froms.length===0))) {
-          $scope.column.parameters = JSON.stringify(paramsParse.object2mongo({to: tos, from: froms}));
-          socket.emit('editColumn', {id: $scope.column.id, parameters: $scope.column.parameters, position: $scope.column.position, type: $scope.column.type});
-          $scope.toggleSettings();
-          $rootScope.$broadcast('columnUpdated', $scope.column.id);
+        newParams = JSON.stringify(paramsParse.object2mongo({to: tos, from: froms}));
+        if (!angular.equals(newParams, $scope.column.parameters)) {
+          if (!((tos.length===0) && (froms.length===0))) {
+            $scope.column.parameters = newParams;
+            socket.emit('editColumn', {id: $scope.column.id, parameters: $scope.column.parameters, position: $scope.column.position, type: $scope.column.type});
+            $scope.toggleSettings();
+            $rootScope.$broadcast('columnUpdated', $scope.column.id);
+          } else {
+            console.log('One or more users must be selected under Tweets and/or Mentions');
+            // toast error message
+          }
         } else {
-          console.log('One or more users must be selected under Tweets and/or Mentions');
+          console.log('Parameters haven\'t changed!');
           // toast error message
         }
       }
