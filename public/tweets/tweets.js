@@ -101,7 +101,6 @@ tweetApp.directive('tweetColumn', function(socket){
       $scope.bottomLoading = false;
       
       var initRequest = function() {
-          console.log('initRequest:');
           var tweetColumn = angular.extend({}, {tweetCount: 10}, $scope.column);
           socket.emit('initRequest', tweetColumn);
           console.log('Inital ' + 10 + ' tweets requested for column ' + $scope.column.id);
@@ -133,7 +132,7 @@ tweetApp.directive('tweetColumn', function(socket){
       
       // Fires after connection lost and regained
       socket.on('reconnect', function(){
-        console.log('reconnect please');
+        console.log('Reconnect please');
         if ($scope.tweets.length!=0) {
           var updateRequest = angular.extend({}, {lastTweet: $scope.tweets[0].id_str}, $scope.column);
           socket.emit('updateRequest', updateRequest);
@@ -262,10 +261,18 @@ tweetApp.directive('addTweetColumn', function(socket, $filter){
       }
       
       $scope.delTo = function (index) {
-        if ($scope.tos.length!=1) {$scope.tos.splice(index,1);}
+        if ($scope.tos.length!=1) {
+          $scope.tos.splice(index,1);
+        } else {
+          $scope.tos[0].user = '';
+        }
       };
       $scope.delFrom = function (index) {
-        if ($scope.froms.length!=1) {$scope.froms.splice(index,1);}
+        if ($scope.froms.length!=1) {
+          $scope.froms.splice(index,1);
+        } else {
+          $scope.froms[0].user = '';
+        }
       };
       
       $scope.moveColumnLeft = function () {

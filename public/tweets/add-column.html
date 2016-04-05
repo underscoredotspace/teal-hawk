@@ -9,7 +9,7 @@
             <option value=""></option>
             <option data-ng-repeat="user in listen_users" value="{{user.id_str}}">{{user.screen_name}}</option>
           </select>
-          <span class="del-listen-user" data-ng-click="delFrom($index)"><i class="fa fa-trash"></i></span>
+          <span class="del-listen-user" data-ng-click="delFrom($index)"><i class="fa fa-times"></i></span>
         </div>
         <div class="add-listen-user"><span data-ng-click="addFrom()"><i class="fa fa-plus"></i></span></div>
       </div>
@@ -21,7 +21,7 @@
             <option value=""></option>
             <option data-ng-repeat="user in listen_users" value="{{user.id_str}}">{{user.screen_name}}</option>
           </select>
-          <span class="del-listen-user" data-ng-click="delTo($index)"><i class="fa fa-trash"></i></span>
+          <span class="del-listen-user" data-ng-click="delTo($index)"><i class="fa fa-times"></i></span>
         </div>
         <div class="add-listen-user"><span data-ng-click="addTo()"><i class="fa fa-plus"></i></span></div>
       </div>
