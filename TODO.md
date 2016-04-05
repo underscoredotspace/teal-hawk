@@ -31,5 +31,5 @@
 - [ ] Update stream parameters for server-side app.js and restart as required
 
 #Algorithms
-- [ ] Decide on _.each,  angular.forEach, or Array.forEach by case
-- [ ] Decide on _.extend or angular.extend by case
+- [ ] **Decide on _.each,  angular.forEach, or Array.forEach by case**
+- [ ] **Decide on _.extend or angular.extend by case**
