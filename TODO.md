@@ -32,6 +32,7 @@
 - [ ] Delete users
 - [ ] Update stream parameters for server-side app.js and restart as required
 
-#Algorithms
+#Efficiency
 - [X] Decide on _.each,  angular.forEach, or Array.forEach by case
 - [X] Decide on _.extend or angular.extend by case
+- [ ] Move underscore-query requirement to front-end for tweet validation
