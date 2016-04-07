@@ -101,7 +101,7 @@ tweetApp.directive('tweetColumn', function(socket){
       $scope.bottomLoading = false;
       
       var initRequest = function() {
-          var tweetColumn = angular.extend({}, {tweetCount: 10}, $scope.column);
+          var tweetColumn = {tweetCount: 10, id: $scope.column.id, parameters: $scope.column.parameters};
           socket.emit('initRequest', tweetColumn);
           console.log('Inital ' + 10 + ' tweets requested for column ' + $scope.column.id);
       };
@@ -134,7 +134,7 @@ tweetApp.directive('tweetColumn', function(socket){
       socket.on('reconnect', function(){
         console.log('Reconnect please');
         if ($scope.tweets.length!=0) {
-          var updateRequest = angular.extend({}, {lastTweet: $scope.tweets[0].id_str}, $scope.column);
+          var updateRequest = {lastTweet: $scope.tweets[0].id_str, id: $scope.column.id, parameters: $scope.column.parameters}
           socket.emit('updateRequest', updateRequest);
           console.log('Tweets after ' + updateRequest.lastTweet + ' requested for column ' + $scope.column.id);
         }
@@ -207,7 +207,7 @@ tweetApp.directive('tweetColumn', function(socket){
       $scope.showMore = function() {
         if (($scope.bottomLoading==false) && (socket.connected)) {
           $scope.bottomLoading = true; // set this to true until we get more bottomTweets. 
-          var nextTweets = angular.extend({}, {tweetCount: 10}, {lastTweet: $scope.tweets[$scope.tweets.length-1].id_str}, $scope.column);
+          var nextTweets = {tweetCount: 10, lastTweet: $scope.tweets[$scope.tweets.length-1].id_str, id: $scope.column.id, parameters: $scope.column.parameters};
           console.log('Next 10 tweets after ' + nextTweets.lastTweet + ' requested');
           socket.emit('NextTweets', nextTweets);
         } else {
@@ -278,6 +278,7 @@ tweetApp.directive('addTweetColumn', function(socket, $filter){
           // move column left
           var thisColumn = _.indexOf(_.pluck($scope.columns, 'position'), $scope.column.position);
           var leftColumn = _.indexOf(_.pluck($scope.columns, 'position'), $scope.column.position-1);
+          console.log(thisColumn, leftColumn);
           var leftPosition = $scope.columns[leftColumn].position;
           $scope.columns[leftColumn].position = $scope.columns[thisColumn].position;
           $scope.columns[thisColumn].position = leftPosition;
