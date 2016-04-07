@@ -144,7 +144,7 @@ tweetApp.directive('tweetColumn', function(socket){
       function removePhotoLink (tweet) {
         if (tweet.extended_entities) {
             if (tweet.extended_entities.media) {
-            angular.forEach(tweet.extended_entities.media, function(media_item) {
+            _.each(tweet.extended_entities.media, function(media_item) {
               if (media_item.type=='photo') {
                 tweet.text = tweet.text.replace(media_item.url, '');
               }
@@ -157,7 +157,7 @@ tweetApp.directive('tweetColumn', function(socket){
       function removeQuotedLink (tweet) {
         if (tweet.quoted_status) {
             if (tweet.entities.urls) {
-            angular.forEach(tweet.entities.urls, function(url_item) {
+            _.each(tweet.entities.urls, function(url_item) {
               if (url_item.display_url.substr(0, 12) =='twitter.com/') {
                 tweet.text = tweet.text.replace(url_item.url, '');
               }
@@ -170,14 +170,12 @@ tweetApp.directive('tweetColumn', function(socket){
       socket.on('topTweet', function(newTweet) {
         if (_.indexOf(newTweet[0],$scope.column.id)!=-1) {
             console.log(newTweet[1].length + ' topTweet(s) recieved for column ' + $scope.column.id);
-            $scope.$evalAsync(function () {
-              for (var i=newTweet[1].length-1; i>=0; i--) {
-                removePhotoLink(newTweet[1]);
-                removeQuotedLink(newTweet[1]);
-                $scope.tweets.unshift(newTweet[1][i]);
-              }
-            });
-            $scope.$digest();
+              _.each(newTweet[1].reverse(), function(tweet) {
+                removePhotoLink(tweet);
+                removeQuotedLink(tweet);
+                $scope.tweets.unshift(tweet);
+              });
+              $scope.$digest();
           } else {
             // console.log('tweet recieved, but not for column ' + $scope.column.id);
           }
@@ -186,21 +184,19 @@ tweetApp.directive('tweetColumn', function(socket){
       socket.on('bottomTweet', function (newTweet) {
         if (newTweet[0]==$scope.column.id){
           console.log(newTweet[1].length + ' bottomTweet(s) recieved for column ' + $scope.column.id);
-          $scope.$evalAsync(function () {
-            for (var i=0; i<=newTweet[1].length-1; i++) {
-              removePhotoLink(newTweet[1][i]);
-              removeQuotedLink(newTweet[1][i]);
-              $scope.tweets.push(newTweet[1][i]);
-            }
+            _.each(newTweet[1], function(tweet) {
+              removePhotoLink(tweet);
+              removeQuotedLink(tweet);
+              $scope.tweets.push(tweet);
           });
-          $scope.$digest();
           $scope.bottomLoading = false; // alows showMore function to fire again
+          $scope.$digest();
         }
       });
       
       // Fires when deletion request is recieved from Twitter via server
       socket.on('deleteTweet', function (id_str) {
-        if ($filter('filter')($scope.tweets, {id_str: id_str}).length>0) {
+        if (_.findWhere($scope.tweets, {id_str: id_str})!=undefined) {
           console.log('Tweet ' + id_str + ' deleted from ' + $scope.column.id);
           $scope.tweets = $filter('filter')($scope.tweets, {id_str: '!' + id_str});
           $scope.$digest();
@@ -236,7 +232,7 @@ tweetApp.directive('addTweetColumn', function(socket, $filter){
         } else {
           objectArray = paramsParse.mongo2object(JSON.parse($scope.column.parameters));
           $scope.tos = [];
-          objectArray.to.forEach(function(element, index){
+          _.each(objectArray.to, function(element){
             $scope.tos.push({user: element});
           });
           if ($scope.tos.length === 0) {
@@ -244,7 +240,7 @@ tweetApp.directive('addTweetColumn', function(socket, $filter){
           }
           
           $scope.froms = [];
-          objectArray.from.forEach(function(element, index){
+          _.each(objectArray.from, function(element){
             $scope.froms.push({user: element});
           });
           if ($scope.froms.length === 0) {
@@ -307,7 +303,7 @@ tweetApp.directive('addTweetColumn', function(socket, $filter){
       }
       
       $scope.toggleSettings =  function() {
-        if ($scope.column.parameters=='') {
+        if ($scope.column.parameters==='') {
           $scope.column.isNew = true;
         } else {
           $scope.column.isNew = false;
@@ -315,7 +311,7 @@ tweetApp.directive('addTweetColumn', function(socket, $filter){
         $scope.settingsVisible = !$scope.settingsVisible;
         $scope.setupSettings();
         
-        if(!$scope.settingsVisible && $scope.column.parameters == '') {
+        if(!$scope.settingsVisible && $scope.column.parameters === '') {
           $scope.$parent.columns = $filter('filter')($scope.columns, {id: '!' + $scope.column.id});
           $scope.column = [];
         }
@@ -339,10 +335,11 @@ tweetApp.directive('addTweetColumn', function(socket, $filter){
       }
       
       $scope.updateColumn = function() {
+        // uniq to remove duplicates, and compact to remove ''. 
         var tos = _.uniq(_.compact(_.pluck($scope.tos, 'user')));
         var froms = _.uniq(_.compact(_.pluck($scope.froms, 'user')));
         newParams = JSON.stringify(paramsParse.object2mongo({to: tos, from: froms}));
-        if (!angular.equals(newParams, $scope.column.parameters)) {
+        if (!_.isEqual(newParams, $scope.column.parameters)) {
           if (!((tos.length===0) && (froms.length===0))) {
             $scope.column.parameters = newParams;
             socket.emit('editColumn', {id: $scope.column.id, parameters: $scope.column.parameters, position: $scope.column.position, type: $scope.column.type});
@@ -364,7 +361,8 @@ tweetApp.directive('addTweetColumn', function(socket, $filter){
         $scope.$parent.columns = $filter('filter')($scope.columns, {id: '!' + $scope.column.id});
         $scope.column = [];
         $scope.tweets = [];
-        $scope.$parent.columns.forEach(function(element, index) {
+        angular.forEach($scope.$parent.columns, function(element, index) {
+        //$scope.$parent.columns.forEach(function(element, index) {
           if (element.position > deletedPosition) {
             $scope.$parent.columns[index].position = $scope.$parent.columns[index].position -1;
             socket.emit('editColumn', {id: $scope.columns[index].id, parameters: $scope.columns[index].parameters, position: $scope.columns[index].position, type: $scope.columns[index].type});
