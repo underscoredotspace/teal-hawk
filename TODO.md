@@ -4,12 +4,12 @@
 - [X] Parse filter parameters from Mongo collection for editing
 - [X] Edit existing column
 - [x] Move column left or right
-- [ ] Show preview results
+- [ ] ~~Show preview results~~
 - [x] Save edited/new filter parameters to Mongo collection
 - [X] Delete tweet column
 
 #Authentication
-- [ ] Registration
+- [ ] Registration (with bad user route)
 - [x] Login with Twitter
 - [x] Log out
 - [x] Validation for socket requests
@@ -28,8 +28,10 @@
 - [ ] Replace any remaining t.co link text with the real one
 
 #Admin pages
+- [ ] Authorise new user registration
+- [ ] Delete users
 - [ ] Update stream parameters for server-side app.js and restart as required
 
 #Algorithms
-- [ ] **Decide on _.each,  angular.forEach, or Array.forEach by case**
-- [ ] **Decide on _.extend or angular.extend by case**
+- [X] Decide on _.each,  angular.forEach, or Array.forEach by case
+- [X] Decide on _.extend or angular.extend by case
