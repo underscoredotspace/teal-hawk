@@ -70,7 +70,7 @@ BUTTON {
   height: 25px; 
   padding: 0 5px 0 10px;
 }
-.add-tweet-column {
+.tweet-column-settings {
   /*display: none;*/
   position: relative;
   background-color: #222426;
@@ -79,17 +79,17 @@ BUTTON {
   margin-top: 0px;
   padding: 3px;
 }
-.add-column-column-holder {
+.column-settings-column-holder {
   white-space: nowrap;
 }
-.add-column-buttons {
+.column-settings-buttons {
   /*float: right;*/
   display: block;
 }
 .move-column-buttons {
   display: inline-block;
 }
-.add-column-column {
+.column-settings-column {
   display: inline-block;
   vertical-align: top;
 }

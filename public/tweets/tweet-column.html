@@ -4,7 +4,7 @@
     <input data-ng-model="search.text" type="text" class="search-tweets" placeholder="Search" data-scroll-top>
     <button data-ng-click="search={}" class="search-tweets" data-focus-input>Clear</button>
   </div>
-  <div add-tweet-column data-ng-show="settingsVisible"></div>
+  <div tweet-column-settings data-ng-show="settingsVisible"></div>
   <div class="tweet" data-ng-repeat="tweet in tweets|filter:search as filteredtweets track by $index">
     <div class="tweet-left-column">
       <img class="profile-image" src="#" data-ng-src="{{tweet.user.profile_image_url_https}}">

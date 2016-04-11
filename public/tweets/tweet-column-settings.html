@@ -1,8 +1,8 @@
-<div class="add-tweet-column">
-  <div class="add-column-title" data-ng-show="!column.isNew">Edit Column</div>
-  <div class="add-column-title" data-ng-show="column.isNew">Add Column</div>
-  <div class="add-column-column-holder">
-    <div class="add-column-column ">
+<div class="tweet-column-settings">
+  <div class="column-settings-title" data-ng-show="!column.isNew">Edit Column</div>
+  <div class="column-settings-title" data-ng-show="column.isNew">Add Column</div>
+  <div class="column-settings-column-holder">
+    <div class="column-settings-column ">
         <div class="">Tweets</div>
         <div ng-repeat="from in froms" class="">
           <select class="listen-users" name="tweets" data-ng-model="from.user">
@@ -14,7 +14,7 @@
         <div class="add-listen-user"><span data-ng-click="addFrom()"><i class="fa fa-plus"></i></span></div>
       </div>
       
-      <div class="add-column-column">
+      <div class="column-settings-column">
         <div class="">Mentions</div>
         <div data-ng-repeat="to in tos" class="">
           <select class="listen-users" name="mentions" data-ng-model="to.user">
@@ -30,7 +30,7 @@
     <button data-ng-click="moveColumnLeft()"><i class="fa fa-arrow-left"></i></button>
     <button data-ng-click="moveColumnRight()"><i class="fa fa-arrow-right"></i></button>
   </div>
-  <div class="add-column-buttons">
+  <div class="column-settings-buttons">
     <button data-ng-click="delColumn()" data-ng-show="!column.isNew">Delete</button>
     <button data-ng-click="toggleSettings()" data-ng-show="!column.isNew">Cancel</button>
     <button data-ng-click="delColumn()" data-ng-show="column.isNew">Cancel</button>

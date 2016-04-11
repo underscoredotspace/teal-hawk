@@ -219,10 +219,10 @@ tweetApp.directive('tweetColumn', function(socket){
 });
 
 // Directive that enables us to create[/amend] criteria for new column, move column or delete column. 
-tweetApp.directive('addTweetColumn', function(socket, $filter){
+tweetApp.directive('tweetColumnSettings', function(socket, $filter){
   return {
     restrict: 'A', 
-    templateUrl: '/tweets/add-column.html',
+    templateUrl: '/tweets/tweet-column-settings.html',
     replace: true, 
     controller: function($scope, $rootScope, paramsParse) {
       $scope.setupSettings = function() {
