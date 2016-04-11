@@ -23,7 +23,7 @@ tweetApp.factory('socket', function(){
 
 tweetApp.directive('menuBar', function($rootScope) {
   return {
-    restrict: 'E', 
+    restrict: 'A', 
     templateUrl: '/menu-bar',
     replace: true, 
     link: function($scope) {
