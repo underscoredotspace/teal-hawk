@@ -26,7 +26,7 @@
         <div class="add-listen-user"><span data-ng-click="addTo()"><i class="fa fa-plus"></i></span></div>
       </div>
   </div>
-  <div class="move-column-buttons">
+  <div class="move-column-buttons" data-ng-show="!column.isNew">
     <button data-ng-click="moveColumnLeft()"><i class="fa fa-arrow-left"></i></button>
     <button data-ng-click="moveColumnRight()"><i class="fa fa-arrow-right"></i></button>
   </div>

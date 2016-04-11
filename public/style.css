@@ -83,8 +83,8 @@ BUTTON {
   white-space: nowrap;
 }
 .add-column-buttons {
-  float: right;
-  display: inline-block;
+  /*float: right;*/
+  display: block;
 }
 .move-column-buttons {
   display: inline-block;

@@ -249,8 +249,10 @@ mongodb.connect(tweetsDB, function (err, db) {
       // Check to see if any open connections have columns that need this tweet
       var outColumns = [];
       _.each(deckConnections, function(connection, index) {
-        if(query([tweet], JSON.parse(connection.parameters)).length>0) {
-          outColumns.push(connection.id);
+        if (connection.parameters!='') {
+          if(query([tweet], JSON.parse(connection.parameters)).length>0) {
+            outColumns.push(connection.id);
+          }
         }
       });
       
