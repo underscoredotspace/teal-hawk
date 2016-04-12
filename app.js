@@ -1,7 +1,6 @@
 "use strict";
 //var extend = require('util')._extend;
 var _ = require("underscore");
-var query = require("underscore-query")(_, false);
 var mongodb = require('mongodb').MongoClient;
 var tweetsDB = 'mongodb://127.0.0.1:27017/tweets'
 var connectMongo = require('connect-mongo');
@@ -71,8 +70,9 @@ function onAuthorizeFail(data, message, error, accept){
 
 // Express setup
 app.set('views', __dirname + '/public/ejs_views');
-app.set('view engine', 'ejs');
 app.use('/bower_components',  express.static(__dirname + '/bower_components'));
+app.use('/js/underscore-query/lib',  express.static(__dirname + '/node_modules/underscore-query/lib'));
+app.set('view engine', 'ejs');
 app.use(session({key: config.passport.key, secret: config.passport.secret, store: sessionStore, saveUninitialized: false, resave: false }));
 app.use(cookieParser());
 app.use(passport.initialize());
@@ -118,7 +118,6 @@ mongodb.connect(tweetsDB, function (err, db) {
     process.exit(1);
   } else {
     console.log('Connected to mongo');
-    var deckConnections = [];
 
     io.sockets.on('connection', function (socket) {
       // Upon connection to single client for first time await listen events
@@ -127,9 +126,6 @@ mongodb.connect(tweetsDB, function (err, db) {
       var loggedIn = function () {
         db.collection('users').find({twitter_id: socket.request.user.user_id}, {columns:1, _id: 0}).limit(1).toArray(function(err, user) {
           socket.emit('columns', user[0].columns);
-          _.each(user[0].columns, function(column) {
-            deckConnections.push(_.extend(column, {socket: socket.id}));
-          });
         });
       }      
       
@@ -138,10 +134,6 @@ mongodb.connect(tweetsDB, function (err, db) {
       socket.on('reload', function () {loggedIn()});  
       
       socket.on('disconnect', function() {
-        // filter out any columns that belong to this socket
-        deckConnections = _.filter(deckConnections, function(deckConnection){
-          return deckConnection.socket != socket.id;
-        });
         console.log(socket.id + ' disconnected');
       }); 
    
@@ -162,25 +154,17 @@ mongodb.connect(tweetsDB, function (err, db) {
       
       socket.on('newColumn', function(newColumn){
         db.collection("users").update({twitter_id: socket.request.user.user_id}, {$push: {columns: newColumn}});
-        deckConnections.push(_.extend(newColumn, {socket: socket.id}));
         socket.emit('columnAdded', newColumn.id);
       });
       
       socket.on('delColumn', function(columnID){
         db.collection("users").update({twitter_id: socket.request.user.user_id}, {$pull: {columns: {id: columnID}}});
-        deckConnections = _.reject(deckConnections, function(deckConnection){
-          return deckConnection.id == columnID;
-        });
       })
       
       // Hacky, but edit column by deleting by ID then adding in with same ID
       socket.on('editColumn', function (column) {
         db.collection("users").update({twitter_id: socket.request.user.user_id}, {$pull: {columns: {id: column.id}}});
         db.collection("users").update({twitter_id: socket.request.user.user_id}, {$push: {columns: column}});
-        deckConnections = _.reject(deckConnections, function(deckConnection){
-          return deckConnection.id == column.id;
-        });
-        deckConnections.push(_.extend(column, {socket: socket.id}));
       })
 
       // This event is recieved from a client who lost connection and is reconnecting
@@ -203,10 +187,10 @@ mongodb.connect(tweetsDB, function (err, db) {
       // This event is recieved when client goes to bottom of view and needs more tweets
       socket.on('NextTweets', function (nextTweets) {
         var searchQuery = {'$and': [JSON.parse(nextTweets.parameters), {'retweeted_status':{'$exists':false}}, {id_str: {$lt: nextTweets.lastTweet}}]};
-        db.collection('tweets').find(searchQuery).sort([['id_str', -1]]).limit(nextTweets.tweetCount).toArray(function (err, tweet) {
-          if (tweet !== null) {
+        db.collection('tweets').find(searchQuery).sort([['id_str', -1]]).limit(nextTweets.tweetCount).toArray(function (err, tweets) {
+          if (tweets !== null) {
             // emit Tweets back to client/column that made request
-            socket.emit('bottomTweet', [nextTweets.id, tweet]);
+            socket.emit('bottomTweet', [nextTweets.id, tweets]);
           }
         }); 
       }); // End of NextTweets event
@@ -246,18 +230,8 @@ mongodb.connect(tweetsDB, function (err, db) {
         tweet.quote_status.created_at = new Date(tweet.quote_satus.created_at);
       }
       
-      // Check to see if any open connections have columns that need this tweet
-      var outColumns = [];
-      _.each(deckConnections, function(connection, index) {
-        if (connection.parameters!='') {
-          if(query([tweet], JSON.parse(connection.parameters)).length>0) {
-            outColumns.push(connection.id);
-          }
-        }
-      });
-      
       if(!tweet.retweeted_status) {
-        io.sockets.emit('topTweet', [_.uniq(outColumns), [tweet]]);
+        io.sockets.emit('topTweet', [tweet]);
       }
       db.collection('tweets').insert(tweet, function (err, records) {
         if (err) {

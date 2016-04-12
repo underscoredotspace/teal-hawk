@@ -168,17 +168,16 @@ tweetApp.directive('tweetColumn', function(socket){
 
       // Fires when new Tweet for top of stack sent by server
       socket.on('topTweet', function(newTweet) {
-        if (_.indexOf(newTweet[0],$scope.column.id)!=-1) {
-            console.log(newTweet[1].length + ' topTweet(s) recieved for column ' + $scope.column.id);
-              _.each(newTweet[1].reverse(), function(tweet) {
-                removePhotoLink(tweet);
-                removeQuotedLink(tweet);
-                $scope.tweets.unshift(tweet);
-              });
-              $scope.$digest();
-          } else {
-            // console.log('tweet recieved, but not for column ' + $scope.column.id);
-          }
+        newTweets = _.query(newTweet, JSON.parse($scope.column.parameters));
+        if(newTweets.length>0) {
+          console.log(newTweets.length + ' topTweet(s) recieved for column ' + $scope.column.id);
+          _.each(newTweets.reverse(), function(tweet) {
+            removePhotoLink(tweet);
+            removeQuotedLink(tweet);
+            $scope.tweets.unshift(tweet);
+          });
+          $scope.$digest();
+        }        
       });
       // Fires when new Tweet for bottom of stack sent by server
       socket.on('bottomTweet', function (newTweet) {
@@ -363,7 +362,6 @@ tweetApp.directive('tweetColumnSettings', function(socket, $filter){
         $scope.column = [];
         $scope.tweets = [];
         angular.forEach($scope.$parent.columns, function(element, index) {
-        //$scope.$parent.columns.forEach(function(element, index) {
           if (element.position > deletedPosition) {
             $scope.$parent.columns[index].position = $scope.$parent.columns[index].position -1;
             socket.emit('editColumn', {id: $scope.columns[index].id, parameters: $scope.columns[index].parameters, position: $scope.columns[index].position, type: $scope.columns[index].type});
