@@ -71,7 +71,7 @@ function onAuthorizeFail(data, message, error, accept){
 // Express setup
 app.set('views', __dirname + '/public/ejs_views');
 app.use('/bower_components',  express.static(__dirname + '/bower_components'));
-app.use('/js/underscore-query/lib',  express.static(__dirname + '/node_modules/underscore-query/lib'));
+app.use('/js/underscore-query/lib',  express.static(__dirname + '/node_modules/underscore-query/lib')); // hack cos underscore-query not on Bower
 app.set('view engine', 'ejs');
 app.use(session({key: config.passport.key, secret: config.passport.secret, store: sessionStore, saveUninitialized: false, resave: false }));
 app.use(cookieParser());
