@@ -10,12 +10,12 @@
     "ejs": "^2.4.1",
     "express": "4.13.3",
     "express-session": "^1.13.0",
-    "lodash": "^4.6.1",
     "mongodb": "2.0.49",
     "passport": "^0.3.2",
     "passport-twitter": "^1.0.4",
     "passport.socketio": "^3.6.1",
     "socket.io": "1.3.7",
-    "twit": "^2.2.3"
+    "twit": "^2.2.3",
+    "underscore": "^1.8.3"
   }
 }
