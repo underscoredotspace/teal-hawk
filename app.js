@@ -120,7 +120,7 @@ mongodb.connect(tweetsDB, function (err, db) {
 
     io.sockets.on('connection', function (socket) {
       // Upon connection to single client for first time await listen events
-      console.log(socket.id + ' connected');
+      console.log(Date() + ': ' + socket.id + ' connected');
       
       var loggedIn = function () {
         db.collection('users').find({twitter_id: socket.request.user.user_id}, {columns:1, _id: 0}).limit(1).toArray(function(err, user) {
@@ -133,7 +133,7 @@ mongodb.connect(tweetsDB, function (err, db) {
       socket.on('reload', function () {loggedIn()});  
       
       socket.on('disconnect', function() {
-        console.log(socket.id + ' disconnected');
+        console.log(Date() + ': ' + socket.id + ' disconnected');
       }); 
    
       // This tells us the new client needs initial Tweets
@@ -177,7 +177,7 @@ mongodb.connect(tweetsDB, function (err, db) {
               socket.emit('topTweet', [updateRequest.id, tweet]);
               console.log(Date() + ': ' + tweet.length + ' tweets sent to ' + socket.id + ' for column ' + updateRequest.id);
             } else {
-              console.log('No new tweets since ' + updateRequest.lastTweet + ' to send for column ' + updateRequest.id);
+              // console.log('No new tweets since ' + updateRequest.lastTweet + ' to send for column ' + updateRequest.id);
             }
           });
         }
@@ -212,13 +212,13 @@ mongodb.connect(tweetsDB, function (err, db) {
     });
     
     stream.on('tweet', function (tweet) {
-        console.log(tweet.created_at + ' new tweet ' + tweet.id_str);
+        console.log(Date() + ' new tweet ' + tweet.id_str);
         newTweet(tweet);
     });
     
     // Not sure of value add here, but take it anyway. 
     stream.on('quoted_tweet', function (tweet) {
-      console.log(tweet.created_at + ' quoted tweet ' + tweet.id_str);
+      console.log(Date() + ' quoted tweet ' + tweet.id_str);
       newTweet(tweet);
     });
     
@@ -258,7 +258,7 @@ mongodb.connect(tweetsDB, function (err, db) {
 
     stream.on('reconnect', function (request, response, connectInterval) {
       console.log(Date() + ': reconnect: ' + connectInterval);
-      console.log(response);
+      console.log(JSON.stringify(response));
     })
 
     stream.on('parse-error', function(error) {
@@ -269,7 +269,7 @@ mongodb.connect(tweetsDB, function (err, db) {
 
     stream.on('error', function(error) {
       console.log(Date() + ': error - ');
-      console.error(error);
+      console.error(JSON.stringify(error));
       console.log('end of error');
     });
 
