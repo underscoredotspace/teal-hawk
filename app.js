@@ -94,6 +94,11 @@ app.get('/login',function(req,res){
     res.sendFile(__dirname + '/public/login.html');
   }
 });
+//bs-style.css
+app.get('/bs-style.css',function(req,res){
+    res.sendFile(__dirname + '/public/bs-style.css');
+});
+
 
 app.get('/logout', function(req, res){
   req.logout();
