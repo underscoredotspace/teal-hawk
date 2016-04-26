@@ -82,25 +82,25 @@ app.get('/login/twitter',
   passport.authenticate('twitter'));
 
 app.get('/login/twitter/callback',
-  passport.authenticate('twitter', { failureRedirect: '/login/#/baduser'}),
+  passport.authenticate('twitter', { failureRedirect: '/login/#/register'}),
   function(req, res) {
       res.redirect('/');
   });
 
-app.get('/login',function(req,res){
+app.get('/login',function(req,res) {
   if (req.user) {
-    res.redirect('/');
+      res.redirect('/'); 
   } else {
     res.sendFile(__dirname + '/public/login.html');
   }
 });
-//bs-style.css
-app.get('/bs-style.css',function(req,res){
+
+app.get('/bs-style.css',function(req,res) {
     res.sendFile(__dirname + '/public/bs-style.css');
 });
 
 
-app.get('/logout', function(req, res){
+app.get('/logout', function(req, res) {
   req.logout();
   res.redirect('/');
 });
@@ -112,6 +112,7 @@ app.get('/menu-bar', function(req, res) {
 app.get('*', 
   require('connect-ensure-login').ensureLoggedIn('/login'),
   function(req, res){
+    console.log(JSON.stringify(req));
     res.sendFile(__dirname + '/public' + req.url);
 });
 
