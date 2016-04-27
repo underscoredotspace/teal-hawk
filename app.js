@@ -112,7 +112,6 @@ app.get('/menu-bar', function(req, res) {
 app.get('*', 
   require('connect-ensure-login').ensureLoggedIn('/login'),
   function(req, res){
-    console.log(JSON.stringify(req));
     res.sendFile(__dirname + '/public' + req.url);
 });
 
@@ -242,7 +241,7 @@ mongodb.connect(tweetsDB, function (err, db) {
         if (err) {
           console.log('Database error: ' + err)
         } else {
-          console.log('tweet id ' + tweet.id_str + ' inserted to mongodb');
+          console.log(Date() + ': tweet id ' + tweet.id_str + ' inserted to mongodb');
         }
       });
     }
@@ -276,6 +275,15 @@ mongodb.connect(tweetsDB, function (err, db) {
     stream.on('error', function(error) {
       console.log(Date() + ': error - ');
       console.error(JSON.stringify(error));
+      if (error.errno == -5) {
+        console.log('error -5 caught');
+        stream.stop();
+        //console.log (stream);
+        setTimeout (function () {
+          stream.start();
+        }, 5000);
+        //console.log(stream);
+      }
       console.log('end of error');
     });
 
