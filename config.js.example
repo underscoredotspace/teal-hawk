@@ -4,8 +4,7 @@ module.exports = {
     consumer_secret: '',
     access_token: '',
     access_token_secret: '',
-    callbackURL: 'http://127.0.0.1:3000/login/twitter/callback',
-    filter: {'track': '_DotSpace', 'follow': '42383066'}
+    callbackURL: 'http://127.0.0.1:3000/login/twitter/callback'
   },
   passport: {
     key: 'teal hawk',

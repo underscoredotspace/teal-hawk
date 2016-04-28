@@ -210,88 +210,95 @@ mongodb.connect(tweetsDB, function (err, db) {
       timeout_ms: 60*1000
     });
 
-    // Open new Twitter stream with Twat
-    var stream = twit.stream('statuses/filter', config.twitter.filter);
-    stream.on('connected', function() {
-      console.log(Date() + ': connected to Twitter');
-    });
-    
-    stream.on('tweet', function (tweet) {
-        console.log(Date() + ' new tweet ' + tweet.id_str);
-        newTweet(tweet);
-    });
-    
-    // Not sure of value add here, but take it anyway. 
-    stream.on('quoted_tweet', function (tweet) {
-      console.log(Date() + ' quoted tweet ' + tweet.id_str);
-      newTweet(tweet);
-    });
-    
-    function newTweet(tweet) {
-      // Fit date formats for AngularMoment
-      tweet.created_at = new Date(tweet.created_at);
-      if (tweet.quote_status) {
-        tweet.quote_status.created_at = new Date(tweet.quote_satus.created_at);
-      }
-      
-      if(!tweet.retweeted_status) {
-        io.sockets.emit('topTweet', [tweet]);
-      }
-      db.collection('tweets').insert(tweet, function (err, records) {
-        if (err) {
-          console.log('Database error: ' + err)
-        } else {
-          console.log(Date() + ': tweet id ' + tweet.id_str + ' inserted to mongodb');
+    db.collection("config").findOne({}, function (err, twitconfig) {
+      if (err) {
+        console.error('Can\'t get config from mongodb');
+        process.exit(1);
+      } else { 
+        var stream = twit.stream('statuses/filter', twitconfig.filter);
+        
+        stream.on('connected', function() {
+          console.log(Date() + ': connected to Twitter');
+        });
+        
+        stream.on('tweet', function (tweet) {
+            console.log(Date() + ' new tweet ' + tweet.id_str);
+            newTweet(tweet);
+        });
+        
+        // Not sure of value add here, but take it anyway. 
+        stream.on('quoted_tweet', function (tweet) {
+          console.log(Date() + ' quoted tweet ' + tweet.id_str);
+          newTweet(tweet);
+        });
+        
+        function newTweet(tweet) {
+          // Fit date formats for AngularMoment
+          tweet.created_at = new Date(tweet.created_at);
+          if (tweet.quote_status) {
+            tweet.quote_status.created_at = new Date(tweet.quote_satus.created_at);
+          }
+          
+          if(!tweet.retweeted_status) {
+            io.sockets.emit('topTweet', [tweet]);
+          }
+          db.collection('tweets').insert(tweet, function (err, records) {
+            if (err) {
+              console.log('Database error: ' + err)
+            } else {
+              console.log(Date() + ': tweet id ' + tweet.id_str + ' inserted to mongodb');
+            }
+          });
         }
-      });
-    }
-      
-    stream.on('delete', function (deleteData) {
-      db.collection('tweets').deleteOne({id_str:deleteData.delete.status.id_str}, function(err, records){
-        if (err) throw err; 
-        console.log(Date() + ': tweet ' + deleteData.delete.status.id_str + ' deleted');
-        io.sockets.emit('deleteTweet', deleteData.delete.status.id_str);
-      });
-    });
-    
-    // bit of debugging here, needs to be handled rather than just spat out
-    stream.on('limit', function (limitMessage) {
-      console.log(Date() + ': limit - ');
-      console.error(limitMessage);
-      console.log('end of limit');
-    });
+          
+        stream.on('delete', function (deleteData) {
+          db.collection('tweets').deleteOne({id_str:deleteData.delete.status.id_str}, function(err, records){
+            if (err) throw err; 
+            console.log(Date() + ': tweet ' + deleteData.delete.status.id_str + ' deleted');
+            io.sockets.emit('deleteTweet', deleteData.delete.status.id_str);
+          });
+        });
+        
+        // bit of debugging here, needs to be handled rather than just spat out
+        stream.on('limit', function (limitMessage) {
+          console.log(Date() + ': limit - ');
+          console.error(limitMessage);
+          console.log('end of limit');
+        });
 
-    stream.on('reconnect', function (request, response, connectInterval) {
-      console.log(Date() + ': reconnect: ' + connectInterval);
-      console.log(JSON.stringify(response));
-    })
+        stream.on('reconnect', function (request, response, connectInterval) {
+          console.log(Date() + ': reconnect: ' + connectInterval);
+          console.log(JSON.stringify(response));
+        })
 
-    stream.on('parse-error', function(error) {
-      console.log(Date() + ': parse-error - ');
-      console.error(error);
-      console.log('end of parse-error');
-    });
+        stream.on('parse-error', function(error) {
+          console.log(Date() + ': parse-error - ');
+          console.error(error);
+          console.log('end of parse-error');
+        });
 
-    stream.on('error', function(error) {
-      console.log(Date() + ': error - ');
-      console.error(JSON.stringify(error));
-      if (error.errno == -5) {
-        console.log('error -5 caught');
-        stream.stop();
-        //console.log (stream);
-        setTimeout (function () {
-          stream.start();
-        }, 5000);
-        //console.log(stream);
-      }
-      console.log('end of error');
-    });
+        stream.on('error', function(error) {
+          console.log(Date() + ': error - ');
+          console.error(JSON.stringify(error));
+          if (error.errno == -5) {
+            console.log('error -5 caught');
+            stream.stop();
+            //console.log (stream);
+            setTimeout (function () {
+              stream.start();
+            }, 5000);
+            //console.log(stream);
+          }
+          console.log('end of error');
+        });
 
-    stream.on('warning', function(msg) {
-      console.log(Date() + ': warning - ');
-      console.error(msg);
-      console.log('end of warning');
-    });  
+        stream.on('warning', function(msg) {
+          console.log(Date() + ': warning - ');
+          console.error(msg);
+          console.log('end of warning');
+        });  
+      } // end error if
+    }); // end of db.config
   }
 });
 

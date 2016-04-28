@@ -30,7 +30,9 @@
 #Admin pages
 - [ ] Authorise new user registration
 - [ ] Delete users
+- [X] Get stream parameters from database
 - [ ] Update stream parameters for server-side app.js and restart as required
+- [ ] First run process to create defaults in db etc. 
 
 #Efficiency/Correctness
 - [X] Decide on _.each,  angular.forEach, or Array.forEach by case
