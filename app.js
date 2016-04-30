@@ -281,12 +281,13 @@ mongodb.connect(tweetsDB, function (err, db) {
           console.log(Date() + ': error - ');
           console.error(JSON.stringify(error));
           if (error.errno == -5) {
-            console.log('error -5 caught');
-            stream.stop();
-            //console.log (stream);
-            setTimeout (function () {
-              stream.start();
-            }, 5000);
+            console.log('error -5');
+            process.exit(1);
+            // stream.stop();
+            // //console.log (stream);
+            // setTimeout (function () {
+            //   stream.start();
+            // }, 5000);
             //console.log(stream);
           }
           console.log('end of error');
