@@ -9,7 +9,7 @@
 - [X] Delete tweet column
 
 #Authentication
-- [ ] **Registration (with //login/#/register route)**
+- [ ] **Registration (part done)**
 - [x] Login with Twitter
 - [x] Log out
 - [x] Validation for socket requests

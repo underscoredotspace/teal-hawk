@@ -34,10 +34,14 @@ passport.use(new Strategy({
     mongodb.connect(tweetsDB, function (err, db) {
       db.collection('users').find({'twitter_id': profile.id}).limit(1).toArray(function(err, user){        
         if (user.length>0) {
-          return cb(null, {user_id: profile.id, user_name: profile.username, user_image: profile.photos[0].value});
+          var registered=user[0].registered;
+          // update profile? 
         } else{
-          return cb(null, false);
+          var registered=false;
+          // TODO: create new record
         }
+        // should be taking image and stuff from database? 
+        return cb(null, {user_id: profile.id, user_name: profile.username, user_image: profile.photos[0].value, registered: registered});
       })
     })
   }
@@ -82,14 +86,18 @@ app.get('/login/twitter',
   passport.authenticate('twitter'));
 
 app.get('/login/twitter/callback',
-  passport.authenticate('twitter', { failureRedirect: '/login/#/register'}),
-  function(req, res) {
+  passport.authenticate('twitter', { failureRedirect: '/login'}),
+  function(req, res) {    
+    if (req.user.registered==true) {
       res.redirect('/');
+    } else {
+      res.redirect('/register');
+    } 
   });
 
 app.get('/login',function(req,res) {
   if (req.user) {
-      res.redirect('/'); 
+    res.redirect('/');
   } else {
     res.sendFile(__dirname + '/public/login.html');
   }
@@ -99,20 +107,31 @@ app.get('/bs-style.css',function(req,res) {
     res.sendFile(__dirname + '/public/bs-style.css');
 });
 
-
 app.get('/logout', function(req, res) {
   req.logout();
-  res.redirect('/');
+  res.redirect('/login');
+});
+
+app.get('/register', function(req, res) {
+  res.render('register', { user: req.user });
 });
 
 app.get('/menu-bar', function(req, res) {
+  // check for registered/logged in?
   res.render('menu-bar', { user: req.user });
 });
 
 app.get('*', 
   require('connect-ensure-login').ensureLoggedIn('/login'),
   function(req, res){
-    res.sendFile(__dirname + '/public' + req.url);
+    // check for registered
+    if (req.user.registered==true) {
+      res.sendFile(__dirname + '/public' + req.url);  
+    } else {
+      req.logout();
+      res.redirect('/login');
+    }
+    
 });
 
 // Connect to mongodb, Twitter stream, and fire listen for socketio request
@@ -283,12 +302,6 @@ mongodb.connect(tweetsDB, function (err, db) {
           if (error.errno == -5) {
             console.log('error -5');
             process.exit(1);
-            // stream.stop();
-            // //console.log (stream);
-            // setTimeout (function () {
-            //   stream.start();
-            // }, 5000);
-            //console.log(stream);
           }
           console.log('end of error');
         });
