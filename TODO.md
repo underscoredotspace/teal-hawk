@@ -4,12 +4,12 @@
 - [X] Parse filter parameters from Mongo collection for editing
 - [X] Edit existing column
 - [x] Move column left or right
-- [ ] ~~Show preview results~~
 - [x] Save edited/new filter parameters to Mongo collection
 - [X] Delete tweet column
 
 #Authentication
-- [ ] **Registration (part done)**
+- [X] Registration request
+- [ ] Registration approval by admin user
 - [x] Login with Twitter
 - [x] Log out
 - [x] Validation for socket requests
@@ -24,7 +24,6 @@
 #Tweet Deck Features
 - [ ] Filter by conversation
 - [ ] User stats available on hover of profile image
-- [X] Appropriate route for new user with no columns
 - [ ] Replace any remaining t.co link text with the real one
 
 #Admin pages
@@ -39,3 +38,8 @@
 - [X] Decide on _.extend or angular.extend by case
 - [x] Move underscore-query requirement to front-end for tweet validation
 - [ ] Test for every function
+
+#Look & Feel
+- [ ] Need front-end framework (Bootstrap or something) or SASS for styles
+- [ ] More loading animation
+- [ ] Better handling of new tweets. Not good to burst into view, especially for high volume situations. 
