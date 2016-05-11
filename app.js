@@ -1,22 +1,18 @@
 "use strict";
-//var extend = require('util')._extend;
 var _ = require("underscore");
 var mongodb = require('mongodb').MongoClient;
 var tweetsDB = 'mongodb://127.0.0.1:27017/tweets'
 var connectMongo = require('connect-mongo');
-
 var config = require('./config.js');
 var Twitter = require('twit');
 var express = require('express');
 var cookieParser = require('cookie-parser');
 var session = require('express-session');
 var ejs = require('ejs');
-
 var passport = require('passport');
 var passportSocketIo = require("passport.socketio");
 var http = require("http");
 var socketio = require('socket.io');
-
 var app = express();
 var server = http.createServer(app);
 var io = socketio.listen(server);
@@ -38,7 +34,7 @@ passport.use(new Strategy({
           // update profile? 
         } else{
           var registered=false;
-          // TODO: create new record
+          db.collection("users").insert({name: profile.username, twitter_id: profile.id, registered: false, columns: []});
         }
         // should be taking image and stuff from database? 
         return cb(null, {user_id: profile.id, user_name: profile.username, user_image: profile.photos[0].value, registered: registered});
@@ -143,80 +139,88 @@ mongodb.connect(tweetsDB, function (err, db) {
     console.log('Connected to mongo');
 
     io.sockets.on('connection', function (socket) {
-      // Upon connection to single client for first time await listen events
-      console.log(Date() + ': ' + socket.id + ' connected');
-      
-      var loggedIn = function () {
-        db.collection('users').find({twitter_id: socket.request.user.user_id}, {columns:1, _id: 0}).limit(1).toArray(function(err, user) {
-          socket.emit('columns', user[0].columns);
-        });
-      }      
-      
-      loggedIn();
-      
-      socket.on('reload', function () {loggedIn()});  
-      
-      socket.on('disconnect', function() {
-        console.log(Date() + ': ' + socket.id + ' disconnected');
-      }); 
-   
-      // This tells us the new client needs initial Tweets
-      socket.on('initRequest', function(tweetColumn) {
-        // #TODO# - validate initRequest
-        console.log(Date() + ': initRequest from ' + socket.id + ' for ' + tweetColumn.id);
-        var searchQuery = {'$and': [JSON.parse(tweetColumn.parameters), {'retweeted_status':{'$exists':false}}]};
-        db.collection('tweets').find(searchQuery).sort([['id_str', -1]]).limit(tweetColumn.tweetCount).toArray(function (err, tweet) {
-          if (tweet !== null) {
-            // emit Tweets back to client/column that made request
-            socket.emit('bottomTweet', [tweetColumn.id, tweet]);
-          }
-        }); 
+      // Even though client has made connection (since they are logged in to Twitter), it doens't mean they are registered
+      if (socket.request.user.registered==true) {
+        // Upon connection to single client for first time await listen events
+        console.log(Date() + ': ' + socket.id + ' connected');
         
-        console.log(Date() + ': initRequest to ' + socket.id + ' for ' + tweetColumn.id);
-      }); // End of initRequest event
-      
-      socket.on('newColumn', function(newColumn){
-        db.collection("users").update({twitter_id: socket.request.user.user_id}, {$push: {columns: newColumn}});
-        socket.emit('columnAdded', newColumn.id);
-      });
-      
-      socket.on('delColumn', function(columnID){
-        db.collection("users").update({twitter_id: socket.request.user.user_id}, {$pull: {columns: {id: columnID}}});
-      })
-      
-      // Hacky, but edit column by deleting by ID then adding in with same ID
-      socket.on('editColumn', function (column) {
-        db.collection("users").update({twitter_id: socket.request.user.user_id}, {$pull: {columns: {id: column.id}}});
-        db.collection("users").update({twitter_id: socket.request.user.user_id}, {$push: {columns: column}});
-      })
-
-      // This event is recieved from a client who lost connection and is reconnecting
-      socket.on('updateRequest', function (updateRequest) {
-        // #TODO# - validate updateRequest
-        console.log(Date() + ': ' + socket.id + ' reconnected.');
-        if (updateRequest.hasOwnProperty('parameters')) {
-          var searchQuery = {'$and': [JSON.parse(updateRequest.parameters), {'retweeted_status':{'$exists':false}}, {id_str: {$gt: updateRequest.lastTweet}}]};
-          db.collection('tweets').find(searchQuery).toArray(function (err, tweet) {
-            if ((tweet !== null) && (tweet.length>0)) {
-              socket.emit('topTweet', [updateRequest.id, tweet]);
-              console.log(Date() + ': ' + tweet.length + ' tweets sent to ' + socket.id + ' for column ' + updateRequest.id);
-            } else {
-              // console.log('No new tweets since ' + updateRequest.lastTweet + ' to send for column ' + updateRequest.id);
-            }
+        var loggedIn = function () {
+          db.collection('users').find({twitter_id: socket.request.user.user_id}, {columns:1, _id: 0}).limit(1).toArray(function(err, user) {
+            socket.emit('columns', user[0].columns);
           });
-        }
-      }); // End of updateRequest event
-      
-      // This event is recieved when client goes to bottom of view and needs more tweets
-      socket.on('NextTweets', function (nextTweets) {
-        var searchQuery = {'$and': [JSON.parse(nextTweets.parameters), {'retweeted_status':{'$exists':false}}, {id_str: {$lt: nextTweets.lastTweet}}]};
-        db.collection('tweets').find(searchQuery).sort([['id_str', -1]]).limit(nextTweets.tweetCount).toArray(function (err, tweets) {
-          if (tweets !== null) {
-            // emit Tweets back to client/column that made request
-            socket.emit('bottomTweet', [nextTweets.id, tweets]);
-          }
+        }      
+        
+        loggedIn();
+        
+        socket.on('reload', function () {
+          loggedIn();
+        });  
+        
+        socket.on('disconnect', function() {
+          console.log(Date() + ': ' + socket.id + ' disconnected');
         }); 
-      }); // End of NextTweets event
+    
+        // This tells us the new client needs initial Tweets
+        socket.on('initRequest', function(tweetColumn) {
+          // #TODO# - validate initRequest
+          console.log(Date() + ': initRequest from ' + socket.id + ' for ' + tweetColumn.id);
+          var searchQuery = {'$and': [JSON.parse(tweetColumn.parameters), {'retweeted_status':{'$exists':false}}]};
+          db.collection('tweets').find(searchQuery).sort([['id_str', -1]]).limit(tweetColumn.tweetCount).toArray(function (err, tweet) {
+            if (tweet !== null) {
+              // emit Tweets back to client/column that made request
+              socket.emit('bottomTweet', [tweetColumn.id, tweet]);
+            }
+          }); 
+          
+          console.log(Date() + ': initRequest to ' + socket.id + ' for ' + tweetColumn.id);
+        }); // End of initRequest event
+        
+        socket.on('newColumn', function(newColumn){
+          // #TODO# - validate newColumn
+          db.collection("users").update({twitter_id: socket.request.user.user_id}, {$push: {columns: newColumn}});
+          socket.emit('columnAdded', newColumn.id);
+        });
+        
+        socket.on('delColumn', function(columnID){
+          db.collection("users").update({twitter_id: socket.request.user.user_id}, {$pull: {columns: {id: columnID}}});
+        })
+        
+        // Hacky, but edit column by deleting by ID then adding in with same ID
+        socket.on('editColumn', function (column) {
+          db.collection("users").update({twitter_id: socket.request.user.user_id}, {$pull: {columns: {id: column.id}}});
+          db.collection("users").update({twitter_id: socket.request.user.user_id}, {$push: {columns: column}});
+        })
+
+        // This event is recieved from a client who lost connection and is reconnecting
+        socket.on('updateRequest', function (updateRequest) {
+          // #TODO# - validate updateRequest
+          console.log(Date() + ': ' + socket.id + ' reconnected.');
+          if (updateRequest.hasOwnProperty('parameters')) {
+            var searchQuery = {'$and': [JSON.parse(updateRequest.parameters), {'retweeted_status':{'$exists':false}}, {id_str: {$gt: updateRequest.lastTweet}}]};
+            db.collection('tweets').find(searchQuery).toArray(function (err, tweet) {
+              if ((tweet !== null) && (tweet.length>0)) {
+                socket.emit('topTweet', [updateRequest.id, tweet]);
+                console.log(Date() + ': ' + tweet.length + ' tweets sent to ' + socket.id + ' for column ' + updateRequest.id);
+              } else {
+                // console.log('No new tweets since ' + updateRequest.lastTweet + ' to send for column ' + updateRequest.id);
+              }
+            });
+          }
+        }); // End of updateRequest event
+        
+        // This event is recieved when client goes to bottom of view and needs more tweets
+        socket.on('NextTweets', function (nextTweets) {
+          var searchQuery = {'$and': [JSON.parse(nextTweets.parameters), {'retweeted_status':{'$exists':false}}, {id_str: {$lt: nextTweets.lastTweet}}]};
+          db.collection('tweets').find(searchQuery).sort([['id_str', -1]]).limit(nextTweets.tweetCount).toArray(function (err, tweets) {
+            if (tweets !== null) {
+              // emit Tweets back to client/column that made request
+              socket.emit('bottomTweet', [nextTweets.id, tweets]);
+            }
+          }); 
+        }); // End of NextTweets event
+      } else {
+        console.log('unregistered user attempting to connect to WebSocket');
+      }
     }); //End of io.sockets.on('connection')
           
     
