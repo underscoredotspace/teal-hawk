@@ -28,6 +28,7 @@
 - [ ] Filter by conversation
 - [ ] User stats available on hover of profile image
 - [ ] Replace any remaining t.co link text with the real one
+- [ ] Pull Search out to it's own directive and re-style
 
 #Admin pages
 - [ ] Authorise new user registration
