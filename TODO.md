@@ -45,6 +45,6 @@
 - [ ] Test for every function
 
 #Look & Feel
-- [ ] Need front-end framework (Bootstrap or something) or SASS for styles. Full rebuild needed here. 
+- [ ] Need ~~front-end framework (Bootstrap or something) or~~ SASS for styles. Full rebuild needed here. 
 - [ ] More loading animation
 - [ ] Better handling of new tweets. Not good to burst into view, especially for high volume situations. 

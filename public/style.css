@@ -57,7 +57,7 @@ BUTTON {
   height: calc(100vh - 2px);
 }
 
-.fa-cog:hover, .fa-plus:hover, .fa-times:hover {
+.fa-bars:hover, .fa-plus:hover, .fa-times:hover {
   cursor: pointer;
   color: #6AB825;
 }
