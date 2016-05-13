@@ -10,6 +10,9 @@
 #Authentication
 - [X] Registration request
 - [ ] Registration approval by admin user
+- [ ] Email notification of registrations?
+- [ ] Real-time notification and approval of registration
+- [ ] Holding screen for registation requester that moves once approved. 
 - [x] Login with Twitter
 - [x] Log out
 - [x] Validation for socket requests
@@ -37,9 +40,10 @@
 - [X] Decide on _.each,  angular.forEach, or Array.forEach by case
 - [X] Decide on _.extend or angular.extend by case
 - [x] Move underscore-query requirement to front-end for tweet validation
+- [ ] More functions. Currently too much in directives. 
 - [ ] Test for every function
 
 #Look & Feel
-- [ ] Need front-end framework (Bootstrap or something) or SASS for styles
+- [ ] Need front-end framework (Bootstrap or something) or SASS for styles. Full rebuild needed here. 
 - [ ] More loading animation
 - [ ] Better handling of new tweets. Not good to burst into view, especially for high volume situations. 
