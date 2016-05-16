@@ -1,5 +1,7 @@
 tweetApp.controller('tweetDeck', function ($scope, $filter, socket, $routeParams){
-  if ($routeParams.param == 'reload') {socket.emit('reload', []);}
+  if ($routeParams.param == 'reload') { // This is super-hacky, not the right way to do this
+    socket.emit('reload', []);
+  }
   
   socket.on('connect', function(){
     console.log('connected');
@@ -47,9 +49,9 @@ tweetApp.controller('tweetDeck', function ($scope, $filter, socket, $routeParams
 });
 
 // When you click a button, this puts focus back to the appropriate input box
-tweetApp.directive('focusInput', function() {
+tweetApp.directive('searchTweetsButton', function() {
   return {
-    restrict: 'A',
+    restrict: 'C',
     link: function(scope, element, attrs) {
       element.bind('click', function() {
         element.parent().find('input')[0].focus();
@@ -59,9 +61,9 @@ tweetApp.directive('focusInput', function() {
 });
 
 // Hack to scroll to top of tweet column when search box focused. Thanks Apple. 
-tweetApp.directive('scrollTop', function() {
+tweetApp.directive('searchTweetsInput', function() {
   return {
-    restrict: 'A',
+    restrict: 'C',
     link: function(scope, element, attrs) {
       element.bind('focus', function() {
         element.parent().parent()[0].scrollTop = 0;
@@ -70,20 +72,24 @@ tweetApp.directive('scrollTop', function() {
   };
 });
 
-// Detect when tweet column is scrolled
-tweetApp.directive('scrollBottom', function () {
+// Detect when tweets column is scrolled
+tweetApp.directive('tweets', function () {
   return {
-    restrict: 'A',
+    restrict: 'C',
     link: function (scope, element, attrs) {
       var raw = element[0];
       element.bind('scroll', function () {
+        // If column not scrolled to near top of tweets column then ask that new tweets don't burst in
+        scope.viewBurstMode(raw.scrollTop<25);
+
         // This un-focuses the search box when we scroll down. Related to scrollTop hack
         if ((document.activeElement.tagName=='INPUT')&&(raw.scrollTop>0)){
           document.activeElement.blur();
         }
+        
         // Detects when we're getting to the bottom of the tweet column so we can request more tweets
         if (raw.scrollTop + raw.offsetHeight >= (raw.scrollHeight*(1/1.25))) {
-          scope.$apply(attrs.scrollBottom);
+          scope.showMore();
         }
       });
     }
@@ -99,6 +105,7 @@ tweetApp.directive('tweetColumn', function(socket){
     controller: function ($scope, $filter) {
       $scope.tweets = [];
       $scope.bottomLoading = false;
+      $scope.viewBursting = true;
       
       var initRequest = function() {
           var tweetColumn = {tweetCount: 10, id: $scope.column.id, parameters: $scope.column.parameters};
@@ -137,33 +144,35 @@ tweetApp.directive('tweetColumn', function(socket){
           var updateRequest = {lastTweet: $scope.tweets[0].id_str, id: $scope.column.id, parameters: $scope.column.parameters}
           socket.emit('updateRequest', updateRequest);
           console.log('Tweets after ' + updateRequest.lastTweet + ' requested for column ' + $scope.column.id);
+        } else {
+          initRequest();
         }
       });
       
       // Since we're showing photos within tweet, removes the t.co links in tweet.text
       function removePhotoLink (tweet) {
         if (tweet.extended_entities) {
-            if (tweet.extended_entities.media) {
+          if (tweet.extended_entities.media) {
             _.each(tweet.extended_entities.media, function(media_item) {
               if (media_item.type=='photo') {
                 tweet.text = tweet.text.replace(media_item.url, '');
               }
             });
-            }
           }
+        }
       }
       
       // Since we're showing quoted_status within tweet, removes the t.co links in tweet.text
       function removeQuotedLink (tweet) {
         if (tweet.quoted_status) {
-            if (tweet.entities.urls) {
+          if (tweet.entities.urls) {
             _.each(tweet.entities.urls, function(url_item) {
               if (url_item.display_url.substr(0, 12) =='twitter.com/') {
                 tweet.text = tweet.text.replace(url_item.url, '');
               }
             });
-            }
           }
+        }
       }
 
       // Fires when new Tweet for top of stack sent by server
@@ -183,10 +192,13 @@ tweetApp.directive('tweetColumn', function(socket){
       socket.on('bottomTweet', function (newTweet) {
         if (newTweet[0]==$scope.column.id){
           console.log(newTweet[1].length + ' bottomTweet(s) recieved for column ' + $scope.column.id);
-            _.each(newTweet[1], function(tweet) {
+          _.each(newTweet[1], function(tweet) {
+            // check it isn't already in view
+            if (_.findWhere($scope.tweets, {id_str: tweet.id_str})==undefined) {
               removePhotoLink(tweet);
               removeQuotedLink(tweet);
               $scope.tweets.push(tweet);
+            }
           });
           $scope.bottomLoading = false; // alows showMore function to fire again
           $scope.$digest();
@@ -201,6 +213,13 @@ tweetApp.directive('tweetColumn', function(socket){
           $scope.$digest();
         }
       })
+      
+      $scope.viewBurstMode = function(viewBursting) {
+        if ($scope.viewBursting!=viewBursting) {
+          $scope.viewBursting=viewBursting;
+          console.log($scope.column.id + ' view-burst: ' + viewBursting); 
+        }
+      }
 
       // Called by scrollBottom directive when bottom of column is approached by user. Loads more tweets. 
       $scope.showMore = function() {

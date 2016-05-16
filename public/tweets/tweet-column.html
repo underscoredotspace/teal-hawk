@@ -1,10 +1,12 @@
-<div class="tweets" data-scroll-bottom="showMore()">
+<div class="tweets">
   <div class="search-tweets">
     <span class="column-settings-button" data-ng-click="toggleSettings()"><i class="fa fa-lg fa-bars" data-ng-class="{'cog-selected': settingsVisible}"></i></span>
-    <input data-ng-model="search.text" type="text" class="search-tweets" placeholder="Search" data-scroll-top>
-    <button data-ng-click="search={}" class="search-tweets" data-focus-input>Clear</button>
+    <input data-ng-model="search.text" type="text" class="search-tweets search-tweets-input" placeholder="Search">
+    <span data-ng-click="search={};" class="search-tweets search-tweets-button"><i class="fa fa-lg fa-times-circle"></i></span>
   </div>
+  
   <div data-tweet-column-settings data-ng-show="settingsVisible"></div>
+  
   <div class="tweet" data-ng-repeat="tweet in tweets|filter:search as filteredtweets track by $index">
     <div class="tweet-left-column">
       <img class="profile-image" src="#" alt="{{'Profile Image for '+tweet.user.screen_name}}" data-ng-src="{{tweet.user.profile_image_url_https}}">
@@ -32,5 +34,5 @@
         <span class="tweet-created-at" title="{{tweet.created_at}}" data-am-time-ago="tweet.created_at"></span>
       </div>
     </div>
-  </div>
+  </div><!-- // tweet -->
 </div>

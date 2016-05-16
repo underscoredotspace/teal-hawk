@@ -57,7 +57,7 @@ BUTTON {
   height: calc(100vh - 2px);
 }
 
-.fa-bars:hover, .fa-plus:hover, .fa-times:hover {
+.fa-bars:hover, .fa-plus:hover, .fa-times:hover, .fa-times-circle:hover {
   cursor: pointer;
   color: #6AB825;
 }
@@ -69,10 +69,12 @@ BUTTON:hover {
 .cog-selected {
   color: #cca300;
 }
-.column-settings-button {
+.column-settings-button, .search-tweets-button {
   line-height: 25px;
   vertical-align: middle;
   height: 25px; 
+}
+.column-settings-button {
   padding: 0 5px 0 10px;
 }
 .tweet-column-settings {
@@ -130,7 +132,8 @@ BUTTON:hover {
   overflow: scroll;
   overflow-x: hidden;
   width: 375px;
-  max-width: calc(100vw - 76px);
+  max-width: calc(100vw - 40px);
+  /*min-width: 375px;*/
   background-color: #404246;
   padding: 2px;
   padding-left: 0px;
@@ -249,7 +252,7 @@ DIV.search-tweets {
   margin-bottom: 3px;
   margin-top: 0px;
 }
-INPUT.search-tweets, BUTTON.search-tweets {
+INPUT.search-tweets {
   height: 25px; 
   margin: 0px;
   padding: 0px;
@@ -258,8 +261,8 @@ INPUT.search-tweets, BUTTON.search-tweets {
   margin: 5px;
   outline-width: 0px;
   border-width: 0px;
-  width: calc(375px - 98px - 40px);
-  max-width: calc(100vw - 174px  - 40px);
+  width: calc(375px - 98px - 5px);
+  max-width: calc(100vw - 174px  - 5px);
   font-size: 16px;
   vertical-align: middle;
 }
