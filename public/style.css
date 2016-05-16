@@ -167,7 +167,7 @@ BUTTON:hover {
   display: inline-block;
   white-space: normal;
   width: 290px;
-  max-width: calc(100vw - 160px);
+  max-width: calc(100vw - 124px);
 }
 
 .tweet-user {
