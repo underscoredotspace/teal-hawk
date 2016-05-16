@@ -262,7 +262,7 @@ INPUT.search-tweets {
   outline-width: 0px;
   border-width: 0px;
   width: calc(375px - 98px - 5px);
-  max-width: calc(100vw - 174px  - 5px);
+  max-width: calc(100vw - 138px  - 5px);
   font-size: 16px;
   vertical-align: middle;
 }
