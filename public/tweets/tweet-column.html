@@ -1,7 +1,7 @@
 <div class="tweets">
   <div class="search-tweets">
     <span class="column-settings-button" data-ng-click="toggleSettings()"><i class="fa fa-lg fa-bars" data-ng-class="{'cog-selected': settingsVisible}"></i></span>
-    <input data-ng-model="search.text" type="text" class="search-tweets search-tweets-input" placeholder="Search">
+    <input data-ng-model="search.text"  ng-model-options="{debounce: 500}" type="text" class="search-tweets search-tweets-input" placeholder="Search">
     <span data-ng-click="search={};" class="search-tweets search-tweets-button"><i class="fa fa-lg fa-times-circle"></i></span>
   </div>
   
