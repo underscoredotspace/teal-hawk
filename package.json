@@ -1,7 +1,10 @@
 {
   "name": "teal-hawk",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "private": true,
+  "scripts": {
+    "start": "nodemon app.js"
+  },
   "dependencies": {
     "bower": "^1.7.7",
     "connect-ensure-login": "^0.1.1",

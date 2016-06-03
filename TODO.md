@@ -7,6 +7,11 @@
 - [x] Save edited/new filter parameters to Mongo collection
 - [X] Delete tweet column
 
+#Stylesheet and front end structure changes
+- [ ] New stylesheet with more flexbox
+- [ ] Tweet directive
+- [ ] Tweets to be held in columns[n].tweets / column.tweets
+
 #Authentication
 - [X] Registration request
 - [ ] Registration approval by admin user
