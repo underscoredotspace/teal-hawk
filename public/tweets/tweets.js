@@ -96,6 +96,15 @@ tweetApp.directive('tweets', function () {
   };
 });
 
+tweetApp.directive('thTweetSearch', function() {
+  return {
+    restrict: 'C',
+    templateUrl: 'tweets/th-tweet-search.html',
+    replace: true, 
+    scope: false
+  }
+})
+
 tweetApp.directive('thTweet', function() {
   return {
     restrict: 'C',

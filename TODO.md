@@ -3,13 +3,14 @@
 - [X] Ability to add new tweet column
 - [X] Parse filter parameters from Mongo collection for editing
 - [X] Edit existing column
-- [x] Move column left or right
-- [x] Save edited/new filter parameters to Mongo collection
+- [X] Move column left or right
+- [X] Save edited/new filter parameters to Mongo collection
 - [X] Delete tweet column
 
 #Stylesheet and front end structure changes
 - [ ] New stylesheet with more flexbox
-- [ ] Tweet directive
+- [X] Tweet directive
+- [X] Tweet Search directive
 - [ ] Tweets to be held in columns[n].tweets / column.tweets
 
 #Authentication
@@ -18,9 +19,9 @@
 - [ ] Email notification of registrations?
 - [ ] Real-time notification and approval of registration
 - [ ] Holding screen for registation requester that moves once approved. 
-- [x] Login with Twitter
-- [x] Log out
-- [x] Validation for socket requests
+- [X] Login with Twitter
+- [X] Log out
+- [X] Validation for socket requests
 
 #Better communication with user
 - [ ] Toast messages
@@ -45,7 +46,7 @@
 #Efficiency/Correctness
 - [X] Decide on _.each,  angular.forEach, or Array.forEach by case
 - [X] Decide on _.extend or angular.extend by case
-- [x] Move underscore-query requirement to front-end for tweet validation
+- [X] Move underscore-query requirement to front-end for tweet validation
 - [ ] More functions. Currently too much in directives. 
 - [ ] Test for every function
 

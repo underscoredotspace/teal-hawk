@@ -246,7 +246,7 @@ BUTTON:hover {
   vertical-align: middle;
   line-height: 20px;
 }
-DIV.search-tweets {
+DIV.th-tweet-search {
   position: relative;
   background-color: #222426;
   height: 35px; 
