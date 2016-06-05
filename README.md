@@ -1,6 +1,8 @@
 # teal-hawk  
 
-Teal Hawk is a Twitter analysis tool for real-time analysis of a brand's mentions. The intention is to allow real-time and business improvement analysts to gain actionable insight into what customers/press/moaners are saying about their brand.  
+Teal Hawk is a Twitter analysis tool for real-time analysis of a brand's mentions. The intention is to allow real-time and business improvement analysts to gain actionable insight into what customers/press/moaners are saying about their brand.
+
+![screenshot](https://raw.githubusercontent.com/underscoredotspace/teal-hawk/master/teal-hawk.png "Screenshot of Teal Hawk")
 
 The project is made with  node.js, mongodb and socket.io, along with passport-twitter login. Other than mongodb and node.js itself, everything needed to run should be here: 
 
