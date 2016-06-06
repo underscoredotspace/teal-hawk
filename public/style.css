@@ -76,36 +76,20 @@ A:hover {
   justify-content: space-between;
 }
 
-
-/* --- Debugging --- */
-
-.red {
-  background-color: palevioletred;
+.space-around {
+  justify-content: space-around;
 }
-
-.yellow {
-  background-color: palegoldenrod
-}
-
-.green {
-  background-color: palegreen
-}
-
-.blue {
-  background-color: paleturquoise;
-}
-
 
 /* --- Main  --- */
 
 .frame {
-  padding: 5px;
+  padding: 3px;
   background-color: rgb(64,66,70)
 }
 
 .nav {
   width: 35px;
-  margin-right: 5px;
+  margin-right: 3px;
   align-items: center;
   justify-content: flex-start;
   background-color: rgb(34,36,38)
@@ -120,7 +104,9 @@ A:hover {
 
 .tweet-column {
   width: 360px;
-  margin-right: 5px;
+  max-width: calc(100vw - 44px);
+  min-width: 250px;
+  margin-right: 3px;
 }
 
 .th-tweet-search {
@@ -161,17 +147,17 @@ A:hover {
 .th-tweet-config {
   background-color: rgb(34,36,38);
   padding: 0 10px;
-  margin-top: 5px;
+  margin-top: 3px;
 }
 
 .tweets {
-  margin-top: 5px;
+  margin-top: 3px;
 }
 
 .th-tweet {
   background-color: rgb(34,36,38);
-  padding: 0 10px;
-  margin-bottom: 5px;
+  padding: 5px 10px;
+  margin-bottom: 3px;
 }
 
 .tweet-user {
