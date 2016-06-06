@@ -1,20 +1,4 @@
-var tweetApp = angular.module('tweetApp', ['angularMoment', 'ngAnimate', 'ngTouch', 'ngRoute']).constant('_', window._);
-
-tweetApp.config(function($routeProvider) {
-  $routeProvider
-  .when('/deck/', {
-    templateUrl: 'tweets/tweet-deck.html',
-    controller: 'tweetDeck'
-  }).when('/deck/:param', {
-    templateUrl: 'tweets/tweet-deck.html',
-    controller: 'tweetDeck'
-  }).when('/config', {
-    templateUrl: 'config/config.html',
-    controller: 'configController'
-  }).otherwise({
-    redirectTo: '/deck'
-  });
-});
+var tweetApp = angular.module('tweetApp', ['angularMoment', 'ngAnimate', 'ngTouch']).constant('_', window._);
 
 tweetApp.factory('socket', function(){
   var socket = io.connect();

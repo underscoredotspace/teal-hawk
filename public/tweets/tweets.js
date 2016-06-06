@@ -1,47 +1,55 @@
-tweetApp.controller('tweetDeck', function ($scope, $filter, socket){
-  socket.on('connect', function(){
-    console.log('connected');
-  });
+tweetApp.directive("tweetDeck", function() {
+  return {
+    restrict: 'C', 
+    templateUrl: 'tweets/th-tweet-deck.html',
+    replace: true, 
+    scope: false,
+    controller: function($scope, $filter, socket) {
+      socket.on('connect', function(){
+        console.log('connected');
+      });
 
-  socket.on('connect_error', function(err){
-    console.log('connection error: ' + err);
-  });
-  
-  socket.on('columns', function (columns) {
-    if(!angular.equals($scope.columns, columns)){
-      console.log('new columns recieved');
-      $scope.columns = columns;
-      $scope.$apply();
-    };
-  });
-  
-  $scope.$on('newColumn', function () {   
-    // create semi-uuid 
-    var newID = Math.random().toString(36).substr(2, 4);
-    while (_.where($scope.columns, {id: newID}).length!=0) {
-      newID = Math.random().toString(36).substr(2, 4);
+      socket.on('connect_error', function(err){
+        console.log('connection error: ' + err);
+      });
+      
+      socket.on('columns', function (columns) {
+        if(!angular.equals($scope.columns, columns)){
+          console.log('new columns recieved');
+          $scope.columns = columns;
+          $scope.$apply();
+        };
+      });
+      
+      $scope.$on('newColumn', function () {   
+        // create semi-uuid 
+        var newID = Math.random().toString(36).substr(2, 4);
+        while (_.where($scope.columns, {id: newID}).length!=0) {
+          newID = Math.random().toString(36).substr(2, 4);
+        }
+        
+        if ($scope.columns.length != 0) {
+          newPosition = _.max($scope.columns, 'position').position + 1;
+        } else {
+          newPosition = 1;
+        }
+        
+        // create new tweet column with no params
+        $scope.columns.push({
+          id: newID,
+          parameters: '',
+          position: newPosition,
+          type: "tweetColumn"
+        });
+        console.log('new column ' + newID + ' created');
+      });
+      
+      // When we move away from the Deck, turn listeners off, to prevent duplication when we come back. 
+      $scope.$on('$destroy', function (event) {
+        socket.removeAllListeners();
+      });
     }
-    
-    if ($scope.columns.length != 0) {
-      newPosition = _.max($scope.columns, 'position').position + 1;
-    } else {
-      newPosition = 1;
-    }
-    
-    // create new tweet column with no params
-    $scope.columns.push({
-      id: newID,
-      parameters: '',
-      position: newPosition,
-      type: "tweetColumn"
-    });
-    console.log('new column ' + newID + ' created');
-  });
-  
-  // When we move away from the Deck, turn listeners off, to prevent duplication when we come back. 
-  $scope.$on('$destroy', function (event) {
-    socket.removeAllListeners();
-  });
+  }
 });
 
 // When you click a button, this puts focus back to the appropriate input box
@@ -112,8 +120,8 @@ tweetApp.directive('thTweet', function() {
 
 tweetApp.directive('tweetColumn', function(socket){
   return {
-    restrict: 'A', 
-    templateUrl: 'tweets/tweet-column.html',
+    restrict: 'C', 
+    templateUrl: 'tweets/th-tweet-column.html',
     replace: true,
     scope: false,
     controller: function ($scope, $filter) {
@@ -251,10 +259,10 @@ tweetApp.directive('tweetColumn', function(socket){
 });
 
 // Directive that enables us to create[/amend] criteria for new column, move column or delete column. 
-tweetApp.directive('tweetColumnSettings', function(socket, $filter){
+tweetApp.directive('thTweetConfig', function(socket, $filter){
   return {
-    restrict: 'A', 
-    templateUrl: '/tweets/tweet-column-settings.html',
+    restrict: 'C', 
+    templateUrl: '/tweets/th-tweet-config.html',
     replace: true, 
     controller: function($scope, $rootScope, paramsParse) {
       $scope.setupSettings = function() {

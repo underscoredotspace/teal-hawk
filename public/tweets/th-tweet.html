@@ -1,28 +1,18 @@
-<div class="tweet">
-  <div class="tweet-left-column">
-    <img class="profile-image" src="#" alt="{{'Profile Image for '+tweet.user.screen_name}}" data-ng-src="{{tweet.user.profile_image_url_https}}">
+<div>
+  <div class="flex row tweet-user">
+    <div class="max-w tweet-user-name">{{tweet.user.name}}</div>
+    <div class="no-shrink tweet-screen-name">{{tweet.user.screen_name}}</div>
   </div>
-  <div class="tweet-right-column">
-    <div class="tweet-user">
-      <span class="tweet-user-name" data-ng-bind="tweet.user.name"></span>
-      <span class="tweet-user-screenname" data-ng-bind="tweet.user.screen_name"></span>
+  <div class="flex row max-h max-w">
+    <div class="flex col no-shrink tweet-profile">
+      <img class="tweet-profile-image" data-ng-src="{{tweet.user.profile_image_url_https}}">
+      <div class="tweet-profile-stats"></div>
     </div>
-    <div class="tweet-text" data-ng-bind-html="tweet.text|linkyUnsanitized|tweetLinky|highlight:search.text|trustHTML"></div>
-    <div class="quoted-tweet" data-ng-if="tweet.is_quote_status">
-      <div class="quoted-tweet-user-screenname">{{'@' + tweet.quoted_status.user.screen_name}}</div>
-      <div data-ng-bind-html="tweet.quoted_status.text|linkyUnsanitized|tweetLinky|highlight:search.text|trustHTML"></div>
-      <a href="#" data-ng-href="{{media.media_url_https}}" class="tweet-media-image" target="_blank" data-ng-repeat="media in tweet.quoted_status.extended_entities.media|filter:{type: photo}">
-        <img class="tweet-media-image" src="#" alt="{{'Tweet media id '+media.id_str}}" data-ng-src="{{media.media_url_https + ':thumb'}}">
-      </a>
-    </div>
-    <div class="tweet-media">
-      <a href="#" data-ng-href="{{media.media_url_https}}" class="tweet-media-image" target="_blank" data-ng-repeat="media in tweet.extended_entities.media|filter:{type: photo}">
-        <img class="tweet-media-image" src="#"  alt="{{'Tweet media id '+media.id_str}}" data-ng-src="{{media.media_url_https + ':thumb'}}">
-      </a>
-    </div>
-    <div class="tweet-meta">
-      <span class="tweet-id" data-ng-bind="tweet.id_str"></span>
-      <span class="tweet-created-at" title="{{tweet.created_at}}" data-am-time-ago="tweet.created_at"></span>
+    <div class="max-h max-w">
+      <div class="max-w">
+        <div class="tweet-text" data-ng-bind-html="tweet.text|linkyUnsanitized|tweetLinky|highlight:search.text|trustHTML"></div>
+        <div class="tweet-created-at" data-am-time-ago="tweet.created_at">12 hours ago</div>
+      </div>
     </div>
   </div>
 </div>

@@ -1,5 +1,6 @@
-  <div>
-    <span class="column-settings-button" data-ng-click="toggleSettings()"><i class="fa fa-lg fa-bars" data-ng-class="{'cog-selected': settingsVisible}"></i></span>
-    <input data-ng-model="search.text"  ng-model-options="{debounce: 500}" type="text" class="search-tweets search-tweets-input" placeholder="Search">
-    <span data-ng-click="search={};" class="search-tweets search-tweets-button"><i class="fa fa-lg fa-times-circle"></i></span>
-  </div>
+<div class="flex row max-w no-shrink">
+  <i class="fa fa-bars fa-lg no-shrink tweet-settings-button" data-ng-click="toggleSettings()"></i>
+  <input class="tweet-search-text max-w" type="text" placeholder="Search" data-ng-model="search.text" ng-model-options="{debounce: 500}">
+  <i class="fa fa-times-circle fa-lg no-shrink tweet-search-clear" data-ng-click="search={}"></i>
+</div>
+  
