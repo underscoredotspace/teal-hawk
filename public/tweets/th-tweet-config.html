@@ -1,45 +1,47 @@
 <div data-ng-show="settingsVisible">
-  <div class="" data-ng-show="!column.isNew">Edit Column</div>
-  <div class="" data-ng-show="column.isNew">Add Column</div>
-  
-  <div class="flex row max-w space-around">
-    <div class="flex col">
-      <div class="">Tweets</div>
-      <div ng-repeat="from in froms" class="">
-        <select class="" name="tweets" data-ng-model="from.user">
-          <option value=""></option>
-          <option data-ng-repeat="user in listen_users" value="{{user.id_str}}">{{user.screen_name}}</option>
-        </select>
-        <i class="fa fa-times" data-ng-click="delFrom($index)"></i>
+  <div class="th-hacky-hack max-h">
+    <div class="" data-ng-show="!column.isNew">Edit Column</div>
+    <div class="" data-ng-show="column.isNew">Add Column</div>
+    
+    <div class="flex row max-w space-around">
+      <div class="flex col">
+        <div class="">Tweets</div>
+        <div ng-repeat="from in froms" class="">
+          <select class="" name="tweets" data-ng-model="from.user">
+            <option value=""></option>
+            <option data-ng-repeat="user in listen_users" value="{{user.id_str}}">{{user.screen_name}}</option>
+          </select>
+          <i class="fa fa-times" data-ng-click="delFrom($index)"></i>
+        </div>
+        <div class=""><i class="fa fa-plus" data-ng-click="addFrom()"></i></div>
       </div>
-      <div class=""><i class="fa fa-plus" data-ng-click="addFrom()"></i></div>
-    </div>
-      
-    <div class="flex col">
-      <div class="">Mentions</div>
-      <div data-ng-repeat="to in tos" class="">
-        <select class="listen-users" name="mentions" data-ng-model="to.user">
-          <option value=""></option>
-          <option data-ng-repeat="user in listen_users" value="{{user.id_str}}">{{user.screen_name}}</option>
-        </select>
-        <i class="fa fa-times" data-ng-click="delTo($index)"></i>
+        
+      <div class="flex col">
+        <div class="">Mentions</div>
+        <div data-ng-repeat="to in tos" class="">
+          <select class="" name="mentions" data-ng-model="to.user">
+            <option value=""></option>
+            <option data-ng-repeat="user in listen_users" value="{{user.id_str}}">{{user.screen_name}}</option>
+          </select>
+          <i class="fa fa-times" data-ng-click="delTo($index)"></i>
+        </div>
+        <div class=""><i class="fa fa-plus" data-ng-click="addTo()"></i></div>
       </div>
-      <div class=""><i class="fa fa-plus" data-ng-click="addTo()"></i></div>
-    </div>
-  </div>
-  
-  <div class="flex row max-w space-between">
-    <div class="flex row noshrink" data-ng-show="!column.isNew">
-      <i class="fa fa-arrow-left" data-ng-click="moveColumnLeft()"></i>
-      <i class="fa fa-arrow-right" data-ng-click="moveColumnRight()"></i>
     </div>
     
-    <div class="flex row">
-      <button data-ng-click="delColumn()" data-ng-show="!column.isNew">Delete</button>
-      <button data-ng-click="toggleSettings()" data-ng-show="!column.isNew">Cancel</button>
-      <button data-ng-click="delColumn()" data-ng-show="column.isNew">Cancel</button>
-      <button data-ng-click="addColumn()" data-ng-show="column.isNew">Add</button>
-      <button data-ng-click="updateColumn()" data-ng-show="!column.isNew">Update</button>
+    <div class="flex row max-w space-between th-config-buttons">
+      <div class="flex row noshrink th-config-arrows" data-ng-show="!column.isNew">
+        <button class="th-config-arrow" data-ng-click="moveColumnLeft()"><i class="fa fa-arrow-left"></i></button>
+        <button class="th-config-arrow" data-ng-click="moveColumnRight()"><i class="fa fa-arrow-right"></i></button>
+      </div>
+      
+      <div class="flex row max-w th-config-actions">
+        <button class="btn-orange" data-ng-click="delColumn()" data-ng-show="!column.isNew">Delete</button>
+        <button class="btn-gray" data-ng-click="toggleSettings()" data-ng-show="!column.isNew">Cancel</button>
+        <button class="btn-gray" data-ng-click="delColumn()" data-ng-show="column.isNew">Cancel</button>
+        <button class="btn-green" data-ng-click="addColumn()" data-ng-show="column.isNew">Add</button>
+        <button class="btn-green" data-ng-click="updateColumn()" data-ng-show="!column.isNew">Update</button>
+      </div>
     </div>
   </div>
 </div>

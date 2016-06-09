@@ -1,5 +1,5 @@
 <div class="flex row max-w no-shrink">
-  <i class="fa fa-bars fa-lg no-shrink tweet-settings-button" data-ng-click="toggleSettings()"></i>
+  <i class="fa fa-bars fa-lg no-shrink th-fa-link tweet-settings-button" data-ng-class="{'tweet-settings-visible': settingsVisible}" data-ng-click="toggleSettings()"></i>
   <input class="tweet-search-text max-w" type="text" placeholder="Search" data-ng-model="search.text" ng-model-options="{debounce: 500}">
   <i class="fa fa-times-circle fa-lg no-shrink tweet-search-clear" data-ng-click="search={}"></i>
 </div>

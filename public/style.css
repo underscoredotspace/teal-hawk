@@ -3,20 +3,36 @@
 html {
   height: 100vh;
   width: 100vw;
+  box-sizing: border-box;
+}
+*, *:before, *:after {
+  box-sizing: inherit;
 }
 
 html, body, div, select, button {
-  box-sizing: border-box;
   padding: 0;
   margin: 0;
 }
 
-body, input, select, button {
+body, input {
   color: rgb(221, 221, 221);
   -webkit-font-smoothing: antialiased;
   font-family: 'Source Sans Pro', sans-serif;
   font-size: 16px;
   line-height: 23px;
+}
+
+button {
+  background-color: rgba(64,66,70, 0.75);
+  border: solid 1px  rgb(34,36,38);
+  outline: solid 1px rgb(64,66,70);
+  color: rgb(221, 221, 221);
+  font-size: 12px; 
+  padding: 5px 10px;
+}
+
+.btn-gray:hover {
+  background-color: rgba(64,66,70, 1);
 }
 
 A, A:hover, A:visited {
@@ -105,8 +121,28 @@ A:hover {
 .tweet-column {
   width: 360px;
   max-width: calc(100vw - 44px);
-  min-width: 250px;
+  min-width: 310px;
   margin-right: 3px;
+}
+
+.tweet-settings-button {
+  padding-right: 10px;
+}
+
+.tweet-settings-button:hover {
+  color: rgba(190,103,210, 0.75);
+}
+
+.tweet-settings-visible, .tweet-settings-button:active {
+  color: rgba(190,103,210, 1);
+}
+
+.tweet-search-clear:hover {
+  color: rgba(204, 163, 0, 0.75);
+}
+
+.tweet-search-clear:active {
+  color: rgba(204, 163, 0, 0.75);
 }
 
 .th-tweet-search {
@@ -116,27 +152,18 @@ A:hover {
   background-color: rgb(34,36,38)
 }
 
-.highlighted {
-  background:#cca300;
-  color: #222426;
-}
-
-.tweet-settings-button {
-  padding-right: 10px;
-}
-
 .tweet-search-text {
-  background-color: rgba(64,66,70, 0.5);
+  background-color: rgba(64,66,70, 0.75);
   font-size: 16px;
   color: rgb(221, 221, 221);
   outline-style: none;
-  border: solid 1px rgba(204,163,0, 0.5);
+  border: solid 1px rgb(34,36,38);
   padding: 0 10px;
 }
 
 .tweet-search-text:focus {
-  border: solid 1px rgba(204,163,0, 1);
-  outline: solid 1px rgba(204,163,0, 0.5);
+  outline: solid 1px rgb(34,36,38);
+  border: solid 1px rgba(204,163,0, 0.75);
   background-color: rgba(64,66,70, 1)
 }
 
@@ -144,10 +171,35 @@ A:hover {
   padding-left: 10px;
 }
 
+.highlighted {
+  background:rgb(204,163,0);
+  color: rgb(34,36,38);
+}
+
+.th-hacky-hack {
+  margin: 10px 0;
+}
+
 .th-tweet-config {
   background-color: rgb(34,36,38);
   padding: 0 10px;
   margin-top: 3px;
+}
+
+.th-config-buttons {
+  margin-top: 10px;
+} 
+
+.th-config-arrows {
+  align-items: center;
+}
+
+.th-config-arrow {
+  padding: 5px;
+}
+
+.th-config-actions {
+  justify-content: flex-end;
 }
 
 .tweets {

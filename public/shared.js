@@ -1,4 +1,4 @@
-var tweetApp = angular.module('tweetApp', ['angularMoment', 'ngAnimate', 'ngTouch']).constant('_', window._);
+var tweetApp = angular.module('tweetApp', ['angularMoment', 'ngAnimate']).constant('_', window._);
 
 tweetApp.factory('socket', function(){
   var socket = io.connect();
