@@ -99,6 +99,10 @@ app.get('/login',function(req,res) {
   }
 });
 
+app.get('/style.css',function(req,res) {
+    res.sendFile(__dirname + '/sass/style.css');
+});
+
 app.get('/bs-style.css',function(req,res) {
     res.sendFile(__dirname + '/public/bs-style.css');
 });

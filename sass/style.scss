@@ -1,3 +1,23 @@
+// Colour set up
+
+$c_face: rgb(34,36,38);
+$c_back: rgb(064,066,070);
+$c_text: rgb(221,221,221);
+
+$test: 6px;
+
+$c_red: rgb(255,124,124);
+$c_purple: rgb(231,124,255);
+$c_yellow: rgb(255,255,124);
+$c_cyan: rgb(124,226,255);
+$c_green: rgb(106,184,37);
+
+$c_palered: rgba(255,124,124,0.75);
+$c_palepurple: rgba(231,124,255,0.75);
+$c_paleyellow: rgba(255,255,124,0.75);
+$c_palecyan: rgba(124,226,255,0.75);
+$c_palegreen: rgba(106,184,37,0.75);
+
 /* --- HTML Elements --- */
 
 html {
@@ -47,13 +67,12 @@ button {
 }
 
 A, A:hover, A:visited {
-  color: rgba(107, 255, 25, 0.75);
+  color: $c_green;
   font-weight: bold;
   text-decoration: none;
 }
 
 A:hover {
-  color: rgba(107, 255, 25, 1);
   text-decoration: none;
   border-bottom-style: solid;
   border-bottom-width: 1px;
@@ -124,7 +143,7 @@ A:hover {
   margin-right: 3px;
   align-items: center;
   justify-content: flex-start;
-  background-color: rgb(34,36,38)
+  background-color: $c_face;
 }
 
 .nav-item {
@@ -146,11 +165,11 @@ A:hover {
 }
 
 .tweet-settings-button:hover {
-  color: rgba(190,103,210, 0.75);
+  color: $c_palepurple;
 }
 
 .tweet-settings-visible, .tweet-settings-button:active {
-  color: rgba(190,103,210, 1);
+  color: $c_purple;
 }
 
 .tweet-search-clear:hover {
@@ -158,7 +177,7 @@ A:hover {
 }
 
 .tweet-search-clear:active {
-  color: rgba(255, 255, 25, 1.0)
+  color: $c_yellow;
 }
 
 .th-tweet-search {
@@ -179,7 +198,7 @@ A:hover {
 
 .tweet-search-text:focus {
   outline: solid 1px rgb(34,36,38);
-  border: solid 1px rgba(255, 255, 25, 1.0);
+  border: solid 1px $c_yellow;
   background-color: rgba(64,66,70, 1)
 }
 
@@ -188,7 +207,7 @@ A:hover {
 }
 
 .highlighted {
-  background:rgba(255, 255, 25, 0.75);
+  background: $c_paleyellow;
   color: rgb(34,36,38);
 }
 
@@ -197,7 +216,7 @@ A:hover {
 }
 
 .th-tweet-config {
-  background-color: rgb(34,36,38);
+  background-color: $c_face;
   padding: 0 10px;
   margin-top: 3px;
 }
@@ -232,7 +251,7 @@ A:hover {
 }
 
 .th-tweet {
-  background-color: rgb(34,36,38);
+  background-color: $c_face;
   padding: 5px 10px;
   margin-bottom: 3px;
 }
@@ -249,12 +268,11 @@ A:hover {
 
 .tweet-screen-name {
   font-size: 75%;
-  color: rgba(255, 0, 132, 0.75)
+  color: $c_purple;
 }
 
 .tweet-profile {
   margin: 5px 10px 5px 0;
-  /*min-width: 48px;*/
 }
 
 .tweet-profile-image {
@@ -275,5 +293,5 @@ A:hover {
 
 .tweet-created-at {
   font-size: 75%;
-  color: rgba(0, 130, 255, 0.75);
+  color: $c_cyan;
 }
