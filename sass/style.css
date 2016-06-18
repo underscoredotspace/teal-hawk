@@ -7,7 +7,7 @@ html {
 *, *:before, *:after {
   box-sizing: inherit; }
 
-html, body, div, select, button {
+html, body, div, select {
   padding: 0;
   margin: 0; }
 
@@ -18,25 +18,52 @@ body, input {
   font-size: 16px;
   line-height: 23px; }
 
-button {
-  background-color: rgba(64, 66, 70, 0.75);
-  border: solid 1px #222426;
-  outline: solid 1px #404246;
-  color: #dddddd;
-  font-size: 12px;
-  padding: 5px 10px; }
+BUTTON {
+  margin: 3px;
+  font-size: 16px;
+  width: 75px;
+  height: 25px;
+  color: #ddd;
+  background-color: rgba(64, 66, 70, 0.5);
+  border-radius: 4px;
+  outline: none;
+  text-shadow: 1px -1px 2px #000;
+  border: solid 1px rgba(221, 221, 221, 0.1); }
+
+BUTTON:hover {
+  box-shadow: 0 5px 21px 0 black;
+  transition: all 0.2s ease-in 0s; }
+
+.btn-small {
+  width: 35px;
+  border-radius: 18px; }
+
+.btn-gray {
+  background-color: rgba(64, 66, 70, 0.5); }
 
 .btn-gray:hover {
-  background-color: rgba(0, 130, 255, 0.75);
-  color: #222426; }
+  background-color: #404246; }
 
-.btn-orange:hover {
-  background-color: rgba(255, 130, 25, 0.75);
-  color: #222426; }
+.btn-red {
+  background-color: rgba(120, 66, 70, 0.5); }
+
+.btn-red:hover {
+  background-color: #784246; }
+
+.btn-green {
+  background-color: rgba(64, 126, 70, 0.5); }
 
 .btn-green:hover {
-  background-color: rgba(107, 255, 25, 0.75);
-  color: #222426; }
+  background-color: #407e46; }
+
+.btn-blue {
+  background-color: rgba(64, 66, 130, 0.5); }
+
+.btn-blue:hover {
+  background-color: #404282; }
+
+BUTTON:active {
+  box-shadow: inset 0 0 15px 0 rgba(255, 255, 255, 0.3); }
 
 A, A:hover, A:visited {
   color: #6ab825;
@@ -170,9 +197,6 @@ A:hover {
 
 .th-config-arrows {
   align-items: center; }
-
-.th-config-arrow {
-  padding: 5px; }
 
 .th-config-actions {
   justify-content: flex-end; }

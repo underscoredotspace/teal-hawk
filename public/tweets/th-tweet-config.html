@@ -31,14 +31,14 @@
     
     <div class="flex row max-w space-between th-config-buttons">
       <div class="flex row noshrink th-config-arrows" data-ng-show="!column.isNew">
-        <button class="th-config-arrow" data-ng-click="moveColumnLeft()"><i class="fa fa-arrow-left"></i></button>
-        <button class="th-config-arrow" data-ng-click="moveColumnRight()"><i class="fa fa-arrow-right"></i></button>
+        <button class="btn-small th-config-arrow" data-ng-click="moveColumnLeft()"><i class="fa fa-arrow-left"></i></button>
+        <button class="btn-small th-config-arrow" data-ng-click="moveColumnRight()"><i class="fa fa-arrow-right"></i></button>
       </div>
       
       <div class="flex row max-w th-config-actions">
-        <button class="btn-orange" data-ng-click="delColumn()" data-ng-show="!column.isNew">Delete</button>
-        <button class="btn-gray" data-ng-click="toggleSettings()" data-ng-show="!column.isNew">Cancel</button>
-        <button class="btn-gray" data-ng-click="delColumn()" data-ng-show="column.isNew">Cancel</button>
+        <button class="btn-red" data-ng-click="delColumn()" data-ng-show="!column.isNew">Delete</button>
+        <button class="btn-blue" data-ng-click="toggleSettings()" data-ng-show="!column.isNew">Cancel</button>
+        <button class="btn-red" data-ng-click="delColumn()" data-ng-show="column.isNew">Cancel</button>
         <button class="btn-green" data-ng-click="addColumn()" data-ng-show="column.isNew">Add</button>
         <button class="btn-green" data-ng-click="updateColumn()" data-ng-show="!column.isNew">Update</button>
       </div>
