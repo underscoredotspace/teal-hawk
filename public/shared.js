@@ -5,13 +5,35 @@ tweetApp.factory('socket', function(){
   return socket;
 });
 
+tweetApp.directive('button', function($timeout) {
+  return {
+    restrict: 'E',
+    scope: true,
+    link: function(scope, element, attrs) {
+      element.on('mouseenter', function(event) {
+        element.addClass('hover');
+      });
+      element.on('mouseleave', function(event) {
+        element.removeClass('hover');
+      });
+
+      element.on('click', function(event) {
+        element.removeClass('hover');
+      });
+      element.on('mousemove', function(event) {
+        element.addClass('hover');
+      });
+    }
+  }
+});
+
 tweetApp.directive('menuBar', function($rootScope) {
   return {
     restrict: 'A', 
     templateUrl: '/menu-bar',
     replace: true, 
-    link: function($scope) {
-      $scope.newColumn = function() {
+    link: function(scope) {
+      scope.newColumn = function() {
         $rootScope.$broadcast('newColumn', '');
         document.activeElement.blur();
       }
@@ -22,10 +44,10 @@ tweetApp.directive('menuBar', function($rootScope) {
 tweetApp.directive('goThere', function($window){
   return {
     restrict: 'A', 
-    link: function($scope, $element, $attrs) {
-      $element.bind('click', function () {
-        $scope.$apply(function () {
-          $window.location.href = $attrs.goThere;
+    link: function(scope, element, attrs) {
+      element.bind('click', function () {
+        scope.$apply(function () {
+          window.location.href = attrs.goThere;
           document.activeElement.blur();
         });
       });

@@ -53,7 +53,7 @@ tweetApp.directive("tweetDeck", function() {
 });
 
 // When you click a button, this puts focus back to the appropriate input box
-tweetApp.directive('searchTweetsButton', function() {
+tweetApp.directive('tweetSearchClear', function() {
   return {
     restrict: 'C',
     link: function(scope, element, attrs) {

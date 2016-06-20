@@ -30,7 +30,7 @@ BUTTON {
   text-shadow: 1px -1px 2px #000;
   border: solid 1px rgba(221, 221, 221, 0.1); }
 
-BUTTON:hover {
+BUTTON.hover {
   box-shadow: 0 5px 21px 0 black;
   transition: all 0.2s ease-in 0s; }
 
@@ -41,25 +41,25 @@ BUTTON:hover {
 .btn-gray {
   background-color: rgba(64, 66, 70, 0.5); }
 
-.btn-gray:hover {
+.btn-gray .hover {
   background-color: #404246; }
 
 .btn-red {
   background-color: rgba(120, 66, 70, 0.5); }
 
-.btn-red:hover {
+.btn-red .hover {
   background-color: #784246; }
 
 .btn-green {
   background-color: rgba(64, 126, 70, 0.5); }
 
-.btn-green:hover {
+.btn-green .hover {
   background-color: #407e46; }
 
 .btn-blue {
   background-color: rgba(64, 66, 130, 0.5); }
 
-.btn-blue:hover {
+.btn-blue .hover {
   background-color: #404282; }
 
 BUTTON:active {
