@@ -8,7 +8,7 @@
 - [X] Delete tweet column
 
 #Stylesheet and front end structure changes
-- [ ] New stylesheet with more flexbox
+- [X] New stylesheet with more flexbox
 - [X] Tweet directive
 - [X] Tweet Search directive
 - [ ] Tweets to be held in columns[n].tweets / column.tweets
@@ -24,6 +24,7 @@
 - [X] Validation for socket requests
 
 #Better communication with user
+- [ ] Modal dialogs for confirmation
 - [ ] Toast messages
 - [ ] User warnings (e.g. when column can't be moved)
 - [ ] User error messages?
@@ -34,7 +35,7 @@
 - [ ] Filter by conversation
 - [ ] User stats available on hover of profile image
 - [ ] Replace any remaining t.co link text with the real one
-- [ ] Pull Search out to it's own directive and re-style
+- [X] Pull Search out to it's own directive and re-style
 
 #Admin pages
 - [ ] Authorise new user registration
@@ -51,6 +52,6 @@
 - [ ] Test for every function
 
 #Look & Feel
-- [ ] Need ~~front-end framework (Bootstrap or something) or~~ SASS for styles. Full rebuild needed here. 
+- [X] Need ~~front-end framework (Bootstrap or something) or~~ SASS for styles. Full rebuild needed here. 
 - [ ] More loading animation
 - [ ] Better handling of new tweets. Not good to burst into view, especially for high volume situations. 
