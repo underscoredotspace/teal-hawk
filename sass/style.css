@@ -63,7 +63,7 @@ BUTTON.hover {
   background-color: #404282; }
 
 BUTTON:active {
-  box-shadow: inset 0 0 15px 0 rgba(255, 255, 255, 0.3); }
+  box-shadow: inset 0 0 15px 0 rgba(255, 255, 255, 0.5); }
 
 A, A:hover, A:visited {
   color: #6ab825;
