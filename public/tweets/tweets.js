@@ -124,7 +124,7 @@ tweetApp.directive('tweetColumn', function(socket){
     templateUrl: 'tweets/th-tweet-column.html',
     replace: true,
     scope: false,
-    controller: function ($scope, $filter) {
+    controller: function ($scope, $filter, $rootScope) {
       $scope.tweets = [];
       $scope.bottomLoading = false;
       $scope.viewBursting = true;
@@ -239,7 +239,7 @@ tweetApp.directive('tweetColumn', function(socket){
       $scope.viewBurstMode = function(viewBursting) {
         if ($scope.viewBursting!=viewBursting) {
           $scope.viewBursting=viewBursting;
-          console.log($scope.column.id + ' view-burst: ' + viewBursting); 
+          $rootScope.$broadcast('newToast', {type: 'info', message: $scope.column.id + ' view-burst: ' + viewBursting}); 
         }
       }
 
@@ -259,7 +259,7 @@ tweetApp.directive('tweetColumn', function(socket){
 });
 
 // Directive that enables us to create[/amend] criteria for new column, move column or delete column. 
-tweetApp.directive('thTweetConfig', function(socket, $filter){
+tweetApp.directive('thTweetConfig', function(socket, $filter, $rootScope){
   return {
     restrict: 'C', 
     templateUrl: '/tweets/th-tweet-config.html',
@@ -313,7 +313,7 @@ tweetApp.directive('thTweetConfig', function(socket, $filter){
       
       $scope.moveColumnLeft = function () {
         if ($scope.column.position==_.min($scope.columns, 'position').position) {
-          console.log('already as left as we can go!'); // Should be toast for user
+          $rootScope.$broadcast('newToast', {type: 'info', message: 'Can\t go any further left!'});
         } else {
           // move column left
           var thisColumn = _.indexOf(_.pluck($scope.columns, 'position'), $scope.column.position);
@@ -329,7 +329,7 @@ tweetApp.directive('thTweetConfig', function(socket, $filter){
       }
       $scope.moveColumnRight = function () {
         if ($scope.column.position==_.max($scope.columns, 'position').position) {
-          console.log('already as right as we can go!'); // Should be toast for user
+          $rootScope.$broadcast('newToast', {type: 'info', message: 'Can\t go any further right!'});
         } else {
           // move column right
           var thisColumn = _.indexOf(_.pluck($scope.columns, 'position'), $scope.column.position);
@@ -370,8 +370,7 @@ tweetApp.directive('thTweetConfig', function(socket, $filter){
           socket.emit('newColumn', {id: $scope.column.id, parameters: $scope.column.parameters, position: $scope.column.position, type: $scope.column.type});
           $scope.toggleSettings();
         } else {
-          console.log('One or more users must be selected under Tweets and/or Mentions');
-          // toast error message
+          $rootScope.$broadcast('newToast', {type: 'fail', message: 'A Tweet or Mention must be selected'});
         }
       }
       
@@ -387,11 +386,11 @@ tweetApp.directive('thTweetConfig', function(socket, $filter){
             $scope.toggleSettings();
             $rootScope.$broadcast('columnUpdated', $scope.column.id);
           } else {
-            console.log('One or more users must be selected under Tweets and/or Mentions');
+            $rootScope.$broadcast('newToast', {type: 'fail', message: 'A Tweet or Mention must be selected'});
             // toast error message
           }
         } else {
-          console.log('Parameters haven\'t changed!');
+          $rootScope.$broadcast('newToast', {type: 'warn', message: 'Parameters haven\'t changed!'});
           // toast error message
         }
       }

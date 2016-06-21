@@ -51,14 +51,17 @@ tweetApp.directive('thToastMessages', function($timeout, $filter) {
         while (_.where($scope.toasts, {id: newID}).length!=0) {
           newID = Math.random().toString(36).substr(2, 4);
         }
-        $scope.toasts.push({
-          id: newID,
-          text: toast.message,
-          type: toast.type
+        $timeout(function() {
+          $scope.toasts.push({
+            id: newID,
+            text: toast.message,
+            type: toast.type
+          });
         });
+
         $timeout(function () {
           deleteToast(newID);
-        }, 10000);
+        }, 5000);
       });
     }
   }
