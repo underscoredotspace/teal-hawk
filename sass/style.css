@@ -130,6 +130,38 @@ A:hover {
   padding-top: 10px; }
 
 /* --- Tweet Deck Styles --- */
+.th-toast-messages {
+  position: fixed;
+  z-index: 1000;
+  width: 300px;
+  height: 0;
+  padding: 40px 10px 0 0;
+  text-align: center;
+  top: 0;
+  right: 0;
+  max-height: 100vh; }
+
+.th-toast-message {
+  padding: 5px;
+  margin: 5px 0;
+  opacity: 0.9;
+  color: #222426;
+  box-shadow: 0 5px 21px 0 black;
+  border-radius: 5px;
+  font-weight: 700; }
+
+.th-toast-fail {
+  background-color: rgba(255, 124, 124, 0.75); }
+
+.th-toast-pass {
+  background-color: rgba(106, 184, 37, 0.75); }
+
+.th-toast-warn {
+  background-color: rgba(255, 255, 124, 0.75); }
+
+.th-toast-info {
+  background-color: rgba(124, 226, 255, 0.75); }
+
 .tweet-column {
   width: 360px;
   max-width: calc(100vw - 44px);
@@ -239,3 +271,5 @@ A:hover {
 .tweet-created-at {
   font-size: 75%;
   color: #7ce2ff; }
+
+/*# sourceMappingURL=style.css.map */

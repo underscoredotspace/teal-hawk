@@ -27,6 +27,55 @@ tweetApp.directive('button', function($timeout) {
   }
 });
 
+
+tweetApp.directive('thToastMessages', function($timeout, $filter) {
+  return {
+    restrict: 'C',
+    scope: false,
+    controller: function($scope) {
+      $scope.toasts = [];
+      function deleteToast(message) {
+        index = _.indexOf(_.pluck($scope.toasts, 'id'), message);
+        if (index != -1) {
+          $scope.toasts.splice(index, 1);
+        }
+      }
+
+      $scope.$on('deleteToast', function (event, message) {
+        deleteToast(message);
+        $scope.$digest();
+      });
+
+      $scope.$on('newToast', function (event, toast) { 
+        var newID = Math.random().toString(36).substr(2, 4);
+        while (_.where($scope.toasts, {id: newID}).length!=0) {
+          newID = Math.random().toString(36).substr(2, 4);
+        }
+        $scope.toasts.push({
+          id: newID,
+          text: toast.message,
+          type: toast.type
+        });
+        $timeout(function () {
+          deleteToast(newID);
+        }, 10000);
+      });
+    }
+  }
+});
+
+tweetApp.directive('thToastMessage', function($rootScope) {
+  return {
+    restrict: 'C', 
+    scope: false,
+    link: function(scope, element, attrs) {
+      element.on('click', function() {
+        $rootScope.$broadcast('deleteToast', scope.toast.id);
+      })
+    },
+  }
+})
+
 tweetApp.directive('menuBar', function($rootScope) {
   return {
     restrict: 'A', 

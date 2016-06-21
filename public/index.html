@@ -37,6 +37,7 @@
     <div class="frame flex row max-h max-w no-shrink">
       <div class="nav" data-menu-bar></div>
       <div class="tweet-deck"></div>
+      <div class="th-toast-messages flex col"><div class="th-toast-message max-w no-shrink {{'th-toast-' + toast.type}}" ng-repeat="toast in toasts">{{toast.text}}</div></div>
     </div>
   </body>
 </html>
