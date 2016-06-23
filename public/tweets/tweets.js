@@ -109,12 +109,17 @@ tweetApp.directive('thTweetSearch', function() {
   }
 })
 
-tweetApp.directive('thTweet', function() {
+tweetApp.directive('thTweet', function($timeout) {
   return {
     restrict: 'C',
     templateUrl: 'tweets/th-tweet.html',
     replace: true, 
-    scope: false
+    scope: false,
+    link: function(scope, element, attrs) {
+      $timeout(function() {
+        element.removeClass('hidden');
+      }, 0);
+    }
   }
 })
 
@@ -239,7 +244,7 @@ tweetApp.directive('tweetColumn', function(socket){
       $scope.viewBurstMode = function(viewBursting) {
         if ($scope.viewBursting!=viewBursting) {
           $scope.viewBursting=viewBursting;
-          $rootScope.$broadcast('newToast', {type: 'info', message: $scope.column.id + ' view-burst: ' + viewBursting}); 
+          //$rootScope.$broadcast('newToast', {type: 'info', message: $scope.column.id + ' view-burst: ' + viewBursting}); 
         }
       }
 

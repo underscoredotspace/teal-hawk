@@ -3,8 +3,9 @@
   "version": "0.3.1",
   "private": true,
   "scripts": {
-    "build-css": "./bin/build-css",
-    "watch-css": "./bin/watch-css"
+    "watch-css": "sass --watch sass/style.scss:sass/style.css",
+    "start-app": "nodemon app.js",
+    "dev-run": "npm run watch-css & npm run start-app"
   },
   "dependencies": {
     "bower": "^1.7.7",

@@ -24,6 +24,7 @@ html {
   width: 100vw;
   box-sizing: border-box;
 }
+
 *, *:before, *:after {
   box-sizing: inherit;
 }
@@ -324,6 +325,10 @@ A:hover {
   margin-bottom: 3px;
 }
 
+.hidden {
+  display: none;
+}
+
 .tweet-user {
   border-bottom: solid rgba(221, 221, 221, 0.5) 1px;
   margin-bottom: 5px;
@@ -358,6 +363,30 @@ A:hover {
   line-height: 20px;
   min-height: 40px;
 }
+
+.tweet-media {
+  padding-left: 3px;
+  padding-right: 3px;
+}
+
+.tweet-media-image {
+  display: inline-block;
+  max-width: 70px;
+  padding: 3px 6px 0px 0px;
+}
+
+/*.quoted-tweet {
+  text-align: justify;
+  margin-top: 5px;
+  border-style: dashed;
+  border-width: 1px 0px 1px 0px;
+  border-color: #cca300;
+  background-color: rgba(204, 163, 0, 0.1);
+  padding: 3px;
+}
+.quoted-tweet-user-screenname {
+  font-weight: bold;
+}*/
 
 .tweet-created-at {
   font-size: 75%;

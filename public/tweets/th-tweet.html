@@ -11,6 +11,11 @@
     <div class="max-h max-w">
       <div class="max-w">
         <div class="tweet-text" data-ng-bind-html="tweet.text|linkyUnsanitized|tweetLinky|highlight:search.text|trustHTML"></div>
+        <div class="tweet-media">
+          <a href="#" data-ng-href="{{media.media_url_https}}" class="tweet-media-image" target="_blank" data-ng-repeat="media in tweet.extended_entities.media|filter:{type: photo}">
+            <img class="tweet-media-image" src="#"  alt="{{'Tweet media id '+media.id_str}}" data-ng-src="{{media.media_url_https + ':thumb'}}">
+          </a>
+        </div>
         <div class="tweet-created-at" data-am-time-ago="tweet.created_at">12 hours ago</div>
       </div>
     </div>
