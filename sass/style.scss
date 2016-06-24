@@ -193,16 +193,15 @@ A:hover {
   z-index: 1000;
   width: 300px;
   height: 0;
-  padding: 40px 10px 0 0;
   text-align: center;
-  top: 0;
+  top: 40px;
   right: 0;
   max-height: 100vh;
 }
 
 .th-toast-message {
   padding: 5px;
-  margin: 5px 0;
+  margin: 5px 10px;
   opacity: 0.9;
   color: $c_face;
   box-shadow: 0 5px 21px 0 rgba(0, 0, 0, 1);
