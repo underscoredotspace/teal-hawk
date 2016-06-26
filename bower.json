@@ -10,7 +10,6 @@
   "moduleType": [],
   "private": true,
   "dependencies": {
-    "font-awesome": "fontawesome#^4.5.0",
     "underscore-query": "^1.3.1"
   }
 }

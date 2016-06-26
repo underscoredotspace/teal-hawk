@@ -1,0 +1,52 @@
+@import url(http://fonts.googleapis.com/css?family=Source+Sans+Pro:400,900);
+@import url(https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css);
+@import url(https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css);
+
+@function longshadow($color_a, $color_b, $stepnum, $opacity: 1) {
+  $gradient_steps: null;
+  @for $i from 1 through $stepnum {
+    $weight: ( ( $i - 1) / $stepnum) * 100;
+    $colour_mix: mix($color_b, rgba($color_a, $opacity), $weight);
+    $seperator: null;
+    @if($i !=$stepnum) {
+      $seperator: #{','};
+    }
+    $gradient_steps: append( unquote("#{$gradient_steps}"), #{$i}px #{$i}px $colour_mix $seperator);
+  }
+  @return $gradient_steps;
+}
+
+$c_face: rgb(34,36,38);
+$c_back: rgb(064,066,070);
+$c_text: rgb(221,221,221);
+
+BODY {
+  height: 100vh;
+  margin: 0;
+  font-size: 18px;
+  background: $c_back;
+  color: $c_text;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-around;
+  font-family: 'Source Sans Pro', sans-serif;
+}
+
+.th-container {
+  text-align: center;
+  padding: 30px 120px;
+  background: $c_face;
+}
+
+.th-text {
+  padding-bottom: 30px;
+}
+
+H1 {
+  margin: 0;
+  font-size: 63px;
+  line-height: 90px;
+  font-weight: 900;
+  text-shadow: longshadow(darken($c_face, 90%), $c_face, 20, 0.7);
+}

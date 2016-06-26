@@ -16,7 +16,7 @@
             <img class="tweet-media-image" src="#"  alt="{{'Tweet media id '+media.id_str}}" data-ng-src="{{media.media_url_https + ':thumb'}}">
           </a>
         </div>
-        <div class="tweet-created-at" data-am-time-ago="tweet.created_at" title="{{tweet.created_at|amDateFormat:'DD-MM-YYYY@HHmm'}}"></div>
+        <div class="tweet-created-at" data-am-time-ago="tweet.created_at" title="{{tweet.created_at|amCalendar:referenceTime:formats}}"></div>
       </div>
     </div>
   </div>
