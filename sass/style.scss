@@ -112,8 +112,13 @@ A, A:hover, A:visited {
 
 A:hover {
   text-decoration: none;
-  border-bottom-style: solid;
-  border-bottom-width: 1px;
+  border-bottom: solid 2px $c_palegreen;
+  color: $c_palegreen;
+}
+
+A.tweet-media-image:hover {
+  text-decoration: none;
+  border-style: none;
 }
 
 .fake-link {
@@ -198,7 +203,7 @@ A:hover {
   height: 0;
   text-align: center;
   top: 40px;
-  right: 0;
+  right: 20px;
   max-height: 100vh;
 }
 
@@ -239,7 +244,7 @@ A:hover {
   padding-right: 10px;
 }
 
-.tweet-settings-button:hover {
+.tweet-settings-button.hover {
   color: $c_palepurple;
 }
 
@@ -247,7 +252,7 @@ A:hover {
   color: $c_purple;
 }
 
-.tweet-search-clear:hover {
+.tweet-search-clear.hover {
   color: rgba(255, 255, 25, 0.75)
 }
 
@@ -323,8 +328,11 @@ A:hover {
 
 .th-tweet {
   background-color: $c_face;
+  margin-bottom: 3px
+}
+
+.th-tweet-inner {
   padding: 5px 10px;
-  margin-bottom: 3px;
 }
 
 .hidden {

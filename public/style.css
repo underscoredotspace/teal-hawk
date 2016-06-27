@@ -74,8 +74,12 @@ A, A:hover, A:visited {
 
 A:hover {
   text-decoration: none;
-  border-bottom-style: solid;
-  border-bottom-width: 1px; }
+  border-bottom: solid 2px rgba(106, 184, 37, 0.75);
+  color: rgba(106, 184, 37, 0.75); }
+
+A.tweet-media-image:hover {
+  text-decoration: none;
+  border-style: none; }
 
 .fake-link {
   cursor: pointer; }
@@ -139,7 +143,7 @@ A:hover {
   height: 0;
   text-align: center;
   top: 40px;
-  right: 0;
+  right: 20px;
   max-height: 100vh; }
 
 .th-toast-message {
@@ -172,13 +176,13 @@ A:hover {
 .tweet-settings-button {
   padding-right: 10px; }
 
-.tweet-settings-button:hover {
+.tweet-settings-button.hover {
   color: rgba(231, 124, 255, 0.75); }
 
 .tweet-settings-visible, .tweet-settings-button:active {
   color: #e77cff; }
 
-.tweet-search-clear:hover {
+.tweet-search-clear.hover {
   color: rgba(255, 255, 25, 0.75); }
 
 .tweet-search-clear:active {
@@ -239,8 +243,10 @@ A:hover {
 
 .th-tweet {
   background-color: #222426;
-  padding: 5px 10px;
   margin-bottom: 3px; }
+
+.th-tweet-inner {
+  padding: 5px 10px; }
 
 .hidden {
   display: none; }

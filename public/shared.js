@@ -5,9 +5,9 @@ tweetApp.factory('socket', function(){
   return socket;
 });
 
-tweetApp.directive('button', function($timeout) {
+tweetApp.directive('thHover', function($timeout) {
   return {
-    restrict: 'E',
+    restrict: 'A',
     scope: true,
     link: function(scope, element, attrs) {
       element.on('mouseenter', function(event) {

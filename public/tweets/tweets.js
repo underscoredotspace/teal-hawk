@@ -43,11 +43,6 @@ tweetApp.directive("tweetDeck", function() {
         });
         console.log('new column ' + newID + ' created');
       });
-      
-      // When we move away from the Deck, turn listeners off, to prevent duplication when we come back. 
-      $scope.$on('$destroy', function (event) {
-        socket.removeAllListeners();
-      });
     }
   }
 });
@@ -92,7 +87,7 @@ tweetApp.directive('tweets', function () {
         }
         
         // Detects when we're getting to the bottom of the tweet column so we can request more tweets
-        if (raw.scrollTop + raw.offsetHeight >= (raw.scrollHeight*(1/1.25))) {
+        if (raw.scrollTop + raw.offsetHeight >= (raw.scrollHeight-300)) {
           scope.showMore();
         }
       });
@@ -107,21 +102,16 @@ tweetApp.directive('thTweetSearch', function() {
     replace: true, 
     scope: false
   }
-})
+});
 
 tweetApp.directive('thTweet', function($timeout) {
   return {
     restrict: 'C',
     templateUrl: 'tweets/th-tweet.html',
     replace: true, 
-    scope: false,
-    link: function(scope, element, attrs) {
-      $timeout(function() {
-        element.removeClass('hidden');
-      }, 0);
-    }
+    scope: false
   }
-})
+});
 
 tweetApp.directive('tweetColumn', function(socket){
   return {

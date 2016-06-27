@@ -35,8 +35,9 @@ BODY {
 
 .th-container {
   text-align: center;
-  padding: 30px 120px;
+  padding: 30px 80px;
   background: $c_face;
+  box-shadow: 0 5px 21px 0 rgba(0, 0, 0, 0.5);
 }
 
 .th-text {
@@ -46,7 +47,7 @@ BODY {
 H1 {
   margin: 0;
   font-size: 63px;
-  line-height: 90px;
+  margin-bottom: 27px;
   font-weight: 900;
   text-shadow: longshadow(darken($c_face, 90%), $c_face, 20, 0.7);
 }
