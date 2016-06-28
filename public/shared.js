@@ -27,6 +27,21 @@ tweetApp.directive('thHover', function($timeout) {
   }
 });
 
+tweetApp.service('thToast', function($rootScope) {
+  return {
+    newToast: function(message, type) {
+      if(type==undefined) {
+        type = 'info';
+      }
+
+      if(message==undefined) {
+        $rootScope.$broadcast('newToast', {type: 'fail', message: 'Invalid toast recieved'});
+      } else {
+        $rootScope.$broadcast('newToast', {type: type, message: message});
+      }
+    }
+  }
+})
 
 tweetApp.directive('thToastMessages', function($timeout, $filter) {
   return {

@@ -1,48 +1,55 @@
-tweetApp.directive("tweetDeck", function() {
+tweetApp.directive("tweetDeck", function($timeout, socket, thToast) {
   return {
     restrict: 'C', 
     templateUrl: 'tweets/th-tweet-deck.html',
     replace: true, 
     scope: false,
-    controller: function($scope, $filter, socket) {
+    link: function(scope, element) {
       socket.on('connect', function(){
         console.log('connected');
       });
 
       socket.on('connect_error', function(err){
+        thToast.newToast('Connection error', 'fail');
         console.log('connection error: ' + err);
       });
       
       socket.on('columns', function (columns) {
-        if(!angular.equals($scope.columns, columns)){
+        if(!angular.equals(scope.columns, columns)){
           console.log('new columns recieved');
-          $scope.columns = columns;
-          $scope.$apply();
+          scope.columns = columns;
+          scope.$apply();
         };
       });
-      
-      $scope.$on('newColumn', function () {   
-        // create semi-uuid 
-        var newID = Math.random().toString(36).substr(2, 4);
-        while (_.where($scope.columns, {id: newID}).length!=0) {
-          newID = Math.random().toString(36).substr(2, 4);
+
+      scope.$on('newColumn', function() {
+        if (_.max(scope.columns, 'position').parameters!='') {
+          // create semi-uuid 
+          var newID = Math.random().toString(36).substr(2, 4);
+          while (_.where(scope.columns, {id: newID}).length!=0) {
+            newID = Math.random().toString(36).substr(2, 4);
+          }
+          
+          if (scope.columns.length != 0) {
+            newPosition = _.max(scope.columns, 'position').position + 1;
+          } else {
+            newPosition = 1;
+          }
+          
+          // create new tweet column with no params
+            scope.columns.push({
+              id: newID,
+              parameters: '',
+              position: newPosition,
+              type: "tweetColumn"
+          });
+          console.log('new column ' + newID + ' created');
+
+          $timeout(function() {
+            element[0].scrollLeft=element[0].scrollWidth;
+          }, 0);
         }
-        
-        if ($scope.columns.length != 0) {
-          newPosition = _.max($scope.columns, 'position').position + 1;
-        } else {
-          newPosition = 1;
-        }
-        
-        // create new tweet column with no params
-        $scope.columns.push({
-          id: newID,
-          parameters: '',
-          position: newPosition,
-          type: "tweetColumn"
-        });
-        console.log('new column ' + newID + ' created');
-      });
+      })
     }
   }
 });
@@ -234,7 +241,6 @@ tweetApp.directive('tweetColumn', function(socket){
       $scope.viewBurstMode = function(viewBursting) {
         if ($scope.viewBursting!=viewBursting) {
           $scope.viewBursting=viewBursting;
-          //$rootScope.$broadcast('newToast', {type: 'info', message: $scope.column.id + ' view-burst: ' + viewBursting}); 
         }
       }
 
@@ -254,12 +260,12 @@ tweetApp.directive('tweetColumn', function(socket){
 });
 
 // Directive that enables us to create[/amend] criteria for new column, move column or delete column. 
-tweetApp.directive('thTweetConfig', function(socket, $filter, $rootScope){
+tweetApp.directive('thTweetConfig', function(){
   return {
     restrict: 'C', 
     templateUrl: '/tweets/th-tweet-config.html',
     replace: true, 
-    controller: function($scope, $rootScope, paramsParse) {
+    controller: function($scope, paramsParse, socket, $filter, $rootScope, thToast) {
       $scope.setupSettings = function() {
         if($scope.column.isNew) {
           $scope.tos = [{user: ''}];
@@ -308,7 +314,7 @@ tweetApp.directive('thTweetConfig', function(socket, $filter, $rootScope){
       
       $scope.moveColumnLeft = function () {
         if ($scope.column.position==_.min($scope.columns, 'position').position) {
-          $rootScope.$broadcast('newToast', {type: 'info', message: 'Can\t go any further left!'});
+          thToast.newToast('Can\t go any further left!');
         } else {
           // move column left
           var thisColumn = _.indexOf(_.pluck($scope.columns, 'position'), $scope.column.position);
@@ -324,7 +330,7 @@ tweetApp.directive('thTweetConfig', function(socket, $filter, $rootScope){
       }
       $scope.moveColumnRight = function () {
         if ($scope.column.position==_.max($scope.columns, 'position').position) {
-          $rootScope.$broadcast('newToast', {type: 'info', message: 'Can\t go any further right!'});
+          thToast.newToast('Can\t go any further right!');
         } else {
           // move column right
           var thisColumn = _.indexOf(_.pluck($scope.columns, 'position'), $scope.column.position);
@@ -365,7 +371,7 @@ tweetApp.directive('thTweetConfig', function(socket, $filter, $rootScope){
           socket.emit('newColumn', {id: $scope.column.id, parameters: $scope.column.parameters, position: $scope.column.position, type: $scope.column.type});
           $scope.toggleSettings();
         } else {
-          $rootScope.$broadcast('newToast', {type: 'fail', message: 'A Tweet or Mention must be selected'});
+          thToast.newToast('A selection must be made', 'fail');
         }
       }
       
@@ -381,12 +387,11 @@ tweetApp.directive('thTweetConfig', function(socket, $filter, $rootScope){
             $scope.toggleSettings();
             $rootScope.$broadcast('columnUpdated', $scope.column.id);
           } else {
-            $rootScope.$broadcast('newToast', {type: 'fail', message: 'A Tweet or Mention must be selected'});
+            thToast.newToast('A selection must be made', 'fail');
             // toast error message
           }
         } else {
-          $rootScope.$broadcast('newToast', {type: 'warn', message: 'Parameters haven\'t changed!'});
-          // toast error message
+          thToast.newToast('Parameters haven\'t changed', 'warn');
         }
       }
       

@@ -74,7 +74,6 @@ A, A:hover, A:visited {
 
 A:hover {
   text-decoration: none;
-  border-bottom: solid 2px rgba(106, 184, 37, 0.75);
   color: rgba(106, 184, 37, 0.75); }
 
 A.tweet-media-image:hover {
