@@ -402,3 +402,33 @@ A.tweet-media-image:hover {
   font-size: 75%;
   color: $c_cyan;
 }
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.th-tweet-loading {
+  display: flex;
+  justify-content: space-around;
+  padding: 25px 0;
+  background-color: $c_face;
+  margin-top: 3px
+}
+
+.loading-spinner {
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    border: 5px solid $c_text;
+    border-top-color: $c_palegreen;
+    animation: spin 1.5s infinite linear;
+  &--double {
+    border-style: double;
+    border-width: 10px;;
+  }
+}

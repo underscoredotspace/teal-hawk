@@ -302,4 +302,27 @@ A.tweet-media-image:hover {
   font-size: 75%;
   color: #7ce2ff; }
 
+@keyframes spin {
+  0% {
+    transform: rotate(0deg); }
+  100% {
+    transform: rotate(360deg); } }
+.th-tweet-loading {
+  display: flex;
+  justify-content: space-around;
+  padding: 25px 0;
+  background-color: #222426;
+  margin-top: 3px; }
+
+.loading-spinner {
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  border: 5px solid #dddddd;
+  border-top-color: rgba(106, 184, 37, 0.75);
+  animation: spin 1.5s infinite linear; }
+  .loading-spinner--double {
+    border-style: double;
+    border-width: 10px; }
+
 /*# sourceMappingURL=style.css.map */
