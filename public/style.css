@@ -43,25 +43,25 @@ BUTTON.hover {
 .btn-gray {
   background-color: rgba(64, 66, 70, 0.5); }
 
-.btn-gray .hover {
-  background-color: #404246; }
+.btn-gray.hover {
+  background-color: #54565a; }
 
 .btn-red {
   background-color: rgba(120, 66, 70, 0.5); }
 
-.btn-red .hover {
+.btn-red.hover {
   background-color: #784246; }
 
 .btn-green {
   background-color: rgba(64, 126, 70, 0.5); }
 
-.btn-green .hover {
+.btn-green.hover {
   background-color: #407e46; }
 
 .btn-blue {
   background-color: rgba(64, 66, 130, 0.5); }
 
-.btn-blue .hover {
+.btn-blue.hover {
   background-color: #404282; }
 
 BUTTON:active {
@@ -310,9 +310,7 @@ A.tweet-media-image:hover {
 .th-tweet-loading {
   display: flex;
   justify-content: space-around;
-  padding: 25px 0;
-  background-color: #222426;
-  margin-top: 3px; }
+  padding: 25px 0; }
 
 .loading-spinner {
   border-radius: 50%;
@@ -321,8 +319,5 @@ A.tweet-media-image:hover {
   border: 5px solid #dddddd;
   border-top-color: rgba(106, 184, 37, 0.75);
   animation: spin 1.5s infinite linear; }
-  .loading-spinner--double {
-    border-style: double;
-    border-width: 10px; }
 
 /*# sourceMappingURL=style.css.map */

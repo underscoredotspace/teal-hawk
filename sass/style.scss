@@ -72,15 +72,15 @@ BUTTON.hover {
   background-color: rgba(64, 66, 70, 0.5);
 }
 
-.btn-gray .hover {
-  background-color: rgb(64, 66, 70);
+.btn-gray.hover {
+  background-color: rgb(84, 86, 90);
 }
 
 .btn-red {
   background-color: rgba(120, 66, 70, 0.5);
 }
 
-.btn-red .hover {
+.btn-red.hover {
   background-color: rgb(120, 66, 70);
 }
 
@@ -88,7 +88,7 @@ BUTTON.hover {
   background-color: rgba(64, 126, 70, 0.5)
 }
 
-.btn-green .hover {
+.btn-green.hover {
   background-color: rgb(64, 126, 70)
 }
 
@@ -96,7 +96,7 @@ BUTTON.hover {
   background-color: rgba(64, 66, 130, 0.5);
 }
 
-.btn-blue .hover {
+.btn-blue.hover {
   background-color: rgb(64, 66, 130);
 }
 
@@ -416,8 +416,6 @@ A.tweet-media-image:hover {
   display: flex;
   justify-content: space-around;
   padding: 25px 0;
-  background-color: $c_face;
-  margin-top: 3px
 }
 
 .loading-spinner {
@@ -427,8 +425,4 @@ A.tweet-media-image:hover {
     border: 5px solid $c_text;
     border-top-color: $c_palegreen;
     animation: spin 1.5s infinite linear;
-  &--double {
-    border-style: double;
-    border-width: 10px;;
-  }
 }
