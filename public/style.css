@@ -318,6 +318,6 @@ A.tweet-media-image:hover {
   height: 50px;
   border: 5px solid #dddddd;
   border-top-color: rgba(106, 184, 37, 0.75);
-  animation: spin 1.5s infinite linear; }
+  animation: spin 0.5s infinite linear; }
 
 /*# sourceMappingURL=style.css.map */
