@@ -1,4 +1,4 @@
-var tweetApp = angular.module('tweetApp', ['angularMoment', 'ngAnimate']).constant('_', window._);
+var tweetApp = angular.module('tweetApp', ['angularMoment']).constant('_', window._);
 
 tweetApp.directive("tweetDeck", function($timeout, socket, thToast) {
   return {

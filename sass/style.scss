@@ -187,12 +187,10 @@ A.tweet-media-image:hover {
   align-items: center;
   justify-content: flex-start;
   background-color: $c_face;
+  &-item {
+    padding-top: 10px;
+  }
 }
-
-.nav-item {
-  padding-top: 10px;
-}
-
 
 /* --- Tweet Deck Styles --- */
 
@@ -217,20 +215,19 @@ A.tweet-media-image:hover {
   font-weight: 700;
 }
 
-.th-toast-fail {
-  background-color: $c_palered;
-}
-
-.th-toast-pass {
-  background-color: $c_palegreen;
-}
-
-.th-toast-warn {
-  background-color: $c_paleyellow;
-}
-
-.th-toast-info {
-  background-color: $c_palecyan;
+.th-toast {
+  &-fail {
+    background-color: $c_palered;
+  }
+  &-pass {
+    background-color: $c_palegreen;
+  }
+  &-warn {
+    background-color: $c_paleyellow;
+  }
+  &-info {
+    background-color: $c_palecyan;
+  }
 }
 
 .tweet-column {
@@ -368,10 +365,14 @@ A.tweet-media-image:hover {
   margin-bottom: 0px;
 }
 
+.tweet-content {
+  min-height: 63px;
+}
+
 .tweet-text {
   word-break: break-word;
   line-height: 20px;
-  min-height: 40px;
+  // min-height: 40px;
 }
 
 .tweet-media {
@@ -399,6 +400,8 @@ A.tweet-media-image:hover {
 }*/
 
 .tweet-created-at {
+  height: 100%;
+  align-items: flex-start;
   font-size: 75%;
   color: $c_cyan;
 }
