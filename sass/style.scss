@@ -293,9 +293,22 @@ A.tweet-media-image:hover {
 }
 
 .th-tweet-config {
+  overflow: hidden;
   background-color: $c_face;
+  max-height: 0;
   padding: 0 10px;
-  margin-top: 3px;
+  margin-top: 0;
+  opacity: 0;
+  transition: none;
+  &-visible {
+    max-height: 100%;
+    overflow: visible;
+    opacity: 1;
+    margin-top: 3px;
+    transition-duration: 0.5s;
+    transition-timing-function: ease-in-out;
+    transition-property: max-height, opacity, margin-top;
+  }
 }
 
 .th-listen {
@@ -372,7 +385,6 @@ A.tweet-media-image:hover {
 .tweet-text {
   word-break: break-word;
   line-height: 20px;
-  // min-height: 40px;
 }
 
 .tweet-media {

@@ -122,7 +122,7 @@ tweetApp.directive('thTweet', function($timeout) {
   }
 });
 
-tweetApp.directive('tweetColumn', function(socket){
+tweetApp.directive('tweetColumn', function(socket, thToast){
   return {
     restrict: 'C', 
     templateUrl: 'tweets/th-tweet-column.html',
@@ -130,8 +130,8 @@ tweetApp.directive('tweetColumn', function(socket){
     scope: false,
     controller: function ($scope, $filter, $rootScope) {
       $scope.tweets = [];
-      $scope.bottomLoading = true;
       $scope.viewBursting = true;
+      $scope.bottomLoading = true;
       
       var initRequest = function() {
           var tweetColumn = {tweetCount: 10, id: $scope.column.id, parameters: $scope.column.parameters};
@@ -159,13 +159,14 @@ tweetApp.directive('tweetColumn', function(socket){
       function resetColumn (columnID) {
         if(columnID==$scope.column.id) {
           $scope.tweets = [];
+          $scope.bottomLoading = true;
           initRequest();
         }
       }
       
       // Fires after connection lost and regained
       socket.on('reconnect', function(){
-        console.log('Reconnect please');
+        thToast.newToast('Reconnected', 'pass');
         if ($scope.tweets.length!=0) {
           var updateRequest = {lastTweet: $scope.tweets[0].id_str, id: $scope.column.id, parameters: $scope.column.parameters}
           socket.emit('updateRequest', updateRequest);
