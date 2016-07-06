@@ -25,11 +25,11 @@
 
 #Better communication with user
 - [ ] Modal dialogs for confirmation
-- [ ] Toast messages
-- [ ] User warnings (e.g. when column can't be moved)
-- [ ] User error messages?
-- [ ] Persistent message when offline
-- [ ] New toast when back online
+- [X] Toast messages
+- [X] User warnings (e.g. when column can't be moved)
+- [X] User error messages?
+- [X] Persistent message when offline
+- [X] New toast when back online
 
 #Tweet Deck Features
 - [ ] Filter by conversation
@@ -38,7 +38,6 @@
 - [X] Pull Search out to it's own directive and re-style
 
 #Admin pages
-- [ ] Authorise new user registration
 - [ ] Delete users
 - [X] Get stream parameters from database
 - [ ] Update stream parameters for server-side app.js and restart as required
@@ -53,5 +52,5 @@
 
 #Look & Feel
 - [X] Need ~~front-end framework (Bootstrap or something) or~~ SASS for styles. Full rebuild needed here. 
-- [ ] More loading animation
+- [X] More loading animation
 - [ ] Better handling of new tweets. Not good to burst into view, especially for high volume situations. 
