@@ -68,68 +68,6 @@ function onAuthorizeFail(data, message, error, accept){
   accept(new Error(message));
 }
 
-// Express setup
-app.set('views', __dirname + '/public/ejs_views');
-app.use('/bower_components',  express.static(__dirname + '/bower_components'));
-app.set('view engine', 'ejs');
-app.use(session({key: config.passport.key, secret: config.passport.secret, store: sessionStore, saveUninitialized: false, resave: false }));
-app.use(cookieParser());
-app.use(passport.initialize());
-app.use(passport.session());
-
-// Express routes
-app.get('/login/twitter',
-  passport.authenticate('twitter'));
-
-app.get('/login/twitter/callback',
-  passport.authenticate('twitter', { failureRedirect: '/login'}),
-  function(req, res) {    
-    if (req.user.registered==true) {
-      res.redirect('/');
-    } else {
-      res.redirect('/register');
-    } 
-  });
-
-app.get('/login',function(req,res) {
-  if (req.user) {
-    res.redirect('/');
-  } else {
-    res.sendFile(__dirname + '/public/login.html');
-  }
-});
-
-app.get('/login-style.css',function(req,res) {
-    res.sendFile(__dirname + '/public/login-style.css');
-});
-
-app.get('/logout', function(req, res) {
-  req.logout();
-  res.redirect('/login');
-});
-
-app.get('/register', function(req, res) {
-  res.render('register', { user: req.user });
-});
-
-app.get('/menu-bar', function(req, res) {
-  // check for registered/logged in?
-  res.render('menu-bar', { user: req.user });
-});
-
-app.get('*', 
-  require('connect-ensure-login').ensureLoggedIn('/login'),
-  function(req, res){
-    // check for registered
-    if (req.user.registered==true) {
-      res.sendFile(__dirname + '/public' + req.url);  
-    } else {
-      req.logout();
-      res.redirect('/login');
-    }
-    
-});
-
 // Connect to mongodb, Twitter stream, and fire listen for socketio request
 mongodb.connect(tweetsDB, function (err, db) {
   if (err) {
@@ -137,6 +75,78 @@ mongodb.connect(tweetsDB, function (err, db) {
     process.exit(1);
   } else {
     console.log('Connected to mongo');
+
+    // Express setup
+    app.set('views', __dirname + '/public/ejs_views');
+    app.use('/bower_components',  express.static(__dirname + '/bower_components'));
+    app.set('view engine', 'ejs');
+    app.use(session({key: config.passport.key, secret: config.passport.secret, store: sessionStore, saveUninitialized: false, resave: false }));
+    app.use(cookieParser());
+    app.use(passport.initialize());
+    app.use(passport.session());
+
+    // Express routes
+    app.get('/login/twitter',
+      passport.authenticate('twitter'));
+
+    app.get('/login/twitter/callback',
+      passport.authenticate('twitter', { failureRedirect: '/login'}),
+      function(req, res) {    
+        if (req.user.registered==true) {
+          res.redirect('/');
+        } else {
+          res.redirect('/register');
+        } 
+      });
+
+    app.get('/login',function(req,res) {
+      if (req.user) {
+        res.redirect('/');
+      } else {
+        res.sendFile(__dirname + '/public/login.html');
+      }
+    });
+
+    app.get('/login-style.css',function(req,res) {
+        res.sendFile(__dirname + '/public/login-style.css');
+    });
+
+    app.get('/logout', function(req, res) {
+      req.logout();
+      res.redirect('/login');
+    });
+
+    app.get('/register', function(req, res) {
+      res.render('register', { user: req.user });
+    });
+
+
+    app.get('/registered', function(req, res) {
+      if (req.query.hasOwnProperty('user_id')) {
+        db.collection('users').find({twitter_id: req.query.user_id}, {registered:1, _id: 0}).limit(1).toArray(function(err, user) {
+          res.json(user);
+        });
+      } else {
+        res.sendStatus(400);
+      }
+    });
+
+    app.get('/menu-bar', function(req, res) {
+      // check for registered/logged in?
+      res.render('menu-bar', { user: req.user });
+    });
+
+    app.get('*', 
+      require('connect-ensure-login').ensureLoggedIn('/login'),
+      function(req, res){
+        // check for registered
+        if (req.user.registered==true) {
+          res.sendFile(__dirname + '/public' + req.url);  
+        } else {
+          req.logout();
+          res.redirect('/login');
+        }
+    });
 
     io.sockets.on('connection', function (socket) {
       // Even though client has made connection (since they are logged in to Twitter), it doens't mean they are registered
