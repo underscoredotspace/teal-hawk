@@ -18,7 +18,7 @@
 - [ ] Registration approval by admin user
 - [ ] Email notification of registrations?
 - [ ] Real-time notification and approval of registration
-- [ ] Holding screen for registation requester that moves once approved. 
+- [X] Holding screen for registation requester that moves once approved. 
 - [X] Login with Twitter
 - [X] Log out
 - [X] Validation for socket requests
@@ -39,6 +39,7 @@
 
 #Admin pages
 - [ ] Delete users
+- [ ] Delete session/log user out
 - [X] Get stream parameters from database
 - [ ] Update stream parameters for server-side app.js and restart as required
 - [ ] First run process to create defaults in db etc. 

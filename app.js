@@ -122,8 +122,8 @@ mongodb.connect(tweetsDB, function (err, db) {
 
 
     app.get('/registered', function(req, res) {
-      if (req.query.hasOwnProperty('user_id')) {
-        db.collection('users').find({twitter_id: req.query.user_id}, {registered:1, _id: 0}).limit(1).toArray(function(err, user) {
+      if (req.query.hasOwnProperty('userid')) {
+        db.collection('users').find({twitter_id: req.query.userid}, {registered:1, _id: 0}).limit(1).toArray(function(err, user) {
           res.json(user);
         });
       } else {

@@ -1,4 +1,3 @@
-
 <html>
 <head>
   <meta charset="utf-8">
@@ -6,24 +5,32 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Teal Hawk - Register</title>
   <link rel="stylesheet" href="/login-style.css">
-<% if(user){ %>
-  <script>
-    user_id = '<%=user.user_id%>';
-  </script>
-<% } else { %>
-  <meta http-equiv="refresh" content="0; url=/">
-<% } %>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.5.7/angular.min.js"></script>
 </head>
 
-<body>
-  <div class="th-container">
+<body data-ng-app="regApp">
+  <div class="th-container" data-ng-controller="regController">
     <h1>Teal Hawk</h1>
     <div class="th-text">
       Please wait for the administrater to approve your request
     </div>
-    <a class="btn btn-lg btn-primary" href="/login/twitter" role="button">
-      Sign In <i class="fa fa-twitter"></i>
-    </a>
+    <!-- Spinner -->
   </div>
+
+<script>
+  // regApp = angular.module('regApp', []).constant('userid', '<%=user.user_id%>')
+  angular.module('regApp', []).controller('regController', function ($http, $interval) {
+    userid = '<%=user.user_id%>';
+    $interval(function () {
+      $http.get('/registered?userid=' + userid).success(function(res) {
+        if(res[0].registered) {
+          console.log('registered');
+          window.location.href = '/login/twitter';
+        }
+      })
+    }, 2000);
+  });
+</script>
+
 </body>
 </html>
