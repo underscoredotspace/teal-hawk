@@ -17,6 +17,7 @@ var app = express();
 var server = http.createServer(app);
 var io = socketio.listen(server);
 var MongoStore = connectMongo(session);
+var connectEnsureLogin = require('connect-ensure-login');
 
 // Passport and Passport.SocketIO setup
 var sessionStore = new MongoStore({url: tweetsDB});
@@ -117,17 +118,24 @@ mongodb.connect(tweetsDB, function (err, db) {
     });
 
     app.get('/register', function(req, res) {
-      res.render('register', { user: req.user });
+      if(req.user) {
+        res.render('register', { user: req.user });
+      } else {
+        res.redirect('/login');
+      }
     });
 
-
     app.get('/registered', function(req, res) {
-      if (req.query.hasOwnProperty('userid')) {
-        db.collection('users').find({twitter_id: req.query.userid}, {registered:1, _id: 0}).limit(1).toArray(function(err, user) {
-          res.json(user);
+      if (req.user) {
+        db.collection('users').find({twitter_id: req.user.user_id}, {registered:1, _id: 0}).limit(1).toArray(function(err, user) {
+          if (user[0].registered) {
+            req.user.registered = true;
+            req.session.save();
+          }
+          res.json(user[0]);
         });
       } else {
-        res.sendStatus(400);
+        res.sendStatus(401);
       }
     });
 
@@ -136,16 +144,13 @@ mongodb.connect(tweetsDB, function (err, db) {
       res.render('menu-bar', { user: req.user });
     });
 
-    app.get('*', 
-      require('connect-ensure-login').ensureLoggedIn('/login'),
-      function(req, res){
-        // check for registered
-        if (req.user.registered==true) {
-          res.sendFile(__dirname + '/public' + req.url);  
-        } else {
-          req.logout();
-          res.redirect('/login');
-        }
+    app.get('*', connectEnsureLogin.ensureLoggedIn('/login'), function(req, res){
+      // check for registered
+      if (req.user.registered==true) {
+        res.sendFile(__dirname + '/public' + req.url);  
+      } else {
+        res.redirect('/login');
+      }
     });
 
     io.sockets.on('connection', function (socket) {
@@ -231,6 +236,15 @@ mongodb.connect(tweetsDB, function (err, db) {
       } else {
         console.log('unregistered user attempting to connect to WebSocket');
       }
+
+      socket.on('AuthUser', function (userid) {
+        //check that logged in user is {admin: true}
+        //db.users.update({ "twitter_id" : "566428445" }, {$set: {registered: true}})
+      });
+
+      socket.on('DelUser', function (userid) {
+        // db.sessions.remove({session: {$regex: /\"user_id":\"566428445\"/}});
+      });
     }); //End of io.sockets.on('connection')
           
     

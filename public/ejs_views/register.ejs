@@ -12,22 +12,24 @@
   <div class="th-container" data-ng-controller="regController">
     <h1>Teal Hawk</h1>
     <div class="th-text">
-      Please wait for the administrater to approve your request
+      {{!registered ? 'Waiting for approval' : 'Loading...'}}
     </div>
-    <!-- Spinner -->
   </div>
 
 <script>
-  // regApp = angular.module('regApp', []).constant('userid', '<%=user.user_id%>')
-  angular.module('regApp', []).controller('regController', function ($http, $interval) {
-    userid = '<%=user.user_id%>';
-    $interval(function () {
-      $http.get('/registered?userid=' + userid).success(function(res) {
-        if(res[0].registered) {
-          console.log('registered');
-          window.location.href = '/login/twitter';
+  angular.module('regApp', []).controller('regController', function ($scope, $http, $interval) {
+    function askIfRegistered() {
+      $http.get('/registered').success(function(res) {
+        $scope.registered = res.registered;
+        if($scope.registered) {
+          window.location.href = '/';
         }
       })
+    }
+    $scope.registered = false;
+    askIfRegistered();
+    $interval(function () {
+      askIfRegistered();
     }, 2000);
   });
 </script>
