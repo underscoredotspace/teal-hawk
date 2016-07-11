@@ -102,7 +102,11 @@ mongodb.connect(tweetsDB, function (err, db) {
 
     app.get('/login',function(req,res) {
       if (req.user) {
-        res.redirect('/');
+        if (req.user.registered==true) {
+          res.redirect('/');
+        } else {
+          res.redirect('/register');
+        }
       } else {
         res.sendFile(__dirname + '/public/login.html');
       }
@@ -119,7 +123,11 @@ mongodb.connect(tweetsDB, function (err, db) {
 
     app.get('/register', function(req, res) {
       if(req.user) {
-        res.render('register', { user: req.user });
+        if (req.user.registered==false) {
+          res.render('register');
+        } else {
+          res.redirect('/');
+        }
       } else {
         res.redirect('/login');
       }
