@@ -32,13 +32,16 @@ passport.use(new Strategy({
       db.collection('users').find({'twitter_id': profile.id}).limit(1).toArray(function(err, user){        
         if (user.length>0) {
           var registered=user[0].registered;
+          var admin=user[0].admin;
           // update profile? 
         } else{
           var registered=false;
-          db.collection("users").insert({name: profile.username, twitter_id: profile.id, registered: false, columns: []});
+          var admin=false;
+          db.collection("users").insert({name: profile.username, twitter_id: profile.id, registered: false, admin: false, columns: []});
         }
+        console.log({admin:admin});
         // should be taking image and stuff from database? 
-        return cb(null, {user_id: profile.id, user_name: profile.username, user_image: profile.photos[0].value, registered: registered});
+        return cb(null, {user_id: profile.id, user_name: profile.username, user_image: profile.photos[0].value, registered: registered, admin: admin});
       })
     })
   }
@@ -152,6 +155,15 @@ mongodb.connect(tweetsDB, function (err, db) {
       res.render('menu-bar', { user: req.user });
     });
 
+    app.get('/admin/*', connectEnsureLogin.ensureLoggedIn('/login'), function(req, res){
+      // check for registered
+      if (req.user.admin==true) {
+        res.sendFile(__dirname + '/public' + req.url);  
+      } else {
+        res.sendStatus(401);
+      }
+    });
+
     app.get('*', connectEnsureLogin.ensureLoggedIn('/login'), function(req, res){
       // check for registered
       if (req.user.registered==true) {
@@ -246,12 +258,16 @@ mongodb.connect(tweetsDB, function (err, db) {
       }
 
       socket.on('AuthUser', function (userid) {
-        //check that logged in user is {admin: true}
-        //db.users.update({ "twitter_id" : "566428445" }, {$set: {registered: true}})
+        if (socket.request.user.hasOwnProperty('admin')) {
+          if (socket.request.user.admin==true) {
+            db.collection('users').update({ "twitter_id" : userid}, {$set: {registered: true}});
+          }
+        }
       });
 
       socket.on('DelUser', function (userid) {
-        // db.sessions.remove({session: {$regex: /\"user_id":\"566428445\"/}});
+        db.collection('users').remove({ "twitter_id" : userid})
+        db.collection('sessions').remove({session: {$regex: '/\"user_id":\"' + userid + '\"/}'}});
       });
     }); //End of io.sockets.on('connection')
           
