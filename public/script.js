@@ -56,6 +56,47 @@ tweetApp.directive("tweetDeck", function($timeout, socket, thToast) {
   }
 });
 
+tweetApp.directive('thLightbox', function() {
+  return {
+    restrict: 'C',
+    templateUrl: 'tweets/th-lightbox.html',
+    replace: true
+  }
+});
+
+tweetApp.directive('thFrameLink', function($rootScope) {
+  return {
+    restrict: 'A', 
+    link: function(scope, element, attrs) {
+      element.bind('click', function() {
+        $rootScope.$broadcast('th-frame', attrs.thFrameLink);
+      });
+    }
+  }
+});
+
+tweetApp.directive('thFrame', function() {
+  return {
+    restrict: 'C',
+    template: '<iframe ng-src="{{frameAddress}}" ng-cloak></iframe>',
+    replace: true,
+    controller: function($scope, $timeout) {
+      $scope.frameVisible=false;
+      $scope.$on('th-frame', function(event, address) {
+        $timeout(function() {
+          if(address!='x') {
+            $scope.frameAddress = address + '.html';
+            $scope.frameVisible = true;
+          } else {
+            $scope.frameAddress = '/tweets/blank.html';
+            $scope.frameVisible = false;
+          }
+        }, 0);
+      });
+    }
+  }
+});
+
 // When you click a button, this puts focus back to the appropriate input box
 tweetApp.directive('tweetSearchClear', function() {
   return {
