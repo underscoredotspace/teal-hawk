@@ -6,6 +6,7 @@
 - [X] Move column left or right
 - [X] Save edited/new filter parameters to Mongo collection
 - [X] Delete tweet column
+- [X] Get $scope.listen_users data from config colleciton in Mongo
 
 #Stylesheet and front end structure changes
 - [X] New stylesheet with more flexbox
@@ -50,8 +51,9 @@
 - [X] Move underscore-query requirement to front-end for tweet validation
 - [ ] More functions. Currently too much in directives. 
 - [ ] Test for every function
+- [ ] Find out/consider what should be express route with json response, and what should stay socket
 
 #Look & Feel
 - [X] Need ~~front-end framework (Bootstrap or something) or~~ SASS for styles. Full rebuild needed here. 
-- [X] More loading animation
+- [ ] Much more ~~loading~~ animation
 - [ ] Better handling of new tweets. Not good to burst into view, especially for high volume situations. 

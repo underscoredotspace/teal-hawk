@@ -460,6 +460,9 @@ tweetApp.directive('thTweetConfig', function(){
           id_str: '42383066',
           screen_name: '_DotSpace' 
         },{
+          id_str: '3224409977',
+          screen_name: 'getmondo' 
+        },{
           id_str: '284540385',
           screen_name: 'NatWest_Help' 
         },{

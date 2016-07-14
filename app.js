@@ -33,14 +33,12 @@ passport.use(new Strategy({
         if (user.length>0) {
           var registered=user[0].registered;
           var admin=user[0].admin;
-          // update profile? 
+          // update profile in mongo? 
         } else{
           var registered=false;
           var admin=false;
           db.collection("users").insert({name: profile.username, twitter_id: profile.id, registered: false, admin: false, columns: []});
         }
-        console.log({admin:admin});
-        // should be taking image and stuff from database? 
         return cb(null, {user_id: profile.id, user_name: profile.username, user_image: profile.photos[0].value, registered: registered, admin: admin});
       })
     })
@@ -151,23 +149,34 @@ mongodb.connect(tweetsDB, function (err, db) {
     });
 
     app.get('/menu-bar', function(req, res) {
-      // check for registered/logged in?
-      res.render('menu-bar', { user: req.user });
-    });
-
-    app.get('/admin/*', connectEnsureLogin.ensureLoggedIn('/login'), function(req, res){
-      // check for registered
-      if (req.user.admin==true) {
-        res.sendFile(__dirname + '/public' + req.url);  
+      if (req.user) {
+        res.render('menu-bar', { user: req.user });
       } else {
         res.sendStatus(401);
       }
     });
 
+    var checkAdmin = function(req, res, next) {
+      // check for registered
+      if (req.user.admin==true) {
+        next();
+      } else {
+        res.sendStatus(401);
+      }
+    }
+
+    app.get('/admin/api/:function/:userId', checkAdmin, function(req, res) {
+      res.send(req.params);
+    });
+
+    app.get('/admin/*', checkAdmin, function(req, res){
+      res.sendFile(__dirname + '/public' + req.url);
+    });
+
     app.get('*', connectEnsureLogin.ensureLoggedIn('/login'), function(req, res){
       // check for registered
       if (req.user.registered==true) {
-        res.sendFile(__dirname + '/public' + req.url);  
+        res.sendFile(__dirname + '/public' + req.url);
       } else {
         res.redirect('/login');
       }
@@ -183,13 +192,13 @@ mongodb.connect(tweetsDB, function (err, db) {
           db.collection('users').find({twitter_id: socket.request.user.user_id}, {columns:1, _id: 0}).limit(1).toArray(function(err, user) {
             socket.emit('columns', user[0].columns);
           });
-        }      
+        }
         
         loggedIn();
         
         socket.on('reload', function () {
           loggedIn();
-        });  
+        });
         
         socket.on('disconnect', function() {
           console.log(Date() + ': ' + socket.id + ' disconnected');
@@ -266,8 +275,12 @@ mongodb.connect(tweetsDB, function (err, db) {
       });
 
       socket.on('DelUser', function (userid) {
-        db.collection('users').remove({ "twitter_id" : userid})
-        db.collection('sessions').remove({session: {$regex: '/\"user_id":\"' + userid + '\"/}'}});
+        if (socket.request.user.hasOwnProperty('admin')) {
+          if (socket.request.user.admin==true) {
+            db.collection('users').remove({ "twitter_id" : userid})
+            db.collection('sessions').remove({session: {$regex: '/\"user_id":\"' + userid + '\"/}'}});
+          }
+        }
       });
     }); //End of io.sockets.on('connection')
           

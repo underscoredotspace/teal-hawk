@@ -1,20 +1,16 @@
 <!DOCTYPE html>
-<html data-ng-app="tweetApp">
+<html data-ng-app="thAdmin">
   <head>
     <!-- Browser set up -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes, minimal-ui">
-    <title>TealHawk</title>
+    <title>TealHawk - UserAdmin</title>
 
     <!-- Styles -->
     <link href="/style.css" rel="stylesheet" type="text/css">
 
     <!-- Angular -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.5.7/angular.min.js"></script>
-
-    <!-- Angular Moment -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.9.0/moment.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-moment/0.9.0/angular-moment.min.js"></script>
     
     <!-- underscore, underscore-query and Socket.IO -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js"></script>
@@ -22,15 +18,10 @@
     <script src="/socket.io/socket.io.js"></script>
 
     <!-- teal-hawk Scripts -->
-  <script src="/script.js"></script>
-    
+    <script src="admin.js"></script>
   </head>
 
-  <!-- Start of tweetApp -->
-  <body class="max-h max-w">
-    <div class="frame flex row max-h max-w no-shrink">
-      <div class="tweet-admin">Admin page one</div>
-      <div class="th-toast-messages flex col"><div class="th-toast-message max-w no-shrink {{'th-toast-' + toast.type}}" ng-repeat="toast in toasts">{{toast.text}}</div></div>
-    </div>
+  <body data-ng-controller="thUserAdmin">
+
   </body>
 </html>

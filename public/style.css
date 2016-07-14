@@ -6,6 +6,9 @@ html {
   width: 100vw;
   box-sizing: border-box; }
 
+body {
+  background-color: #404246; }
+
 *, *:before, *:after {
   box-sizing: inherit; }
 

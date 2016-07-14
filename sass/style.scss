@@ -28,6 +28,10 @@ html {
   box-sizing: border-box;
 }
 
+body {
+  background-color: $c_back;
+}
+
 *, *:before, *:after {
   box-sizing: inherit;
 }
