@@ -165,9 +165,66 @@ mongodb.connect(tweetsDB, function (err, db) {
       }
     }
 
-    app.get('/admin/api/:function/:userId', checkAdmin, function(req, res) {
-      res.send(req.params);
+    app.get('/admin/api/:func/:param', checkAdmin, function(req, res) {
+      // Returns specific user info
+      if (req.params.func=='user') {
+        // Returns details of users awaiting authorisation
+        if (req.params.param=='waitingauth') {
+          db.collection('users').find({registered:false}, {_id:false, twitter_id: true}).toArray(function(err, users) {
+            res.json(_.extend(req.params, {users: users}));
+          });
+        }
+      }
+
+      // Deletes active user and logs them out
+      if (req.params.func=='del') {
+        // Delete user's sessions
+        var userRegex = new RegExp('\"user_id\":\"' + req.params.param + '\"');
+        db.collection('sessions').remove({session: {$regex: userRegex}}, {_id: false, session: true}, function(err, result) {
+          if(err) {
+
+          } else {
+            console.log({sessions: result.result.n});
+          }
+        }); 
+
+        // Delete user record
+        db.collection('users').remove({ "twitter_id" : req.params.param}, function (err, result) {
+          if(err) {
+            
+          } else {
+            console.log({users: result.result.n});
+          }
+        }); 
+
+        // Tell client to log user out and disconnect their socket
+        var userSockets = passportSocketIo.filterSocketsByUser(io, function(user){
+          return user.user_id == req.params.param;
+        });
+        userSockets.forEach(function(socket) {
+          socket.emit('logout', 'Your account has been deleted\nYou will now be logged out');
+          socket.disconnect();
+        });
+        console.log({sockets: userSockets.length});
+
+        res.json(_.extend(req.params, {success: true})); // really want more verbose response than this
+      }
+
+      // Authorise new user waiting for access
+      if (req.params.func=='auth') {
+        db.collection('users').update({ "twitter_id" : req.params.param}, {$set: {registered: true}}, function(err, result) {
+          if (err) {
+            res.json(_.extend(req.params, {error: err}));
+          } else {
+            res.json(_.extend(req.params, {result: result}));
+          }
+        });
+      }
     });
+
+    app.get('/admin/api/*', checkAdmin, function(req, res) {
+      res.sendStatus(400);
+    })
 
     app.get('/admin/*', checkAdmin, function(req, res){
       res.sendFile(__dirname + '/public' + req.url);
@@ -265,23 +322,6 @@ mongodb.connect(tweetsDB, function (err, db) {
       } else {
         console.log('unregistered user attempting to connect to WebSocket');
       }
-
-      socket.on('AuthUser', function (userid) {
-        if (socket.request.user.hasOwnProperty('admin')) {
-          if (socket.request.user.admin==true) {
-            db.collection('users').update({ "twitter_id" : userid}, {$set: {registered: true}});
-          }
-        }
-      });
-
-      socket.on('DelUser', function (userid) {
-        if (socket.request.user.hasOwnProperty('admin')) {
-          if (socket.request.user.admin==true) {
-            db.collection('users').remove({ "twitter_id" : userid})
-            db.collection('sessions').remove({session: {$regex: '/\"user_id":\"' + userid + '\"/}'}});
-          }
-        }
-      });
     }); //End of io.sockets.on('connection')
           
     

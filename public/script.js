@@ -15,6 +15,11 @@ tweetApp.directive("tweetDeck", function($timeout, socket, thToast) {
         thToast.newToast('Connection error', 'fail');
         console.log('connection error: ' + err);
       });
+
+      socket.on('logout', function(message) {
+        console.log(message); // some nice modal message please
+        window.location.href = '/logout';
+      })
       
       socket.on('columns', function (columns) {
         if(!angular.equals(scope.columns, columns)){

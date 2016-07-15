@@ -19,11 +19,14 @@
 <script>
   angular.module('regApp', []).controller('regController', function ($scope, $http, $interval) {
     function askIfRegistered() {
-      $http.get('/registered').success(function(res) {
-        $scope.registered = res.registered;
+      $http.get('/registered').then(function(res) {
+        $scope.registered = res.data.registered;
         if($scope.registered) {
           window.location.href = '/';
         }
+      }, function(res) {
+        console.log('You appear not to be logged in'); // some nice modal message please
+        window.location.href = '/';
       })
     }
     $scope.registered = false;
