@@ -6,7 +6,7 @@
 - [X] Move column left or right
 - [X] Save edited/new filter parameters to Mongo collection
 - [X] Delete tweet column
-- [X] Get $scope.listen_users data from config colleciton in Mongo
+- [ ] Get $scope.listen_users data from config colleciton in Mongo
 
 #Stylesheet and front end structure changes
 - [X] New stylesheet with more flexbox
@@ -39,8 +39,8 @@
 - [X] Pull Search out to it's own directive and re-style
 
 #Admin pages
-- [ ] Delete users
-- [ ] Delete session/log user out
+- [X] Delete users API
+- [X] Delete session/log user out API
 - [X] Get stream parameters from database
 - [ ] Update stream parameters for server-side app.js and restart as required
 - [ ] First run process to create defaults in db etc. 

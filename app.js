@@ -37,7 +37,7 @@ passport.use(new Strategy({
         } else{
           var registered=false;
           var admin=false;
-          db.collection("users").insert({name: profile.username, twitter_id: profile.id, registered: false, admin: false, columns: []});
+          db.collection("users").insert({name: profile.username, twitter_id: profile.id, tRAW: profile, registered: false, admin: false, columns: []});
         }
         return cb(null, {user_id: profile.id, user_name: profile.username, user_image: profile.photos[0].value, registered: registered, admin: admin});
       })
@@ -170,9 +170,11 @@ mongodb.connect(tweetsDB, function (err, db) {
       if (req.params.func=='user') {
         // Returns details of users awaiting authorisation
         if (req.params.param=='waitingauth') {
-          db.collection('users').find({registered:false}, {_id:false, twitter_id: true}).toArray(function(err, users) {
+          db.collection('users').find({registered:false}, {_id:false}).toArray(function(err, users) {
             res.json(_.extend(req.params, {users: users}));
           });
+        } else {
+          res.sendStatus(404);
         }
       }
 
