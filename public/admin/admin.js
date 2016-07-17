@@ -1,4 +1,4 @@
-thAdmin = angular.module('thAdmin', []).constant('_', window._);
+thAdmin = angular.module('thAdmin', ['angularMoment']).constant('_', window._);
 
 thAdmin.factory('userAPI',function ($http) {
     return {
@@ -32,8 +32,10 @@ thAdmin.controller('thUserAdmin', function ($scope, userAPI) {
         userAPI.waitingauth('', function(err, users) {
             if (!err) {
                 $scope.waitingAuth = users;
+                return true;
             } else {
                 console.log(err);
+                return false;
             }
         });
     }
@@ -61,4 +63,26 @@ thAdmin.controller('thUserAdmin', function ($scope, userAPI) {
             }
         });
     };
+});
+
+thAdmin.directive('thHover', function($timeout) {
+  return {
+    restrict: 'A',
+    scope: true,
+    link: function(scope, element, attrs) {
+      element.on('mouseenter', function(event) {
+        element.addClass('hover');
+      });
+      element.on('mouseleave', function(event) {
+        element.removeClass('hover');
+      });
+
+      element.on('click', function(event) {
+        element.removeClass('hover');
+      });
+      element.on('mousemove', function(event) {
+        element.addClass('hover');
+      });
+    }
+  }
 });

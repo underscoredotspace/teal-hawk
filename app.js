@@ -158,10 +158,12 @@ mongodb.connect(tweetsDB, function (err, db) {
 
     var checkAdmin = function(req, res, next) {
       // check for registered
-      if (req.user.admin==true) {
-        next();
-      } else {
-        res.sendStatus(401);
+      if (req.hasOwnProperty('user')) {
+        if (req.user.admin==true) {
+          next();
+        } else {
+          res.sendStatus(401);
+        }
       }
     }
 
