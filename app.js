@@ -82,7 +82,14 @@ mongodb.connect(tweetsDB, function (err, db) {
     app.set('views', __dirname + '/public/ejs_views');
     app.use('/bower_components',  express.static(__dirname + '/bower_components'));
     app.set('view engine', 'ejs');
-    app.use(session({key: config.passport.key, secret: config.passport.secret, store: sessionStore, saveUninitialized: false, resave: false }));
+    app.use(session({
+      key: config.passport.key, 
+      secret: config.passport.secret, 
+      store: sessionStore, 
+      saveUninitialized: false, 
+      resave: false, 
+      cookie: { secure: 'auto' }
+    }));
     app.use(cookieParser());
     app.use(passport.initialize());
     app.use(passport.session());
