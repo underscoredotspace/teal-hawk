@@ -164,6 +164,7 @@ mongodb.connect(tweetsDB, function (err, db) {
         } else {
           res.sendStatus(401);
         }
+      } else {
         res.sendStatus(401);
       }
     }
