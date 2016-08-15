@@ -5,7 +5,8 @@
   "scripts": {
     "watch-css": "sass --watch sass/style.scss:public/style.css --watch sass/login-style.scss:public/login-style.css",
     "start-app": "nodemon app.js",
-    "dev-run": "npm run watch-css & npm run start-app"
+    "dev-run": "npm run watch-css & npm run start-app",
+    "start": "node app.js"
   },
   "dependencies": {
     "bower": "^1.7.7",
