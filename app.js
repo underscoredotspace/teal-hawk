@@ -95,6 +95,10 @@ mongodb.connect(tweetsDB, function (err, db) {
     app.use(passport.session());
 
     // Express routes
+    app.get('/favicon.ico', function(req, res) {
+      res.sendFile(__dirname + '/public/favicon.ico');
+    })
+
     app.get('/login/twitter',
       passport.authenticate('twitter'));
 
