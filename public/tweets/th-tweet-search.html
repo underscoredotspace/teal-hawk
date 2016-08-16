@@ -1,6 +1,6 @@
 <div class="flex row max-w no-shrink">
   <i th-hover class="fa fa-bars fa-lg no-shrink fake-link tweet-settings-button" data-ng-class="{'tweet-settings-visible': settingsVisible}" data-ng-click="toggleSettings()"></i>
   <input class="tweet-search-text max-w" type="text" placeholder="Search" data-ng-model="search.text" ng-model-options="{debounce: 500}">
-  <i th-hover class="fa fa-times-circle fa-lg no-shrink fake-link tweet-search-clear" data-ng-click="search={}"></i>
+  <i th-hover class="fa fa-times-circle fa-lg no-shrink fake-link tweet-search-clear" data-ng-click="$parent.search={}"></i>
 </div>
   
