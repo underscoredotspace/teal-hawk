@@ -16,7 +16,7 @@
 
 #Authentication
 - [X] Registration request
-- [ ] Registration approval by admin user
+- [X] Registration approval by admin user
 - [ ] Email notification of registrations?
 - [ ] Real-time notification and approval of registration
 - [X] Holding screen for registation requester that moves once approved. 
@@ -55,5 +55,6 @@
 
 #Look & Feel
 - [X] Need ~~front-end framework (Bootstrap or something) or~~ SASS for styles. Full rebuild needed here. 
-- [ ] Much more ~~loading~~ animation
+- [X] Column loading animation
+- [ ] Lightbox loading animation
 - [ ] Better handling of new tweets. Not good to burst into view, especially for high volume situations. 
