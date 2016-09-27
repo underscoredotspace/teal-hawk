@@ -8,6 +8,7 @@ The project is made with  node.js, mongodb and socket.io, along with passport-tw
 
 ```
 npm install
+bower install
 ```
   
 config.js must be created in project root with the following:  
@@ -31,10 +32,10 @@ module.exports = {
 In monogodb you must input something like the below. Replace ````name```` and ````twitter_id```` with your own for access to the Deck. Empty ````columns```` element **is** currently required.  
 
 ```javascript
-db.users.insert({name: "_DotSpace", twitter_id: "42383066",	columns: []})
+db.users.insert({name: "_DotSpace", twitter_id: "42383066",	registered: true, admin: true, columns: []})
 db.config.insert({filter:{track: ['_DotSpace'], follow: ['42383066']}})
 ```
 
-Registration, and column creation processes are needed to sort this. 
+Registration, and column creation processes are needed to sort this. There will be weird startup and login erros if you do not do the above first. 
 
 If you like tracking from PIWIK or Google Analytics, put your code in a file called ````tracking.js```` - no need for any NOSCRIPT shit as this app requires JS to do anything.
