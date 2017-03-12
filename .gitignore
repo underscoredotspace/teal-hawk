@@ -6,3 +6,4 @@ tests/
 typings/
 .sass-cache/
 public/tracking.js
+.DS_Store

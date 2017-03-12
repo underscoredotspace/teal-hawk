@@ -6,21 +6,7 @@ tweetApp.directive("tweetDeck", function($timeout, socket, toasts) {
     templateUrl: 'tweets/th-tweet-deck.html',
     replace: true, 
     scope: false,
-    link: function(scope, element) {
-      socket.on('connect', function(){
-        console.log('connected');
-      });
-
-      socket.on('connect_error', function(err){
-        toasts.new(toasts.type('error'), 'Error', 'Socket connection failed');
-        console.log('connection error: ' + err);
-      });
-
-      socket.on('logout', function(message) {
-        console.log(message); // some nice modal message please
-        window.location.href = '/logout';
-      })
-      
+    link: function(scope, element) {      
       socket.on('columns', function (columns) {
         if(!angular.equals(scope.columns, columns)){
           console.log('new columns recieved');
@@ -212,7 +198,7 @@ tweetApp.directive('tweetColumn', function(socket, toasts) {
       
       // Fires after connection lost and regained
       socket.on('reconnect', function(){
-        toasts.new(toasts.type('success'), 'Reconnected', 'Socket reconnected');
+        $scope.$apply(toasts.new(toasts.type('success'), 'Reconnected', 'Socket reconnected'));
         if ($scope.tweets.length!=0) {
           var updateRequest = {lastTweet: $scope.tweets[0].id_str, id: $scope.column.id, parameters: $scope.column.parameters}
           socket.emit('updateRequest', updateRequest);
@@ -438,7 +424,6 @@ tweetApp.directive('thTweetConfig', function(){
             $rootScope.$broadcast('columnUpdated', $scope.column.id);
           } else {
             toasts.new(toasts.type('error'), 'Error', 'A selection must be made');
-            // toast error message
           }
         } else {
           toasts.new(toasts.type('warn'), 'Parameters haven\'t changed');
@@ -479,8 +464,22 @@ tweetApp.directive('thTweetConfig', function(){
   }
 });
 
-tweetApp.factory('socket', function(){
+tweetApp.service('socket', function($rootScope){
   var socket = io.connect();
+  socket.on('connect', function(){
+    console.log('connected');
+  });
+
+  socket.on('connect_error', function(err){
+    $rootScope.$apply(toasts.new(toasts.type('error'), 'Error', 'Socket connection failed'))
+    console.log('connection error: ' + err);
+  });
+
+  socket.on('logout', function(message) {
+    console.log(message); // some nice modal message please
+    window.location.href = '/logout';
+  })
+
   return socket;
 });
 
