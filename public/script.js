@@ -1,6 +1,6 @@
-var tweetApp = angular.module('tweetApp', ['angularMoment']).constant('_', window._);
+var tweetApp = angular.module('tweetApp', ['angularMoment', 'ngCleanToast']).constant('_', window._);
 
-tweetApp.directive("tweetDeck", function($timeout, socket, thToast) {
+tweetApp.directive("tweetDeck", function($timeout, socket, toasts) {
   return {
     restrict: 'C', 
     templateUrl: 'tweets/th-tweet-deck.html',
@@ -12,7 +12,7 @@ tweetApp.directive("tweetDeck", function($timeout, socket, thToast) {
       });
 
       socket.on('connect_error', function(err){
-        thToast.newToast('Connection error', 'fail');
+        toasts.new(toasts.type('error'), 'Error', 'Socket connection failed');
         console.log('connection error: ' + err);
       });
 
@@ -168,7 +168,7 @@ tweetApp.directive('thTweet', function($timeout) {
   }
 });
 
-tweetApp.directive('tweetColumn', function(socket, thToast){
+tweetApp.directive('tweetColumn', function(socket, toasts) {
   return {
     restrict: 'C', 
     templateUrl: 'tweets/th-tweet-column.html',
@@ -212,7 +212,7 @@ tweetApp.directive('tweetColumn', function(socket, thToast){
       
       // Fires after connection lost and regained
       socket.on('reconnect', function(){
-        thToast.newToast('Reconnected', 'pass');
+        toasts.new(toasts.type('success'), 'Reconnected', 'Socket reconnected');
         if ($scope.tweets.length!=0) {
           var updateRequest = {lastTweet: $scope.tweets[0].id_str, id: $scope.column.id, parameters: $scope.column.parameters}
           socket.emit('updateRequest', updateRequest);
@@ -315,7 +315,7 @@ tweetApp.directive('thTweetConfig', function(){
     restrict: 'C', 
     templateUrl: '/tweets/th-tweet-config.html',
     replace: true, 
-    controller: function($scope, paramsParse, socket, $filter, $rootScope, thToast) {
+    controller: function($scope, paramsParse, socket, $filter, $rootScope, toasts) {
       $scope.setupSettings = function() {
         if($scope.column.isNew) {
           $scope.tos = [{user: ''}];
@@ -364,7 +364,7 @@ tweetApp.directive('thTweetConfig', function(){
       
       $scope.moveColumnLeft = function () {
         if ($scope.column.position==_.min($scope.columns, 'position').position) {
-          thToast.newToast('Can\t go any further left!');
+          toasts.new(toasts.type('warn'), '', 'Can\'t go further left');
         } else {
           // move column left
           var thisColumn = _.indexOf(_.pluck($scope.columns, 'position'), $scope.column.position);
@@ -380,7 +380,7 @@ tweetApp.directive('thTweetConfig', function(){
       }
       $scope.moveColumnRight = function () {
         if ($scope.column.position==_.max($scope.columns, 'position').position) {
-          thToast.newToast('Can\t go any further right!');
+          toasts.new(toasts.type('warn'), '', 'Can\'t go further right');
         } else {
           // move column right
           var thisColumn = _.indexOf(_.pluck($scope.columns, 'position'), $scope.column.position);
@@ -421,7 +421,7 @@ tweetApp.directive('thTweetConfig', function(){
           socket.emit('newColumn', {id: $scope.column.id, parameters: $scope.column.parameters, position: $scope.column.position, type: $scope.column.type});
           $scope.toggleSettings();
         } else {
-          thToast.newToast('A selection must be made', 'fail');
+          toasts.new(toasts.type('error'), 'Error', 'A selection must be made');
         }
       }
       
@@ -437,11 +437,11 @@ tweetApp.directive('thTweetConfig', function(){
             $scope.toggleSettings();
             $rootScope.$broadcast('columnUpdated', $scope.column.id);
           } else {
-            thToast.newToast('A selection must be made', 'fail');
+            toasts.new(toasts.type('error'), 'Error', 'A selection must be made');
             // toast error message
           }
         } else {
-          thToast.newToast('Parameters haven\'t changed', 'warn');
+          toasts.new(toasts.type('warn'), 'Parameters haven\'t changed');
         }
       }
       
@@ -505,73 +505,6 @@ tweetApp.directive('thHover', function($timeout) {
     }
   }
 });
-
-tweetApp.service('thToast', function($rootScope) {
-  return {
-    newToast: function(message, type) {
-      if(type==undefined) {
-        type = 'info';
-      }
-
-      if(message==undefined) {
-        $rootScope.$broadcast('newToast', {type: 'fail', message: 'Invalid toast recieved'});
-      } else {
-        $rootScope.$broadcast('newToast', {type: type, message: message});
-      }
-    }
-  }
-})
-
-tweetApp.directive('thToastMessages', function($timeout, $filter) {
-  return {
-    restrict: 'C',
-    scope: false,
-    controller: function($scope) {
-      $scope.toasts = [];
-      function deleteToast(message) {
-        index = _.indexOf(_.pluck($scope.toasts, 'id'), message);
-        if (index != -1) {
-          $scope.toasts.splice(index, 1);
-        }
-      }
-
-      $scope.$on('deleteToast', function (event, message) {
-        deleteToast(message);
-        $scope.$digest();
-      });
-
-      $scope.$on('newToast', function (event, toast) { 
-        var newID = Math.random().toString(36).substr(2, 4);
-        while (_.where($scope.toasts, {id: newID}).length!=0) {
-          newID = Math.random().toString(36).substr(2, 4);
-        }
-        $timeout(function() {
-          $scope.toasts.push({
-            id: newID,
-            text: toast.message,
-            type: toast.type
-          });
-        });
-
-        $timeout(function () {
-          deleteToast(newID);
-        }, 5000);
-      });
-    }
-  }
-});
-
-tweetApp.directive('thToastMessage', function($rootScope) {
-  return {
-    restrict: 'C', 
-    scope: false,
-    link: function(scope, element, attrs) {
-      element.on('click', function() {
-        $rootScope.$broadcast('deleteToast', scope.toast.id);
-      })
-    },
-  }
-})
 
 tweetApp.directive('menuBar', function($rootScope) {
   return {

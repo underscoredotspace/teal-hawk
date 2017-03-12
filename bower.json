@@ -10,6 +10,7 @@
   "moduleType": [],
   "private": true,
   "dependencies": {
-    "underscore-query": "^1.3.1"
+    "underscore-query": "^1.3.1",
+    "ng-cleantoast": "^1.0.0-beta1"
   }
 }

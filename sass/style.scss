@@ -217,7 +217,7 @@ A.tweet-media-image:hover {
   height: 100%;
 }
 
-.th-toast-messages {
+.ct-toasts {
   position: fixed;
   z-index: 1000;
   width: 300px;
@@ -228,7 +228,7 @@ A.tweet-media-image:hover {
   max-height: 100vh;
 }
 
-.th-toast-message {
+.ct-toast {
   padding: 5px;
   margin: 5px 10px;
   opacity: 0.9;
@@ -236,13 +236,10 @@ A.tweet-media-image:hover {
   box-shadow: 0 5px 21px 0 rgba(0, 0, 0, 1);
   border-radius: 5px;
   font-weight: 700;
-}
-
-.th-toast {
-  &-fail {
+  &-error {
     background-color: $c_palered;
   }
-  &-pass {
+  &-success {
     background-color: $c_palegreen;
   }
   &-warn {
