@@ -477,7 +477,7 @@ tweetApp.directive('thTweetConfig', function(){
   }
 });
 
-tweetApp.service('socket', function($rootScope){
+tweetApp.service('socket', function($rootScope, toasts){
   var socket = io.connect();
   socket.on('connect', function(){
     console.log('connected');

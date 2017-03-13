@@ -1,6 +1,7 @@
 "use strict";
 var _ = require("underscore");
 var mongodb = require('mongodb').MongoClient;
+var db = require('./server/db');
 var tweetsDB = 'mongodb://127.0.0.1:27017/tweets'
 var connectMongo = require('connect-mongo');
 var config = require('./config.js');
@@ -168,19 +169,7 @@ mongodb.connect(tweetsDB, function (err, db) {
       }
     });
 
-    app.get('/api/tweets/getColumns', function(req, res) {
-      if (req.user) {
-        db.collection('users').find({twitter_id: req.user.user_id}, {_id: 0, columns: 1}).limit(1).toArray(function(err, user) {
-          if (user[0].registered) {
-            req.user.registered = true;
-            req.session.save();
-          }
-          res.json(user[0].columns);
-        });
-      } else {
-        res.sendStatus(401);
-      }
-    })
+    app.use('/api', require('./server/api'));
 
     var checkAdmin = function(req, res, next) {
       // check for registered
@@ -277,18 +266,6 @@ mongodb.connect(tweetsDB, function (err, db) {
         // Upon connection to single client for first time await listen events
         console.log(Date() + ': ' + socket.id + ' connected');
         
-        // var loggedIn = function () {
-        //   db.collection('users').find({twitter_id: socket.request.user.user_id}, {columns:1, _id: 0}).limit(1).toArray(function(err, user) {
-        //     socket.emit('columns', user[0].columns);
-        //   });
-        // }
-        
-        // loggedIn();
-        
-        // socket.on('reload', function () {
-        //   loggedIn();
-        // });
-        
         socket.on('disconnect', function() {
           console.log(Date() + ': ' + socket.id + ' disconnected');
         }); 
@@ -366,7 +343,7 @@ mongodb.connect(tweetsDB, function (err, db) {
       timeout_ms: 60*1000
     });
 
-    db.collection("config").findOne({}, function (err, twitconfig) {
+  db.collection("config").findOne({}, function (err, twitconfig) {
       if (err) {
         console.error('Can\'t get config from mongodb');
         process.exit(1);
@@ -453,4 +430,20 @@ mongodb.connect(tweetsDB, function (err, db) {
   }
 });
 
-server.listen(3000);
+// CONNECT TO MONGO
+db.connect('mongodb://127.0.0.1:27017/tweets', function(err) {
+  if (err) {
+    console.error(err);
+    process.exit(1)
+  } else {
+
+    // START THE SERVER
+    server.listen(3000, '127.0.0.1', function() {
+      console.log(Date() + ': Express listening on port 3000')
+    }).on('error', function(err) {
+      // Log and quit on any errors with the http server
+      console.error(err);
+      process.exit(1)
+    });
+  }
+})
