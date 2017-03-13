@@ -79,6 +79,7 @@ mongodb.connect(tweetsDB, function (err, db) {
     console.log('Connected to mongo');
 
     // Express setup
+    app.set('json spaces', 2)
     app.set('views', __dirname + '/public/ejs_views');
     app.use('/bower_components',  express.static(__dirname + '/bower_components'));
     app.set('view engine', 'ejs');
@@ -166,6 +167,20 @@ mongodb.connect(tweetsDB, function (err, db) {
         res.sendStatus(401);
       }
     });
+
+    app.get('/api/tweets/getColumns', function(req, res) {
+      if (req.user) {
+        db.collection('users').find({twitter_id: req.user.user_id}, {_id: 0, columns: 1}).limit(1).toArray(function(err, user) {
+          if (user[0].registered) {
+            req.user.registered = true;
+            req.session.save();
+          }
+          res.json(user[0].columns);
+        });
+      } else {
+        res.sendStatus(401);
+      }
+    })
 
     var checkAdmin = function(req, res, next) {
       // check for registered
@@ -262,17 +277,17 @@ mongodb.connect(tweetsDB, function (err, db) {
         // Upon connection to single client for first time await listen events
         console.log(Date() + ': ' + socket.id + ' connected');
         
-        var loggedIn = function () {
-          db.collection('users').find({twitter_id: socket.request.user.user_id}, {columns:1, _id: 0}).limit(1).toArray(function(err, user) {
-            socket.emit('columns', user[0].columns);
-          });
-        }
+        // var loggedIn = function () {
+        //   db.collection('users').find({twitter_id: socket.request.user.user_id}, {columns:1, _id: 0}).limit(1).toArray(function(err, user) {
+        //     socket.emit('columns', user[0].columns);
+        //   });
+        // }
         
-        loggedIn();
+        // loggedIn();
         
-        socket.on('reload', function () {
-          loggedIn();
-        });
+        // socket.on('reload', function () {
+        //   loggedIn();
+        // });
         
         socket.on('disconnect', function() {
           console.log(Date() + ': ' + socket.id + ' disconnected');

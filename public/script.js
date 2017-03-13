@@ -1,19 +1,32 @@
 var tweetApp = angular.module('tweetApp', ['angularMoment', 'ngCleanToast']).constant('_', window._);
 
-tweetApp.directive("tweetDeck", function($timeout, socket, toasts) {
+tweetApp.service('tweets', function($http) {
+  return {
+    getCols: function(callback) {
+      $http.get('/api/tweets/getColumns')
+    .then(function(res) {
+        callback({pass: true}, res.data)
+    }, function(res) {
+        callback({pass: false}, res)
+    });
+    }
+  }
+})
+
+tweetApp.directive("tweetDeck", function($timeout, socket, tweets, toasts) {
   return {
     restrict: 'C', 
     templateUrl: 'tweets/th-tweet-deck.html',
     replace: true, 
     scope: false,
-    link: function(scope, element) {      
-      socket.on('columns', function (columns) {
-        if(!angular.equals(scope.columns, columns)){
-          console.log('new columns recieved');
-          scope.columns = columns;
-          scope.$apply();
-        };
-      });
+    link: function(scope, element) {
+      tweets.getCols(function(pass, data) {
+        if (!pass) {
+          console.log(data)
+        } else {
+          scope.columns = data
+        }
+      })
 
       scope.$on('newColumn', function() {
         if (_.max(scope.columns, 'position').parameters!='') {
