@@ -4,11 +4,23 @@ tweetApp.service('tweets', function($http) {
   return {
     getCols: function(callback) {
       $http.get('/api/tweets/getColumns')
-    .then(function(res) {
-        callback({pass: true}, res.data)
-    }, function(res) {
-        callback({pass: false}, res)
-    });
+      .then(function(res) {
+          callback({pass: true}, res.data)
+      }, function(res) {
+          callback({pass: false}, res)
+      });
+    },
+    post: function(url, data, callback) {
+      $http({
+          url: url,
+          method: "POST",
+          data: data,
+          headers: {'Content-Type': 'application/json'}
+      }).then(function(res) {
+          callback({pass: true}, res.data)
+      }, function(res) {
+          callback({pass: false}, res)
+      });
     }
   }
 })
@@ -167,28 +179,25 @@ tweetApp.directive('thTweet', function($timeout) {
   }
 });
 
-tweetApp.directive('tweetColumn', function(socket, toasts) {
+tweetApp.directive('tweetColumn', function(socket, tweets, toasts) {
   return {
     restrict: 'C', 
     templateUrl: 'tweets/th-tweet-column.html',
     replace: true,
     scope: false,
     controller: function ($scope, $filter, $rootScope) {
-      $scope.tweets = [];
       $scope.viewBursting = true;
       $scope.bottomLoading = true;
       
-      var initRequest = function() {
-          var tweetColumn = {tweetCount: 10, id: $scope.column.id, parameters: $scope.column.parameters};
-          socket.emit('initRequest', tweetColumn);
-          console.log('Inital ' + 10 + ' tweets requested for column ' + $scope.column.id);
-      };
-      
-      $scope.$watch('$scope.column', function() {
-        if(($scope.column!=[]) && (!angular.equals($scope.column.parameters, ''))) {
-          initRequest();
-        };
-      });
+      var tweetColumn = {tweetCount: 10, id: $scope.column.id, parameters: $scope.column.parameters};
+      tweets.post('/api/tweets/init', tweetColumn, function(pass, res){
+        if (!pass) {
+          console.log(res)
+        } else {
+          $scope.tweets = res
+          $scope.bottomLoading = false
+        }
+      })
       
       // Fired back once new column added to database, following newColumn socket event in addTweetColumn
       // Lets us know when to load tweets into new column
@@ -225,7 +234,7 @@ tweetApp.directive('tweetColumn', function(socket, toasts) {
       function removePhotoLink (tweet) {
         if (tweet.extended_entities) {
           if (tweet.extended_entities.media) {
-            _.each(tweet.extended_entities.media, function(media_item) {
+            tweet.extended_entities.media.forEach(function(media_item) {
               if (media_item.type=='photo') {
                 tweet.text = tweet.text.replace(media_item.url, '');
               }

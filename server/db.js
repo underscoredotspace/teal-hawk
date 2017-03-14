@@ -15,6 +15,10 @@ exports.connect = function(url, done) {
   })
 }
 
-exports.get = function() {
-  return state.db
+exports.collection = function(collectionName) {
+  if (!collectionName) {
+    return null
+  } else {
+    return state.db.collection(collectionName)
+  }
 }
