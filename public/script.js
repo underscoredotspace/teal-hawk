@@ -205,12 +205,6 @@ tweetApp.directive('tweetColumn', function(socket, tweets, toasts) {
         $scope.initRequest()
       }
       
-      // Fired back once new column added to database, following newColumn socket event in addTweetColumn
-      // Lets us know when to load tweets into new column
-      socket.on('columnAdded', function(columnID) {
-        resetColumn(columnID);
-      });
-      
       // Fired when column parameters are amended. 
       $scope.$on('columnUpdated', function(event, columnID) {
         resetColumn(columnID);
@@ -267,37 +261,22 @@ tweetApp.directive('tweetColumn', function(socket, tweets, toasts) {
         newTweets = _.query(newTweet, JSON.parse($scope.column.parameters));
         if(newTweets.length>0) {
           console.log(newTweets.length + ' topTweet(s) recieved for column ' + $scope.column.id);
-          _.each(newTweets.reverse(), function(tweet) {
+          newTweets.reverse().forEach(function(tweet) {
             removePhotoLink(tweet);
             removeQuotedLink(tweet);
             $scope.tweets.unshift(tweet);
           });
-          $scope.$digest();
+          $scope.$apply();
         }        
-      });
-      // Fires when new Tweet for bottom of stack sent by server
-      socket.on('bottomTweet', function (newTweet) {
-        if (newTweet[0]==$scope.column.id){
-          console.log(newTweet[1].length + ' bottomTweet(s) recieved for column ' + $scope.column.id);
-          _.each(newTweet[1], function(tweet) {
-            // check it isn't already in view
-            if (_.findWhere($scope.tweets, {id_str: tweet.id_str})==undefined) {
-              removePhotoLink(tweet);
-              removeQuotedLink(tweet);
-              $scope.tweets.push(tweet);
-            }
-          });
-          $scope.bottomLoading = false; // alows showMore function to fire again
-          $scope.$digest();
-        }
       });
       
       // Fires when deletion request is recieved from Twitter via server
       socket.on('deleteTweet', function (id_str) {
         if (_.findWhere($scope.tweets, {id_str: id_str})!=undefined) {
           console.log('Tweet ' + id_str + ' deleted from ' + $scope.column.id);
-          $scope.tweets = $filter('filter')($scope.tweets, {id_str: '!' + id_str});
-          $scope.$digest();
+          $scope.$apply(function() {
+            $scope.tweets = $filter('filter')($scope.tweets, {id_str: '!' + id_str});
+          });
         }
       })
       
@@ -313,8 +292,22 @@ tweetApp.directive('tweetColumn', function(socket, tweets, toasts) {
           $scope.bottomLoading = true; // set this to true until we get more bottomTweets. 
           $scope.$apply();
           var nextTweets = {tweetCount: 10, lastTweet: $scope.tweets[$scope.tweets.length-1].id_str, id: $scope.column.id, parameters: $scope.column.parameters};
-          console.log('Next 10 tweets after ' + nextTweets.lastTweet + ' requested');
-          socket.emit('NextTweets', nextTweets);
+
+          tweets.post('/api/tweets/nextTweets', nextTweets, function(pass, res) {
+            if (!pass) {
+              console.log(res)
+            } else {
+                res.forEach(function(tweet) {
+                  // check it isn't already in view
+                  if (_.findWhere($scope.tweets, {id_str: tweet.id_str})==undefined) {
+                    removePhotoLink(tweet);
+                    removeQuotedLink(tweet);
+                    $scope.tweets.push(tweet);
+                  }
+                $scope.bottomLoading = false; // alows showMore function to fire again
+              })
+            }
+          })
         } else {
           // either waiting already, or disconnected
         }

@@ -20,18 +20,26 @@ routes.get('/tweets/getColumns', function(req, res) {
   });
 })
 
-routes.post('/tweets/newColumn', function(req, res) {
-  newColumn = req.body
-  db.collection("users").update({twitter_id: req.user.user_id}, {$push: {columns: newColumn}});
-  res.json(newColumn)
-})
-
 routes.post('/tweets/init', function(req, res) {
   tweetColumn = req.body
 
   var searchQuery = {'$and': [JSON.parse(tweetColumn.parameters), {'retweeted_status':{'$exists':false}}]};
   db.collection('tweets').find(searchQuery).sort([['id_str', -1]]).limit(tweetColumn.tweetCount).toArray(function (err, tweet) {
     res.json(tweet);
+  }); 
+})
+
+routes.post('/tweets/newColumn', function(req, res) {
+  newColumn = req.body
+  db.collection("users").update({twitter_id: req.user.user_id}, {$push: {columns: newColumn}});
+  res.json(newColumn)
+})
+
+routes.post('/tweets/nextTweets', function(req, res) {
+  var nextTweets = req.body
+  var searchQuery = {'$and': [JSON.parse(nextTweets.parameters), {'retweeted_status':{'$exists':false}}, {id_str: {$lt: nextTweets.lastTweet}}]};
+  db.collection('tweets').find(searchQuery).sort([['id_str', -1]]).limit(nextTweets.tweetCount).toArray(function (err, tweets) {
+      res.json(tweets);
   }); 
 })
 

@@ -278,12 +278,6 @@ db.connect('mongodb://127.0.0.1:27017/tweets', function(err) {
       socket.on('disconnect', function() {
         console.log(Date() + ': ' + socket.id + ' disconnected');
       }); 
-
-      socket.on('newColumn', function(newColumn){
-        // #TODO# - validate newColumn)
-        db.collection("users").update({twitter_id: socket.request.user.user_id}, {$push: {columns: newColumn}});
-        socket.emit('columnAdded', newColumn.id);
-      });
       
       socket.on('delColumn', function(columnID){
         db.collection("users").update({twitter_id: socket.request.user.user_id}, {$pull: {columns: {id: columnID}}});
@@ -311,17 +305,6 @@ db.connect('mongodb://127.0.0.1:27017/tweets', function(err) {
           });
         }
       }); // End of updateRequest event
-      
-      // This event is recieved when client goes to bottom of view and needs more tweets
-      socket.on('NextTweets', function (nextTweets) {
-        var searchQuery = {'$and': [JSON.parse(nextTweets.parameters), {'retweeted_status':{'$exists':false}}, {id_str: {$lt: nextTweets.lastTweet}}]};
-        db.collection('tweets').find(searchQuery).sort([['id_str', -1]]).limit(nextTweets.tweetCount).toArray(function (err, tweets) {
-          if (tweets !== null) {
-            // emit Tweets back to client/column that made request
-            socket.emit('bottomTweet', [nextTweets.id, tweets]);
-          }
-        }); 
-      }); // End of NextTweets event
     } else {
       console.log('unregistered user attempting to connect to WebSocket');
     }
