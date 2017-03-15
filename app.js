@@ -278,25 +278,9 @@ db.connect('mongodb://127.0.0.1:27017/tweets', function(err) {
       socket.on('disconnect', function() {
         console.log(Date() + ': ' + socket.id + ' disconnected');
       }); 
-  
-      // This tells us the new client needs initial Tweets
-      socket.on('initRequest', function(tweetColumn) {
-        console.log(tweetColumn)
-        // #TODO# - validate initRequest
-        console.log(Date() + ': initRequest from ' + socket.id + ' for ' + tweetColumn.id);
-        var searchQuery = {'$and': [JSON.parse(tweetColumn.parameters), {'retweeted_status':{'$exists':false}}]};
-        db.collection('tweets').find(searchQuery).sort([['id_str', -1]]).limit(tweetColumn.tweetCount).toArray(function (err, tweet) {
-          if (tweet !== null) {
-            // emit Tweets back to client/column that made request
-            socket.emit('bottomTweet', [tweetColumn.id, tweet]);
-          }
-        }); 
-        
-        console.log(Date() + ': initRequest to ' + socket.id + ' for ' + tweetColumn.id);
-      }); // End of initRequest event
-      
+
       socket.on('newColumn', function(newColumn){
-        // #TODO# - validate newColumn
+        // #TODO# - validate newColumn)
         db.collection("users").update({twitter_id: socket.request.user.user_id}, {$push: {columns: newColumn}});
         socket.emit('columnAdded', newColumn.id);
       });

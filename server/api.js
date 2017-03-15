@@ -20,6 +20,12 @@ routes.get('/tweets/getColumns', function(req, res) {
   });
 })
 
+routes.post('/tweets/newColumn', function(req, res) {
+  newColumn = req.body
+  db.collection("users").update({twitter_id: req.user.user_id}, {$push: {columns: newColumn}});
+  res.json(newColumn)
+})
+
 routes.post('/tweets/init', function(req, res) {
   tweetColumn = req.body
 

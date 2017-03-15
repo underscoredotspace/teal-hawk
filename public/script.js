@@ -189,15 +189,21 @@ tweetApp.directive('tweetColumn', function(socket, tweets, toasts) {
       $scope.viewBursting = true;
       $scope.bottomLoading = true;
       
-      var tweetColumn = {tweetCount: 10, id: $scope.column.id, parameters: $scope.column.parameters};
-      tweets.post('/api/tweets/init', tweetColumn, function(pass, res){
-        if (!pass) {
-          console.log(res)
-        } else {
-          $scope.tweets = res
-          $scope.bottomLoading = false
-        }
-      })
+      $scope.initRequest = function() {
+        var tweetColumn = {tweetCount: 10, id: $scope.column.id, parameters: $scope.column.parameters};
+        tweets.post('/api/tweets/init', tweetColumn, function(pass, res){
+          if (!pass) {
+            console.log(res)
+          } else {
+            $scope.tweets = res
+            $scope.bottomLoading = false
+          }
+        })
+      }
+
+      if($scope.column.parameters != '') {
+        $scope.initRequest()
+      }
       
       // Fired back once new column added to database, following newColumn socket event in addTweetColumn
       // Lets us know when to load tweets into new column
@@ -214,7 +220,7 @@ tweetApp.directive('tweetColumn', function(socket, tweets, toasts) {
         if(columnID==$scope.column.id) {
           $scope.tweets = [];
           $scope.bottomLoading = true;
-          initRequest();
+          $scope.initRequest();
         }
       }
       
@@ -318,7 +324,7 @@ tweetApp.directive('tweetColumn', function(socket, tweets, toasts) {
 });
 
 // Directive that enables us to create[/amend] criteria for new column, move column or delete column. 
-tweetApp.directive('thTweetConfig', function(){
+tweetApp.directive('thTweetConfig', function(tweets){
   return {
     restrict: 'C', 
     templateUrl: '/tweets/th-tweet-config.html',
@@ -426,7 +432,14 @@ tweetApp.directive('thTweetConfig', function(){
         var froms = _.uniq(_.compact(_.pluck($scope.froms, 'user')));
         if (!((tos.length===0) && (froms.length===0))) {
           $scope.column.parameters = JSON.stringify(paramsParse.object2mongo({to: tos, from: froms}));
-          socket.emit('newColumn', {id: $scope.column.id, parameters: $scope.column.parameters, position: $scope.column.position, type: $scope.column.type});
+          newColumn = {id: $scope.column.id, parameters: $scope.column.parameters, position: $scope.column.position, type: $scope.column.type}
+          tweets.post('/api/tweets/newColumn', newColumn, function(pass, res) {
+            if (!pass) {
+              console.log(res)
+            } else {
+              $scope.initRequest()
+            }
+          })
           $scope.toggleSettings();
         } else {
           toasts.new(toasts.type('error'), 'Error', 'A selection must be made');
