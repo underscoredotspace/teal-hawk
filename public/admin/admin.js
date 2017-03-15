@@ -3,7 +3,7 @@ thAdmin = angular.module('thAdmin', ['angularMoment']).constant('_', window._);
 thAdmin.factory('userAPI',function ($http) {
     return {
         waitingauth: function(params, callback) {
-            $http.get('api/user/waitingauth').then(function (res) {
+            $http.get('/api/admin/user/waitingauth').then(function (res) {
                 console.log(res);
                 callback(null, res.data.users);
             }, function(res) {
@@ -11,14 +11,14 @@ thAdmin.factory('userAPI',function ($http) {
             });
         }, 
         delUser: function(user_id, callback) {
-            $http.get('api/del/'+user_id).then(function (res) {
+            $http.get('/api/admin/del/'+user_id).then(function (res) {
                 callback(null, res.data);
             }, function(res) {
                 callback(res, null);
             });
         }, 
         authUser: function(user_id, callback) {
-            $http.get('api/auth/'+user_id).then(function (res) {
+            $http.get('/api/admin/auth/'+user_id).then(function (res) {
                 callback(null, res.data);
             }, function(res) {
                 callback(res, null);

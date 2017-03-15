@@ -43,4 +43,6 @@ routes.post('/tweets/nextTweets', function(req, res) {
   }); 
 })
 
+routes.use('/admin', require('./admin'));
+
 module.exports = routes;
