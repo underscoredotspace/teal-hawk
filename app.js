@@ -27,6 +27,10 @@ var server = http.createServer(app);
 var io = socketio.listen(server);
 var MongoStore = connectMongo(session);
 var connectEnsureLogin = require('connect-ensure-login');
+var glob = require('./server/glob')
+
+glob.io = io
+glob.passportSocketIo = passportSocketIo
 
 // CONNECT TO MONGO
 db.connect('mongodb://127.0.0.1:27017/tweets', function(err) {

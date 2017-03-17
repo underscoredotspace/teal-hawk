@@ -1,5 +1,9 @@
 var routes = require('express').Router();
 var db = require('./db')
+var glob = require('./glob')
+
+var io = glob.io
+var passportSocketIo = glob.passportSocketIo
 
 routes.use(function(req, res, next) {
   if (req.user.admin==true) {
@@ -42,17 +46,16 @@ routes.get('/:func/:param', function(req, res) {
         console.log({users: result.result.n});
       }
     }); 
-/*
-    // Tell client to log user out and disconnect their socket
+
+    // Tell client to log user out and disconnect their socket (but this will not be true for users awaiting registered==true)
     var userSockets = passportSocketIo.filterSocketsByUser(io, function(user){
-      return user.user_id == req.params.param;
+      return user.user_id == req.params;
     });
     userSockets.forEach(function(socket) {
       socket.emit('logout', 'Your account has been deleted\nYou will now be logged out');
       socket.disconnect();
     });
     console.log({sockets: userSockets.length});
-*/
 
     res.json({success: true}); // really want more verbose response than this
   }
