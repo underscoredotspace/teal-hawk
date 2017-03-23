@@ -10,6 +10,20 @@ routes.use(function(req, res, next) {
   }
 });
 
+routes.get('/registered', function(req, res) {
+  if (req.user) {
+    db.collection('users').find({twitter_id: req.user.user_id}, {registered:1, _id: 0}).limit(1).toArray(function(err, user) {
+      if (user[0].registered) {
+        req.user.registered = true;
+        req.session.save();
+      }
+      res.json(user[0]);
+    });
+  } else {
+    res.sendStatus(401);
+  }
+});
+
 routes.get('/tweets/getColumns', function(req, res) {
   db.collection('users').find({twitter_id: req.user.user_id}, {_id: 0, columns: 1}).limit(1).toArray(function(err, user) {
     if (user[0].registered) {

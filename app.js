@@ -160,20 +160,6 @@ db.connect('mongodb://127.0.0.1:27017/tweets', function(err) {
     }
   });
 
-  app.get('/registered', function(req, res) {
-    if (req.user) {
-      db.collection('users').find({twitter_id: req.user.user_id}, {registered:1, _id: 0}).limit(1).toArray(function(err, user) {
-        if (user[0].registered) {
-          req.user.registered = true;
-          req.session.save();
-        }
-        res.json(user[0]);
-      });
-    } else {
-      res.sendStatus(401);
-    }
-  });
-
   app.get('/menu-bar', function(req, res) {
     if (req.user) {
       res.render('menu-bar', { user: req.user });

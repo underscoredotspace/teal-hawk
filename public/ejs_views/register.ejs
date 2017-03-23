@@ -21,7 +21,7 @@
 <script>
   angular.module('regApp', []).controller('regController', function ($scope, $http, $interval) {
     function askIfRegistered() {
-      $http.get('/registered').then(function(res) {
+      $http.get('/api/registered').then(function(res) {
         $scope.registered = res.data.registered;
         if($scope.registered) {
           window.location.href = '/';
