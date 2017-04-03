@@ -317,7 +317,7 @@ db.collection("config").findOne({}, function (err, twitconfig) {
 })
 
 // START THE SERVER
-server.listen(3000, '127.0.0.1', function() {
+server.listen(3000, '0.0.0.0', function() {
   console.log(Date() + ': Express listening on port 3000')
 }).on('error', function(err) {
   // Log and quit on any errors with the http server
