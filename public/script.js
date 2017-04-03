@@ -40,13 +40,17 @@ tweetApp.directive("tweetDeck", function($timeout, socket, tweets, toasts) {
         }
       })
 
+      function uuid() {
+        return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+          var r = Math.random() * 16 | 0,
+            v = c == 'x' ? r : (r & 0x3 | 0x8);
+          return v.toString(16);
+        });
+      }
+
       scope.$on('newColumn', function() {
         if (_.max(scope.columns, 'position').parameters!='') {
-          // create semi-uuid 
-          var newID = Math.random().toString(36).substr(2, 4);
-          while (_.where(scope.columns, {id: newID}).length!=0) {
-            newID = Math.random().toString(36).substr(2, 4);
-          }
+          var newID = uuid()
           
           if (scope.columns.length != 0) {
             newPosition = _.max(scope.columns, 'position').position + 1;
@@ -63,9 +67,9 @@ tweetApp.directive("tweetDeck", function($timeout, socket, tweets, toasts) {
           });
           console.log('new column ' + newID + ' created');
 
-          $timeout(function() {
-            element[0].scrollLeft=element[0].scrollWidth;
-          }, 0);
+          $timeout(()=>{
+            element[0].scrollLeft=element[0].scrollWidth
+          },0)
         }
       })
     }
@@ -229,44 +233,18 @@ tweetApp.directive('tweetColumn', function(socket, tweets, toasts) {
           initRequest();
         }
       });
-      
-      // Since we're showing photos within tweet, removes the t.co links in tweet.text
-      function removePhotoLink (tweet) {
-        if (tweet.extended_entities) {
-          if (tweet.extended_entities.media) {
-            tweet.extended_entities.media.forEach(function(media_item) {
-              if (media_item.type=='photo') {
-                tweet.text = tweet.text.replace(media_item.url, '');
-              }
-            });
-          }
-        }
-      }
-      
-      // Since we're showing quoted_status within tweet, removes the t.co links in tweet.text
-      function removeQuotedLink (tweet) {
-        if (tweet.quoted_status) {
-          if (tweet.entities.urls) {
-            _.each(tweet.entities.urls, function(url_item) {
-              if (url_item.display_url.substr(0, 12) =='twitter.com/') {
-                tweet.text = tweet.text.replace(url_item.url, '');
-              }
-            });
-          }
-        }
-      }
 
       // Fires when new Tweet for top of stack sent by server
       socket.on('topTweet', function(newTweet) {
+        console.log('new top tweet')
         newTweets = _.query(newTweet, JSON.parse($scope.column.parameters));
         if(newTweets.length>0) {
-          console.log(newTweets.length + ' topTweet(s) recieved for column ' + $scope.column.id);
-          newTweets.reverse().forEach(function(tweet) {
-            removePhotoLink(tweet);
-            removeQuotedLink(tweet);
-            $scope.tweets.unshift(tweet);
-          });
-          $scope.$apply();
+          $scope.$apply(()=>{
+            console.log(newTweets.length + ' topTweet(s) recieved for column ' + $scope.column.id);
+            newTweets.reverse().forEach(function(tweet) {
+              $scope.tweets.unshift(tweet);
+            });
+          })
         }        
       });
       
@@ -300,8 +278,6 @@ tweetApp.directive('tweetColumn', function(socket, tweets, toasts) {
                 res.forEach(function(tweet) {
                   // check it isn't already in view
                   if (_.findWhere($scope.tweets, {id_str: tweet.id_str})==undefined) {
-                    removePhotoLink(tweet);
-                    removeQuotedLink(tweet);
                     $scope.tweets.push(tweet);
                   }
                 $scope.bottomLoading = false; // alows showMore function to fire again
@@ -666,6 +642,39 @@ tweetApp.filter('tweetLinky',['$filter',
     };
   }   
 ]); 
+
+tweetApp.filter('fixTweetText', function() {
+  return function(tweetText, tweet) {
+    var fixedTweetText
+
+    // If tweet.text is truncated, full tweet.text is elsewhere
+    if(tweet.truncated) {
+      fixedTweetText = tweet.extended_tweet.full_text
+    } else {
+      fixedTweetText = tweetText
+    }
+    
+    // If the tweet is a quoted one, we don't need to see the link
+    if(tweet.is_quote_status) {
+      tweet.entities.urls.forEach((url)=>{
+        if(url.display_url.substr(0,12)=='twitter.com/') {
+          fixedTweetText = fixedTweetText.replace(url.url, '')
+        }
+      })
+    }
+    
+    // If the tweet has pictures attached, we're showing the so don't need links here
+    if (tweet.extended_entities && tweet.extended_entities.media) {
+        tweet.extended_entities.media.forEach((media_item) => {
+          if (media_item.type=='photo') {
+            fixedTweetText= fixedTweetText.replace(media_item.url, '');
+          }
+        });
+    }
+    
+    return fixedTweetText
+  }
+})
 
 // Cribbed from http://stackoverflow.com/a/18186947/5487137
 // Don't see a better solution
