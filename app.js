@@ -220,22 +220,20 @@ db.connect('mongodb://127.0.0.1:27017/tweets', function(err) {
     }
   }); //End of io.sockets.on('connection')
         
-  /*
+
   var twit = new Twitter({
     consumer_key: config.twitter.consumer_key,
     consumer_secret: config.twitter.consumer_secret,
-    // app_only_auth: true,
     access_token: config.twitter.access_token,
     access_token_secret: config.twitter.access_token_secret,
     timeout_ms: 60*1000
   });
-*/
+
 db.collection("config").findOne({}, function (err, twitconfig) {
     if (err) {
       console.error('Can\'t get config from mongodb');
       process.exit(1);
     } else { 
-      /*
       var stream = twit.stream('statuses/filter', twitconfig.filter);
       
       stream.on('connected', function() {
@@ -313,7 +311,6 @@ db.collection("config").findOne({}, function (err, twitconfig) {
         console.error(msg);
         console.log('end of warning');
       });  
-*/
     } // end error if
   }); // end of db.config
 }

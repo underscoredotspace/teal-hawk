@@ -69,7 +69,7 @@ tweetApp.directive("tweetDeck", function($timeout, socket, tweets, toasts) {
 
           $timeout(()=>{
             element[0].scrollLeft=element[0].scrollWidth
-          },0)
+          }, 0)
         }
       })
     }
